@@ -1,0 +1,105 @@
+{
+  "runId": "25333350462",
+  "actionsRunId": "25333350462",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25333350462",
+  "commit": "40086aa8f757aefca580ed893fbb28be1116ef14",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "login",
+  "startedAt": "2026-05-04T17:31:35.115Z",
+  "finishedAt": "2026-05-04T17:31:49.727Z",
+  "durationMs": 14612,
+  "stats": {
+    "total": 7,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "TC-LI-001",
+      "title": "TC-LI-001 — Successful login with valid credentials",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "A. Happy Path",
+      "status": "passed",
+      "durationMs": 4545,
+      "retries": 0,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-LI-002",
+      "title": "TC-LI-002 — Wrong password shows error",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "B. Error Handling",
+      "status": "passed",
+      "durationMs": 4778,
+      "retries": 0,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-LI-003",
+      "title": "TC-LI-003 — Empty fields blocked by browser validation",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "B. Error Handling",
+      "status": "passed",
+      "durationMs": 4233,
+      "retries": 0,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-LI-007",
+      "title": "TC-LI-007 — Invalid email format blocked by browser validation",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "B. Error Handling",
+      "status": "passed",
+      "durationMs": 3668,
+      "retries": 0,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-LI-004",
+      "title": "TC-LI-004 — Password visibility toggle",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "C. UI Affordances",
+      "status": "passed",
+      "durationMs": 3102,
+      "retries": 0,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-LI-005",
+      "title": "TC-LI-005 — Forgot password link navigates correctly",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "D. Adjacent Links",
+      "status": "passed",
+      "durationMs": 2428,
+      "retries": 0,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-LI-006",
+      "title": "TC-LI-006 — Create account link navigates correctly",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "D. Adjacent Links",
+      "status": "passed",
+      "durationMs": 2304,
+      "retries": 0,
+      "error": null,
+      "attachments": []
+    }
+  ]
+}
