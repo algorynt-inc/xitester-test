@@ -5,7 +5,10 @@ export default defineConfig({
     testDir: './tests',
     fullyParallel: true,
     forbidOnly: !!process.env.CI,
-    retries: process.env.CI ? 2 : 0,
+    // Lower CI retries (2 → 1) so flaky login-form tests don't retry their
+    // wrong-password attempts twice and burn the SUT's
+    // LOGIN_RATE_LIMIT_MAX_ATTEMPTS=10/300s budget.
+    retries: process.env.CI ? 1 : 0,
     workers: process.env.CI ? 2 : undefined,
     reporter: [
         ['html', { open: 'never', outputFolder: 'playwright-report' }],
@@ -28,14 +31,26 @@ export default defineConfig({
     },
 
     projects: [
+        // One-time UI login per workflow run. Saves storageState to
+        // playwright/.auth/user.json so authenticated specs can opt in via
+        // `test.use({ storageState: '...' })` instead of re-logging.
+        {
+            name: 'setup',
+            testMatch: /auth\.setup\.ts/,
+            // Don't retry login attempts — we want to fail fast and surface
+            // the error rather than burn rate-limit budget.
+            retries: 0,
+        },
         {
             name: 'chromium',
             use: { ...devices['Desktop Chrome'], viewport: { width: 1920, height: 1080 } },
+            dependencies: ['setup'],
         },
         {
             name: 'mobile-chromium',
             grep: /@mobile/,
             use: { ...devices['Pixel 7'], viewport: { width: 375, height: 812 } },
+            dependencies: ['setup'],
         },
     ],
 })

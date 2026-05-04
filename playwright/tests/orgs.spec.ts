@@ -1,84 +1,33 @@
-import { test, expect, type APIRequestContext, type BrowserContext, type Page } from '@playwright/test'
+import { test, expect, type APIRequestContext, type Page } from '@playwright/test'
 import { ENV } from '../env'
 
-const LOGIN_API = `${ENV.apiBase}/api/v1/auth/login`
+// Every test in this file starts already authenticated, courtesy of the
+// `setup` project (auth.setup.ts) which runs once per workflow execution
+// and saves storageState to playwright/.auth/user.json. Zero login attempts
+// in this spec — the orgs suite reuses the single workflow-wide login.
+test.use({ storageState: 'playwright/.auth/user.json' })
+
 const ORG_API = `${ENV.apiBase}/api/v1/organizations`
-const TOKEN_KEY = 'auth_token_v1'
 
 const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD secret bundle.`
 
-/** One token per worker — avoids hammering /auth/login. */
-let cachedToken: Promise<string> | null = null
-
 /**
- * Log in via the JSON API. Surfaces a clear diagnostic when the response
- * is HTML (typically means apiBase points at the SPA host, not the API).
+ * Read the auth token the SPA placed in localStorage during auth.setup.
+ * Required for direct API calls (createTempOrg / deleteCurrentOrg). Pages
+ * already use the cookie/storage from storageState, so no re-auth is needed.
  */
-async function loginViaApi(request: APIRequestContext): Promise<string> {
-    const res = await request.post(LOGIN_API, {
-        data: { email: ENV.user.email, password: ENV.user.password },
-        failOnStatusCode: false,
-    })
-    const text = await res.text()
-    const ctype = res.headers()['content-type'] ?? ''
-    if (!res.ok()) {
-        throw new Error(`POST ${LOGIN_API} returned ${res.status()}: ${text.slice(0, 200)}`)
+async function readToken(page: Page): Promise<string> {
+    if (!page.url().startsWith(ENV.baseURL)) {
+        await page.goto('/')
     }
-    if (!ctype.includes('json')) {
+    const token = await page.evaluate(() => window.localStorage.getItem('auth_token_v1'))
+    if (!token) {
         throw new Error(
-            `POST ${LOGIN_API} returned non-JSON (content-type=${ctype || '?'}). ` +
-                `apiBase is likely wrong — should target the API host (api-${ENV.name}…), ` +
-                `not the SPA host (app-${ENV.name}…). Body starts with: ${text.slice(0, 80)}`,
+            'no auth_token_v1 in localStorage — auth.setup did not run or was unable to log in. ' +
+                'Check the `setup` project output in the Actions log.',
         )
     }
-    const body = JSON.parse(text) as { access_token?: string; token?: string }
-    const token = body.access_token ?? body.token
-    if (!token) throw new Error('login response had no token')
     return token
-}
-
-/**
- * Fallback: log in via the actual UI form, then read the token the SPA
- * stored in localStorage. Slower (full page load + form submit), but
- * works even when apiBase is misconfigured because the SPA itself knows
- * the right API URL.
- */
-async function loginViaUi(page: Page): Promise<string> {
-    await page.goto('/login')
-    await page.locator('#email').waitFor({ state: 'visible', timeout: 15_000 })
-    await page.fill('#email', ENV.user.email)
-    await page.fill('#password', ENV.user.password)
-    await Promise.all([
-        page.waitForURL(url => !url.pathname.startsWith('/login'), { timeout: 20_000 }),
-        page.locator('button[type="submit"]').click(),
-    ])
-    const token = await page.evaluate(() => window.localStorage.getItem('auth_token_v1'))
-    if (!token) throw new Error('UI login completed but no auth_token_v1 in localStorage')
-    return token
-}
-
-async function ensureToken(page: Page, request: APIRequestContext): Promise<string> {
-    if (cachedToken) return cachedToken
-    cachedToken = (async () => {
-        try {
-            return await loginViaApi(request)
-        } catch (err) {
-            // eslint-disable-next-line no-console
-            console.warn(`[orgs.spec] API login failed, falling back to UI login: ${(err as Error).message}`)
-            return await loginViaUi(page)
-        }
-    })()
-    return cachedToken
-}
-
-async function seedAuth(context: BrowserContext, token: string): Promise<void> {
-    await context.addInitScript(t => {
-        try {
-            window.localStorage.setItem('auth_token_v1', t as string)
-        } catch {
-            /* ignore */
-        }
-    }, token)
 }
 
 interface CreatedOrg {
@@ -94,7 +43,6 @@ async function createTempOrg(request: APIRequestContext, token: string, name: st
         failOnStatusCode: false,
     })
     if (res.status() === 403 || res.status() === 402) {
-        // Plan-tier restriction — surface clearly so the calling test can skip.
         throw new Error(`PLAN_BLOCKED:${res.status()}`)
     }
     if (!res.ok()) {
@@ -124,10 +72,8 @@ const ts = () => new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14)
 // ============================================================
 
 test.describe('A. Browse & Search', () => {
-    test('TC-ORG-001 — View organization list', async ({ page, context, request }) => {
+    test('TC-ORG-001 — View organization list', async ({ page }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        const token = await ensureToken(page, request)
-        await seedAuth(context, token)
 
         await page.goto('/organizations')
         await expect(
@@ -135,8 +81,6 @@ test.describe('A. Browse & Search', () => {
             'org search input should be visible',
         ).toBeVisible({ timeout: 10_000 })
 
-        // Heuristic: at least one org card should render. Cards are buttons that
-        // contain the org name; we filter to "real" buttons (not the new-org CTA).
         const orgButtons = page
             .locator('main button')
             .filter({ hasNotText: 'New organization' })
@@ -146,10 +90,8 @@ test.describe('A. Browse & Search', () => {
         ).toBeVisible({ timeout: 10_000 })
     })
 
-    test('TC-ORG-002 — Search filters the org list', async ({ page, context, request }) => {
+    test('TC-ORG-002 — Search filters the org list', async ({ page }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        const token = await ensureToken(page, request)
-        await seedAuth(context, token)
 
         await page.goto('/organizations')
         const search = page.locator('input[placeholder="Search for an organization"]')
@@ -173,10 +115,8 @@ test.describe('A. Browse & Search', () => {
 // ============================================================
 
 test.describe('B. View', () => {
-    test('TC-ORG-003 — View organization settings', async ({ page, context, request }) => {
+    test('TC-ORG-003 — View organization settings', async ({ page }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        const token = await ensureToken(page, request)
-        await seedAuth(context, token)
 
         await page.goto('/organizations')
         const orgButtons = page.locator('main button').filter({ hasNotText: 'New organization' })
@@ -192,10 +132,8 @@ test.describe('B. View', () => {
         await expect(orgSlug).toBeVisible()
         await expect(orgDescription).toBeVisible()
 
-        // Name and slug should be populated for a real org.
         await expect(orgName).not.toHaveValue('')
         await expect(orgSlug).not.toHaveValue('')
-        // Slug is read-only.
         await expect(orgSlug).toHaveAttribute('readonly', '')
     })
 })
@@ -206,27 +144,29 @@ test.describe('B. View', () => {
 
 test.describe('C. Create', () => {
     let createdOrgId: string | null = null
+    let pageRef: Page | null = null
 
     test.afterEach(async ({ request }) => {
-        if (createdOrgId) {
-            // Reuse the worker-cached token rather than logging in again.
-            // If for some reason it isn't set, skip cleanup quietly.
-            const token = await (cachedToken ?? Promise.resolve(null)).catch(() => null)
-            if (token) await deleteCurrentOrg(request, token)
+        if (createdOrgId && pageRef) {
+            try {
+                const token = await readToken(pageRef)
+                await deleteCurrentOrg(request, token)
+            } catch {
+                /* swallow cleanup errors so they don't mask the test failure */
+            }
             createdOrgId = null
+            pageRef = null
         }
     })
 
-    test('TC-ORG-004 — Create a new organization', async ({ page, context, request }) => {
+    test('TC-ORG-004 — Create a new organization', async ({ page, request }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        const token = await ensureToken(page, request)
-        await seedAuth(context, token)
+        pageRef = page
 
         await page.goto('/organizations')
         const newBtn = page.locator('button', { hasText: 'New organization' }).first()
         await expect(newBtn).toBeVisible({ timeout: 10_000 })
 
-        // Plan-tier guard: if the create button is disabled, skip cleanly.
         const enabled = await newBtn.isEnabled()
         test.skip(!enabled, 'Create button is disabled — likely a plan-tier restriction.')
 
@@ -246,7 +186,6 @@ test.describe('C. Create', () => {
         ])
         expect([200, 201]).toContain(response.status())
 
-        // Capture the new org id for afterEach cleanup.
         try {
             const body = (await response.json()) as { id?: string }
             createdOrgId = body.id ?? null
@@ -257,12 +196,15 @@ test.describe('C. Create', () => {
         // Modal should close and the new org name should be visible somewhere on the page.
         await expect(nameInput).toBeHidden({ timeout: 5_000 })
         await expect(page.getByText(tempName)).toBeVisible({ timeout: 8_000 })
+
+        // Suppress the unused `request` lint — afterEach uses it.
+        void request
     })
 
-    test('TC-ORG-007 — Create rejects duplicate name', async ({ page, context, request }) => {
+    test('TC-ORG-007 — Create rejects duplicate name', async ({ page, request }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        const token = await ensureToken(page, request)
-        await seedAuth(context, token)
+        pageRef = page
+        const token = await readToken(page)
 
         // Seed: create the first org via API. If plan-tier blocks it, skip.
         const sharedName = `qa-dup-${ts()}`
@@ -276,7 +218,6 @@ test.describe('C. Create', () => {
             }
             throw err
         }
-        // Track for cleanup
         createdOrgId = temp.id
 
         await page.goto('/organizations')
@@ -296,25 +237,14 @@ test.describe('C. Create', () => {
             submit.click(),
         ])
 
-        // Backend should reject the duplicate. Common shapes:
-        //   409 Conflict, 422 Unprocessable Entity, 400 Bad Request.
         expect(response.status(), 'duplicate-name create should fail with 4xx').toBeGreaterThanOrEqual(400)
         expect(response.status()).toBeLessThan(500)
 
-        // Modal should still be open (the create did not succeed).
         await expect(nameInput, 'modal should remain open after duplicate error').toBeVisible()
 
-        // Some error must be surfaced — either inline in the modal or via toast.
-        // Match common phrasings without locking us to one exact string.
         const ERR_RE = /(already|exists|duplicate|taken|in use)/i
-        const inlineErr = page
-            .locator('div[role="dialog"]')
-            .getByText(ERR_RE)
-            .first()
-        const toastErr = page
-            .locator('[data-sonner-toaster]')
-            .getByText(ERR_RE)
-            .first()
+        const inlineErr = page.locator('div[role="dialog"]').getByText(ERR_RE).first()
+        const toastErr = page.locator('[data-sonner-toaster]').getByText(ERR_RE).first()
         await expect(
             inlineErr.or(toastErr),
             'an "already exists / duplicate / taken / in use" error should be visible',
@@ -328,19 +258,25 @@ test.describe('C. Create', () => {
 
 test.describe('D. Update', () => {
     let tempOrgId: string | null = null
+    let pageRef: Page | null = null
 
     test.afterEach(async ({ request }) => {
-        if (tempOrgId) {
-            const token = await (cachedToken ?? Promise.resolve(null)).catch(() => null)
-            if (token) await deleteCurrentOrg(request, token)
+        if (tempOrgId && pageRef) {
+            try {
+                const token = await readToken(pageRef)
+                await deleteCurrentOrg(request, token)
+            } catch {
+                /* swallow */
+            }
             tempOrgId = null
+            pageRef = null
         }
     })
 
-    test('TC-ORG-005 — Update organization name', async ({ page, context, request }) => {
+    test('TC-ORG-005 — Update organization name', async ({ page, request }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        const token = await ensureToken(page, request)
-        await seedAuth(context, token)
+        pageRef = page
+        const token = await readToken(page)
 
         const tempName = `qa-tmp-${ts()}`
         let temp: CreatedOrg
@@ -380,10 +316,9 @@ test.describe('D. Update', () => {
 // ============================================================
 
 test.describe('E. Delete', () => {
-    test('TC-ORG-006 — Delete an organization via danger zone', async ({ page, context, request }) => {
+    test('TC-ORG-006 — Delete an organization via danger zone', async ({ page, request }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        const token = await ensureToken(page, request)
-        await seedAuth(context, token)
+        const token = await readToken(page)
 
         const tempName = `qa-del-${ts()}`
         let temp: CreatedOrg
@@ -403,7 +338,6 @@ test.describe('E. Delete', () => {
         await expect(deleteBtn).toBeVisible({ timeout: 10_000 })
         await deleteBtn.click()
 
-        // Confirmation dialog requires typing the org name exactly.
         const confirmInput = page.locator('div[role="dialog"] input').first()
         await expect(confirmInput).toBeVisible({ timeout: 5_000 })
         await confirmInput.fill(temp.name)
@@ -416,7 +350,6 @@ test.describe('E. Delete', () => {
         expect([200, 204]).toContain(response.status())
 
         await expect(page.locator('[data-sonner-toaster]')).toContainText(/deleted successfully/i, { timeout: 5_000 })
-        // App routes away from /org/settings — either to /organizations or signs out (login).
         await page.waitForURL(url => !url.pathname.startsWith('/org/settings'), { timeout: 8_000 })
     })
 })
