@@ -137,15 +137,23 @@ jobs:
           retention-days: 30
           if-no-files-found: warn
 
-      - name: Sanity-check run.json
+      - name: Sanity-check run.json + attachments
         if: always()
         run: |
           if [ ! -f .results/run.json ]; then
             echo "::error::JSON reporter did not emit playwright/.results/run.json — Playwright likely crashed before any test ran."
             exit 1
           fi
-          echo "run.json stats:"
+          echo "==== run.json stats ===="
           jq '.stats' .results/run.json
+          echo "==== attachments referenced in JSON ===="
+          jq '[.tests[].attachments[].url]' .results/run.json
+          echo "==== attachments staged on disk ===="
+          if [ -d .results/attachments ]; then
+            find .results/attachments -type f -printf '%P\t%s bytes\n' | sort
+          else
+            echo "(no attachments dir)"
+          fi
 
       - name: Sync results branch (clone or initialize)
         if: always()
@@ -223,6 +231,10 @@ jobs:
           if [ -d "runs/${RUN_ID}" ]; then
             git add "runs/${RUN_ID}"
           fi
+          echo "==== git status before commit ===="
+          git status --short
+          echo "==== files staged ===="
+          git diff --cached --name-only
           if git diff --cached --quiet; then
             echo "Nothing to commit"
             exit 0
@@ -230,6 +242,11 @@ jobs:
           git commit -m "results: ${{ inputs.environment }} ${{ inputs.suite }} run ${RUN_ID}"
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
           git push origin HEAD:results
+          echo "==== Pushed. Verifying remote contents ===="
+          if [ -d "runs/${RUN_ID}" ]; then
+            echo "Files committed under runs/${RUN_ID}:"
+            ls -la "runs/${RUN_ID}/"
+          fi
 
       - name: Propagate test failure
         if: steps.run-tests.outcome == 'failure'

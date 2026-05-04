@@ -1,6 +1,6 @@
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LogOut, Github } from 'lucide-react'
+import { LogOut, Github, PlayCircle } from 'lucide-react'
 import { clearAuth } from '@/lib/auth/auth-store'
 import { useAuth } from '@/lib/auth/use-auth'
 import { REPO_FULL } from '@/lib/config'
@@ -74,6 +74,16 @@ export default function Layout() {
                         <div className="flex-1" />
                         <EnvSelector />
                         <ThemeToggle />
+                        <a
+                            href={`https://github.com/${REPO_FULL}/actions/workflows/e2e.yml`}
+                            target="_blank"
+                            rel="noreferrer"
+                            title="Open GitHub Actions"
+                            className="inline-flex items-center gap-1.5 px-2 py-1 rounded-tremor-default text-xs font-medium border border-tremor-border dark:border-dark-tremor-border text-tremor-content dark:text-dark-tremor-content hover:text-tremor-content-strong dark:hover:text-dark-tremor-content-strong hover:border-tremor-content/40 transition-colors"
+                        >
+                            <PlayCircle className="h-3.5 w-3.5" />
+                            Actions
+                        </a>
                         <a
                             href={`https://github.com/${REPO_FULL}`}
                             target="_blank"

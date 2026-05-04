@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Card, Select, SelectItem, Text } from '@tremor/react'
 import RunsList from '@/components/widgets/RunsList'
+import LiveRunsBar from '@/components/widgets/LiveRunsBar'
 import { useEnv } from '@/components/EnvContext'
 import { filterRuns, loadIndex } from '@/lib/results-loader'
 import { ENVS, SUITES } from '@/types'
@@ -40,6 +41,8 @@ export default function Runs() {
     return (
         <div className="space-y-6">
             <h1 className="text-2xl font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">All runs</h1>
+
+            <LiveRunsBar />
 
             <Card>
                 <div className="flex flex-wrap items-end gap-4">

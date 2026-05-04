@@ -8,6 +8,7 @@ import EnvStatusGrid from '@/components/widgets/EnvStatusGrid'
 import TrendChart from '@/components/widgets/TrendChart'
 import RunsList from '@/components/widgets/RunsList'
 import FailureFeed from '@/components/widgets/FailureFeed'
+import LiveRunsBar from '@/components/widgets/LiveRunsBar'
 import { useEnv } from '@/components/EnvContext'
 import { filterRuns, loadIndex } from '@/lib/results-loader'
 import { ENV_LABELS } from '@/lib/config'
@@ -39,7 +40,12 @@ export default function Overview() {
     const envRuns = filterRuns(allRuns, { environment: env })
 
     if (!loading && allRuns.length === 0 && !error) {
-        return <EmptyState envLabel={ENV_LABELS[env]} />
+        return (
+            <div className="space-y-6">
+                <LiveRunsBar />
+                <EmptyState envLabel={ENV_LABELS[env]} />
+            </div>
+        )
     }
 
     return (
@@ -60,6 +66,8 @@ export default function Overview() {
 
             {error && <p className="text-rose-500 dark:text-rose-400 text-sm">Failed to load results: {error}</p>}
             {loading && <Text>Loading results…</Text>}
+
+            <LiveRunsBar />
 
             <KpiHero runs={envRuns} />
 

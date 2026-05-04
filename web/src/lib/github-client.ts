@@ -72,6 +72,15 @@ export async function listRecentWorkflowRuns(
     }))
 }
 
+/**
+ * Returns workflow runs that are queued, waiting, or in_progress — i.e. live
+ * runs that haven't pushed a JSON to the results branch yet.
+ */
+export async function listLiveWorkflowRuns(token: string): Promise<WorkflowRunSummary[]> {
+    const all = await listRecentWorkflowRuns(token, 20)
+    return all.filter(r => r.status !== 'completed')
+}
+
 export async function getWorkflowRun(token: string, runId: number): Promise<WorkflowRunSummary> {
     const { data } = await octokit(token).actions.getWorkflowRun({
         owner: REPO_OWNER,

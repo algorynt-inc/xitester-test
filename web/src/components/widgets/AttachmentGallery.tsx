@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronLeft, ChevronRight, Download, Film, Image as ImageIcon, Play, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Download, Film, Image as ImageIcon, ImageOff, Play, X } from 'lucide-react'
 import { attachmentUrl } from '@/lib/results-loader'
 import type { ResultAttachment } from '@/types'
 
@@ -45,25 +45,7 @@ export default function AttachmentGallery({ attachments }: Props) {
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                         {images.map((a, i) => (
-                            <motion.button
-                                key={a.url}
-                                type="button"
-                                onClick={() => setLightbox(i)}
-                                whileHover={{ y: -2, scale: 1.01 }}
-                                transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-                                className="group relative overflow-hidden rounded-tremor-default border border-tremor-border dark:border-dark-tremor-border bg-tremor-background-muted dark:bg-dark-tremor-background-muted aspect-video focus:outline-none focus:ring-2 focus:ring-tremor-brand"
-                            >
-                                <img
-                                    src={attachmentUrl(a)!}
-                                    alt={a.name}
-                                    loading="lazy"
-                                    className="absolute inset-0 h-full w-full object-cover"
-                                />
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-                                <span className="absolute bottom-1.5 left-1.5 right-1.5 truncate text-[10px] font-medium text-white drop-shadow bg-black/40 px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                    {a.name}
-                                </span>
-                            </motion.button>
+                            <ImageThumb key={a.url} attachment={a} onClick={() => setLightbox(i)} />
                         ))}
                     </div>
                 </div>
@@ -77,20 +59,7 @@ export default function AttachmentGallery({ attachments }: Props) {
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
                         {videos.map(a => (
-                            <motion.div
-                                key={a.url}
-                                initial={{ opacity: 0, scale: 0.98 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.2 }}
-                                className="rounded-tremor-default overflow-hidden border border-tremor-border dark:border-dark-tremor-border bg-black"
-                            >
-                                <video
-                                    controls
-                                    preload="metadata"
-                                    className="w-full aspect-video"
-                                    src={attachmentUrl(a)!}
-                                />
-                            </motion.div>
+                            <VideoPlayer key={a.url} attachment={a} />
                         ))}
                     </div>
                 </div>
@@ -134,7 +103,7 @@ export default function AttachmentGallery({ attachments }: Props) {
             )}
 
             <AnimatePresence>
-                {lightbox !== null && images[lightbox] && (
+                {lightbox !== null && images[lightbox] && attachmentUrl(images[lightbox]) && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -191,5 +160,88 @@ export default function AttachmentGallery({ attachments }: Props) {
                 )}
             </AnimatePresence>
         </div>
+    )
+}
+
+function ImageThumb({
+    attachment,
+    onClick,
+}: {
+    attachment: ResultAttachment
+    onClick: () => void
+}) {
+    const [errored, setErrored] = useState(false)
+    const url = attachmentUrl(attachment)!
+    return (
+        <motion.button
+            type="button"
+            onClick={errored ? undefined : onClick}
+            whileHover={errored ? undefined : { y: -2, scale: 1.01 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+            className="group relative overflow-hidden rounded-tremor-default border border-tremor-border dark:border-dark-tremor-border bg-tremor-background-muted dark:bg-dark-tremor-background-muted aspect-video focus:outline-none focus:ring-2 focus:ring-tremor-brand"
+        >
+            {errored ? (
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-tremor-content dark:text-dark-tremor-content text-xs gap-1.5 p-2">
+                    <ImageOff className="h-5 w-5 opacity-60" />
+                    <span className="text-center leading-tight">
+                        Attachment not yet on results branch
+                    </span>
+                    <a
+                        href={url}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={e => e.stopPropagation()}
+                        className="text-[10px] text-tremor-brand hover:underline"
+                    >
+                        Try direct URL
+                    </a>
+                </div>
+            ) : (
+                <>
+                    <img
+                        src={url}
+                        alt={attachment.name}
+                        loading="lazy"
+                        onError={() => setErrored(true)}
+                        className="absolute inset-0 h-full w-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                    <span className="absolute bottom-1.5 left-1.5 right-1.5 truncate text-[10px] font-medium text-white drop-shadow bg-black/40 px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                        {attachment.name}
+                    </span>
+                </>
+            )}
+        </motion.button>
+    )
+}
+
+function VideoPlayer({ attachment }: { attachment: ResultAttachment }) {
+    const [errored, setErrored] = useState(false)
+    const url = attachmentUrl(attachment)!
+    return (
+        <motion.div
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.2 }}
+            className="rounded-tremor-default overflow-hidden border border-tremor-border dark:border-dark-tremor-border bg-black"
+        >
+            {errored ? (
+                <div className="flex flex-col items-center justify-center aspect-video gap-2 text-white/70 text-xs px-4 text-center">
+                    <Film className="h-6 w-6 opacity-60" />
+                    <span>Video not available — file isn't on the results branch yet.</span>
+                    <a href={url} target="_blank" rel="noreferrer" className="text-tremor-brand hover:underline">
+                        Try direct URL
+                    </a>
+                </div>
+            ) : (
+                <video
+                    controls
+                    preload="metadata"
+                    className="w-full aspect-video"
+                    src={url}
+                    onError={() => setErrored(true)}
+                />
+            )}
+        </motion.div>
     )
 }
