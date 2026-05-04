@@ -1,6 +1,23 @@
 {
   "runs": [
     {
+      "runId": "25336345189",
+      "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25336345189",
+      "commit": "1d1041e670eace4414dabe67a5088c360c151baf",
+      "environment": "dev",
+      "suite": "orgs",
+      "startedAt": "2026-05-04T18:35:15.614Z",
+      "finishedAt": "2026-05-04T18:35:23.539Z",
+      "durationMs": 7925,
+      "stats": {
+        "total": 1,
+        "passed": 0,
+        "failed": 1,
+        "skipped": 0,
+        "flaky": 0
+      }
+    },
+    {
       "runId": "25336311482",
       "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25336311482",
       "commit": "1d1041e670eace4414dabe67a5088c360c151baf",
