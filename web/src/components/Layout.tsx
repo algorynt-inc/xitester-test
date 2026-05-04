@@ -61,9 +61,8 @@ export default function Layout() {
                     <div className="max-w-screen-2xl mx-auto px-6 py-3 flex items-center gap-6">
                         <Link
                             to="/"
-                            className="flex items-center gap-2 font-semibold tracking-tight text-tremor-content-strong dark:text-dark-tremor-content-strong"
+                            className="font-semibold tracking-tight text-tremor-content-strong dark:text-dark-tremor-content-strong"
                         >
-                            <span className="inline-block h-6 w-6 rounded-md bg-gradient-to-br from-emerald-400 to-lime-500 shadow-sm" />
                             XiTester · Tests
                         </Link>
                         <nav className="flex items-center gap-1">

@@ -56,17 +56,14 @@ export default function Login() {
                     className="w-full max-w-md"
                 >
                     <div className="rounded-2xl border border-tremor-border dark:border-dark-tremor-border bg-tremor-background dark:bg-dark-tremor-background shadow-xl shadow-black/5 dark:shadow-black/40 p-8">
-                        <div className="flex items-center gap-3 mb-6">
-                            <span className="inline-block h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-400 to-lime-500 shadow-md" />
-                            <div>
-                                <h1 className="text-lg font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-                                    XiTester · Tests
-                                </h1>
-                                <p className="text-xs text-tremor-content dark:text-dark-tremor-content">
-                                    Sign in with GitHub · org{' '}
-                                    <code className="font-mono text-[11px]">{REQUIRED_ORG}</code>
-                                </p>
-                            </div>
+                        <div className="mb-6">
+                            <h1 className="text-lg font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
+                                XiTester · Tests
+                            </h1>
+                            <p className="mt-1 text-xs text-tremor-content dark:text-dark-tremor-content">
+                                Sign in with GitHub · org{' '}
+                                <code className="font-mono text-[11px]">{REQUIRED_ORG}</code>
+                            </p>
                         </div>
 
                         <AnimatePresence mode="wait">
