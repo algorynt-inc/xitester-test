@@ -18,7 +18,8 @@ function readSystem(): 'light' | 'dark' {
 
 function readStored(): ThemeMode {
     const v = localStorage.getItem(STORAGE_KEY)
-    return v === 'light' || v === 'dark' || v === 'system' ? v : 'system'
+    // Default to light — the user explicitly asked for light to be the default.
+    return v === 'light' || v === 'dark' || v === 'system' ? v : 'light'
 }
 
 function applyTheme(resolved: 'light' | 'dark'): void {
@@ -37,8 +38,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         const target = mode === 'system' ? readSystem() : mode
         setResolved(target)
         applyTheme(target)
-        if (mode === 'system') localStorage.removeItem(STORAGE_KEY)
-        else localStorage.setItem(STORAGE_KEY, mode)
+        // Always persist so refresh remembers the choice (including 'system').
+        localStorage.setItem(STORAGE_KEY, mode)
     }, [mode])
 
     useEffect(() => {

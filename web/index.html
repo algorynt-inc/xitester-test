@@ -7,16 +7,41 @@
         <meta name="color-scheme" content="dark light" />
         <title>XiTester · Test Dashboard</title>
         <script>
+            // Single-page-apps SPA path restore — pairs with public/404.html.
+            // GitHub Pages 404 redirected /xitester-test/runs/123 to /xitester-test/?p=/runs/123
+            // We pull p+q out of the query string and rewrite to the original path before
+            // React Router boots.
+            (function () {
+                var l = window.location
+                if (l.search.indexOf('?p=') === 0 || l.search.indexOf('&p=') !== -1) {
+                    var search = l.search.slice(1).split('&')
+                    var p = ''
+                    var q = []
+                    for (var i = 0; i < search.length; i++) {
+                        var kv = search[i].split('=')
+                        if (kv[0] === 'p') p = decodeURIComponent(kv.slice(1).join('=')).replace(/~and~/g, '&')
+                        else if (kv[0] === 'q') q.push(decodeURIComponent(kv.slice(1).join('=')).replace(/~and~/g, '&'))
+                        else q.push(search[i])
+                    }
+                    var qs = q.length ? '?' + q.join('&') : ''
+                    history.replaceState(null, '', l.pathname.replace(/\/$/, '') + p + qs + l.hash)
+                }
+            })()
+        </script>
+        <script>
             // Apply stored theme before React renders to prevent flash.
+            // Default is LIGHT (not system) — user choice persists.
             (function () {
                 try {
                     var stored = localStorage.getItem('xt_theme')
-                    var resolved =
-                        stored === 'light' || stored === 'dark'
-                            ? stored
-                            : window.matchMedia('(prefers-color-scheme: dark)').matches
-                            ? 'dark'
-                            : 'light'
+                    var resolved
+                    if (stored === 'light' || stored === 'dark') {
+                        resolved = stored
+                    } else if (stored === 'system') {
+                        resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+                    } else {
+                        resolved = 'light'
+                    }
                     if (resolved === 'dark') document.documentElement.classList.add('dark')
                     document.documentElement.style.colorScheme = resolved
                 } catch (_) {}

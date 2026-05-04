@@ -1,5 +1,14 @@
 import { rawResultsUrl } from './config'
-import type { IndexFile, ResultRun, RunSummary } from '@/types'
+import type { IndexFile, ResultAttachment, ResultRun, RunSummary } from '@/types'
+
+/**
+ * Resolve an attachment's URL field to a fully-qualified raw.githubusercontent.com URL.
+ * Returns null if the attachment has no public URL (e.g., legacy local-only path).
+ */
+export function attachmentUrl(att: ResultAttachment): string | null {
+    if (!att.url) return null
+    return rawResultsUrl(`runs/${att.url}`)
+}
 
 const cache = new Map<string, unknown>()
 

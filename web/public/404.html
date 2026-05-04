@@ -1,0 +1,39 @@
+<!doctype html>
+<!-- Single-Page Apps for GitHub Pages — https://github.com/rafgraph/spa-github-pages -->
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>XiTester · Tests</title>
+        <script>
+            // GitHub Pages serves this 404.html for any path it can't resolve. We capture
+            // the path + query and redirect to the SPA's index, which restores the URL via
+            // history.replaceState before React Router boots.
+            //
+            // segmentCount: 1 because the site lives under /xitester-test/.
+            (function () {
+                var segmentCount = 1
+                var l = window.location
+                l.replace(
+                    l.protocol +
+                        '//' +
+                        l.hostname +
+                        (l.port ? ':' + l.port : '') +
+                        l.pathname
+                            .split('/')
+                            .slice(0, 1 + segmentCount)
+                            .join('/') +
+                        '/?p=/' +
+                        l.pathname
+                            .slice(1)
+                            .split('/')
+                            .slice(segmentCount)
+                            .join('/')
+                            .replace(/&/g, '~and~') +
+                        (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+                        l.hash,
+                )
+            })()
+        </script>
+    </head>
+    <body>Redirecting…</body>
+</html>

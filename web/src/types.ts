@@ -17,6 +17,15 @@ export interface RunStats {
     flaky: number
 }
 
+export interface ResultAttachment {
+    name: string
+    contentType?: string
+    /** Path relative to the run JSON on the results branch, e.g. "<runId>/<file>". */
+    url?: string
+    /** Legacy: local filesystem path (only set during a local run). */
+    path?: string
+}
+
 export interface ResultTest {
     id: string
     title: string
@@ -26,7 +35,7 @@ export interface ResultTest {
     durationMs: number
     retries: number
     error: { message: string; snippet?: string } | null
-    attachments: Array<{ name: string; path?: string; contentType?: string }>
+    attachments: ResultAttachment[]
 }
 
 export interface ResultRun {
