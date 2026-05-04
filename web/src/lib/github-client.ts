@@ -6,10 +6,14 @@ export function octokit(token: string): Octokit {
     return new Octokit({ auth: token })
 }
 
-export async function dispatchE2E(
-    token: string,
-    inputs: { environment: EnvName; suite: SuiteName; browser: BrowserChoice },
-): Promise<void> {
+export interface DispatchInputs {
+    environment: EnvName
+    suite: SuiteName
+    browser: BrowserChoice
+    grep?: string
+}
+
+export async function dispatchE2E(token: string, inputs: DispatchInputs): Promise<void> {
     await octokit(token).actions.createWorkflowDispatch({
         owner: REPO_OWNER,
         repo: REPO_NAME,
@@ -19,8 +23,20 @@ export async function dispatchE2E(
             environment: inputs.environment,
             suite: inputs.suite,
             browser: inputs.browser,
+            grep: inputs.grep ?? '',
         },
     })
+}
+
+/**
+ * Builds a Playwright --grep regex that matches any of the given test IDs
+ * (TC-LI-001 etc.). Test IDs appear at the start of test titles, so matching
+ * the literal IDs joined with `|` is safe.
+ */
+export function buildGrepFromTestIds(ids: string[]): string {
+    if (ids.length === 0) return ''
+    const escaped = ids.map(id => id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    return `(${escaped.join('|')})`
 }
 
 export interface WorkflowRunSummary {

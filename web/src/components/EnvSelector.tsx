@@ -1,3 +1,4 @@
+import { motion, AnimatePresence } from 'framer-motion'
 import { ENVS } from '@/types'
 import { ENV_LABELS } from '@/lib/config'
 import { useEnv } from './EnvContext'
@@ -16,15 +17,27 @@ export default function EnvSelector() {
                         type="button"
                         onClick={() => setEnv(e)}
                         className={clsx(
-                            'px-3 py-1 text-xs font-medium rounded-tremor-full transition-colors',
+                            'relative px-3 py-1 text-xs font-medium rounded-tremor-full transition-colors',
                             active
                                 ? isProd
-                                    ? 'bg-rose-500 text-white'
-                                    : 'bg-tremor-brand text-tremor-brand-inverted'
+                                    ? 'text-white'
+                                    : 'text-white dark:text-tremor-brand-inverted'
                                 : 'text-tremor-content dark:text-dark-tremor-content hover:text-tremor-content-strong dark:hover:text-dark-tremor-content-strong',
                         )}
                     >
-                        {ENV_LABELS[e]}
+                        <AnimatePresence>
+                            {active && (
+                                <motion.span
+                                    layoutId="env-pill"
+                                    className={clsx(
+                                        'absolute inset-0 rounded-tremor-full shadow-sm',
+                                        isProd ? 'bg-rose-500' : 'bg-tremor-brand dark:bg-dark-tremor-brand',
+                                    )}
+                                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                                />
+                            )}
+                        </AnimatePresence>
+                        <span className="relative">{ENV_LABELS[e]}</span>
                     </button>
                 )
             })}

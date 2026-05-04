@@ -11,6 +11,8 @@ playwright/blob-report/
 web/dist/
 web/.vite/
 test-cases/build/
+**/tsconfig.tsbuildinfo
+**/tsconfig.node.tsbuildinfo
 
 # Env / secrets
 .env

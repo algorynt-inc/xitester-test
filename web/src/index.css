@@ -8,6 +8,10 @@ body,
     height: 100%;
 }
 
+html {
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
 body {
     font-family:
         ui-sans-serif,
@@ -17,8 +21,14 @@ body {
         'Segoe UI',
         Roboto,
         sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
 }
 
+::selection {
+    background-color: rgb(132 204 22 / 0.35);
+}
+
+/* Status pills — used by StatusPill component */
 .status-pill {
     display: inline-flex;
     align-items: center;
@@ -27,24 +37,79 @@ body {
     border-radius: 9999px;
     font-size: 0.75rem;
     font-weight: 500;
+    line-height: 1.1;
 }
 
 .status-pill-passed {
-    background-color: rgb(34 197 94 / 0.15);
+    background-color: rgb(34 197 94 / 0.12);
+    color: rgb(22 163 74);
+}
+.dark .status-pill-passed {
+    background-color: rgb(34 197 94 / 0.16);
     color: rgb(74 222 128);
 }
 
 .status-pill-failed {
-    background-color: rgb(239 68 68 / 0.15);
+    background-color: rgb(239 68 68 / 0.12);
+    color: rgb(220 38 38);
+}
+.dark .status-pill-failed {
+    background-color: rgb(239 68 68 / 0.16);
     color: rgb(248 113 113);
 }
 
 .status-pill-skipped {
     background-color: rgb(148 163 184 / 0.15);
+    color: rgb(100 116 139);
+}
+.dark .status-pill-skipped {
     color: rgb(148 163 184);
 }
 
 .status-pill-running {
-    background-color: rgb(59 130 246 / 0.15);
+    background-color: rgb(59 130 246 / 0.12);
+    color: rgb(37 99 235);
+}
+.dark .status-pill-running {
+    background-color: rgb(59 130 246 / 0.16);
     color: rgb(96 165 250);
+}
+
+/* Card hover lift */
+.lift {
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -10px rgb(0 0 0 / 0.25);
+}
+
+/* Subtle scrollbars */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background-color: rgb(148 163 184 / 0.3);
+    border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(148 163 184 / 0.55);
+}
+
+/* Live pulse for running status */
+@keyframes xt-pulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.45; }
+}
+.live-dot {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: rgb(59 130 246);
+    animation: xt-pulse 1.4s ease-in-out infinite;
 }

@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Button, Card, Select, SelectItem, Text, Title } from '@tremor/react'
+import { useEffect, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Button, Card, Select, SelectItem, Text, TextInput, Title } from '@tremor/react'
 import { useEnv } from '@/components/EnvContext'
 import { dispatchE2E, listRecentWorkflowRuns } from '@/lib/github-client'
 import { getToken } from '@/lib/auth/auth-store'
@@ -10,13 +10,20 @@ import type { BrowserChoice, EnvName, SuiteName } from '@/types'
 export default function Trigger() {
     const { env, setEnv } = useEnv()
     const navigate = useNavigate()
-    const [suite, setSuite] = useState<SuiteName>('login')
+    const [params] = useSearchParams()
+    const [suite, setSuite] = useState<SuiteName>(() => (params.get('suite') as SuiteName) || 'login')
     const [browser, setBrowser] = useState<BrowserChoice>('chromium')
+    const [grep, setGrep] = useState<string>(params.get('grep') ?? '')
     const [busy, setBusy] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [confirmProd, setConfirmProd] = useState(false)
 
     const isProd = env === 'prod'
+
+    useEffect(() => {
+        const envParam = params.get('env') as EnvName | null
+        if (envParam && (ENVS as string[]).includes(envParam)) setEnv(envParam)
+    }, [params, setEnv])
 
     const onTrigger = async () => {
         const token = getToken()
@@ -26,9 +33,8 @@ export default function Trigger() {
         try {
             const before = await listRecentWorkflowRuns(token, 5)
             const beforeIds = new Set(before.map(r => r.id))
-            await dispatchE2E(token, { environment: env, suite, browser })
+            await dispatchE2E(token, { environment: env, suite, browser, grep: grep.trim() })
 
-            // GitHub takes a few seconds to register the new run. Poll for it.
             for (let i = 0; i < 12; i++) {
                 await new Promise(r => setTimeout(r, 2000))
                 const recent = await listRecentWorkflowRuns(token, 5)
@@ -78,6 +84,18 @@ export default function Trigger() {
                                 <SelectItem key={b} value={b}>{b}</SelectItem>
                             ))}
                         </Select>
+                    </div>
+                    <div>
+                        <Text>Test filter (optional)</Text>
+                        <TextInput
+                            value={grep}
+                            onValueChange={setGrep}
+                            placeholder="e.g. TC-LI-001  or  (TC-LI-001|TC-LI-014)"
+                            className="mt-1"
+                        />
+                        <Text className="mt-1 text-xs">
+                            Passed to Playwright as <code className="font-mono">--grep</code>. Matches test titles. Leave blank to run everything in the suite.
+                        </Text>
                     </div>
 
                     {isProd && (

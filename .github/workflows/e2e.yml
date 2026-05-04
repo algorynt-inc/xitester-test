@@ -21,6 +21,11 @@ on:
         type: choice
         options: [chromium, mobile-chromium, both]
         default: chromium
+      grep:
+        description: Optional Playwright --grep filter (test title regex). Leave blank to run the whole suite.
+        required: false
+        type: string
+        default: ''
 
 concurrency:
   group: e2e-${{ inputs.environment }}
@@ -30,9 +35,12 @@ permissions:
   contents: write
   actions: read
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   e2e:
-    name: Playwright (${{ inputs.environment }} / ${{ inputs.suite }})
+    name: ${{ inputs.environment }} · ${{ inputs.suite }}${{ inputs.grep && format(' · {0}', inputs.grep) || '' }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     timeout-minutes: 30
@@ -45,6 +53,17 @@ jobs:
       - name: Checkout main
         uses: actions/checkout@v4
 
+      - name: Validate environment secrets
+        env:
+          XT_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          XT_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        run: |
+          if [ -z "$XT_USER_EMAIL" ] || [ -z "$XT_USER_PASSWORD" ]; then
+            echo "::error::Environment '${{ inputs.environment }}' is missing TEST_USER_EMAIL or TEST_USER_PASSWORD secret. Add them under Settings → Environments → ${{ inputs.environment }}."
+            exit 1
+          fi
+          echo "Secrets OK for ${{ inputs.environment }} (user starts with: ${XT_USER_EMAIL:0:4}…)"
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -55,20 +74,16 @@ jobs:
         with:
           version: 9
 
-      - name: Resolve project filter
-        id: project
+      - name: Resolve filters
+        id: filters
         run: |
           case "${{ inputs.browser }}" in
-            both) echo "filter=" >> "$GITHUB_OUTPUT" ;;
-            *)    echo "filter=--project=${{ inputs.browser }}" >> "$GITHUB_OUTPUT" ;;
+            both) echo "project=" >> "$GITHUB_OUTPUT" ;;
+            *)    echo "project=--project=${{ inputs.browser }}" >> "$GITHUB_OUTPUT" ;;
           esac
-
-      - name: Resolve suite filter
-        id: suite
-        run: |
           case "${{ inputs.suite }}" in
-            all)   echo "filter=" >> "$GITHUB_OUTPUT" ;;
-            *)     echo "filter=tests/${{ inputs.suite }}.spec.ts" >> "$GITHUB_OUTPUT" ;;
+            all) echo "suite=" >> "$GITHUB_OUTPUT" ;;
+            *)   echo "suite=tests/${{ inputs.suite }}.spec.ts" >> "$GITHUB_OUTPUT" ;;
           esac
 
       - name: Install dependencies
@@ -84,7 +99,14 @@ jobs:
           XT_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
           XT_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
           XT_TOTP_SECRET: ${{ secrets.TEST_TOTP_SECRET }}
-        run: pnpm exec playwright test ${{ steps.project.outputs.filter }} ${{ steps.suite.outputs.filter }}
+          GREP_INPUT: ${{ inputs.grep }}
+        run: |
+          GREP_FLAG=""
+          if [ -n "$GREP_INPUT" ]; then
+            GREP_FLAG="--grep=$GREP_INPUT"
+            echo "Running with grep filter: $GREP_INPUT"
+          fi
+          pnpm exec playwright test ${{ steps.filters.outputs.project }} ${{ steps.filters.outputs.suite }} $GREP_FLAG
         continue-on-error: true
         id: run-tests
 
@@ -95,6 +117,7 @@ jobs:
           name: playwright-report-${{ github.run_id }}
           path: playwright/playwright-report/
           retention-days: 30
+          if-no-files-found: warn
 
       - name: Upload raw test-results (videos, traces, screenshots)
         if: always()
@@ -103,34 +126,49 @@ jobs:
           name: test-results-${{ github.run_id }}
           path: playwright/test-results/
           retention-days: 30
+          if-no-files-found: warn
+
+      - name: Upload run.json
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: run-json-${{ github.run_id }}
+          path: playwright/.results/run.json
+          retention-days: 30
+          if-no-files-found: warn
 
       - name: Sanity-check run.json
         if: always()
         run: |
           if [ ! -f .results/run.json ]; then
-            echo "::error::JSON reporter did not emit playwright/.results/run.json"
+            echo "::error::JSON reporter did not emit playwright/.results/run.json — Playwright likely crashed before any test ran."
             exit 1
           fi
+          echo "run.json stats:"
           jq '.stats' .results/run.json
 
-      - name: Checkout results branch
-        if: always()
-        uses: actions/checkout@v4
-        with:
-          ref: results
-          path: results-branch
-          fetch-depth: 1
-        continue-on-error: true
-
-      - name: Initialize results branch if missing
+      - name: Sync results branch (clone or initialize)
         if: always()
         working-directory: ${{ github.workspace }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
         run: |
-          if [ ! -d results-branch/.git ]; then
-            mkdir -p results-branch
+          set -e
+          rm -rf results-branch
+          REMOTE="https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
+
+          # Try to clone the existing results branch shallowly. If it doesn't
+          # exist, create an orphan branch in a fresh dir.
+          if git ls-remote --exit-code --heads "$REMOTE" results > /dev/null 2>&1; then
+            echo "results branch exists — cloning"
+            git clone --depth 1 --branch results "$REMOTE" results-branch
+          else
+            echo "results branch does not exist — creating orphan"
+            mkdir results-branch
             cd results-branch
-            git init -b results
-            git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+            git init -q -b results
+            git remote add origin "$REMOTE"
             mkdir -p runs
             echo '{"runs": []}' > index.json
           fi
@@ -138,39 +176,52 @@ jobs:
       - name: Append run.json + update index.json
         if: always()
         working-directory: ${{ github.workspace }}/results-branch
+        env:
+          RUN_ID: ${{ github.run_id }}
         run: |
+          set -e
           mkdir -p runs
-          cp ../playwright/.results/run.json "runs/${{ github.run_id }}.json"
+          cp "../playwright/.results/run.json" "runs/${RUN_ID}.json"
           if [ ! -f index.json ]; then
             echo '{"runs": []}' > index.json
           fi
-          jq --slurpfile r "runs/${{ github.run_id }}.json" '
+          jq --slurpfile r "runs/${RUN_ID}.json" '
             .runs = ([{
-              runId:        $r[0].runId,
+              runId:          $r[0].runId,
               workflowRunUrl: $r[0].workflowRunUrl,
-              commit:       $r[0].commit,
-              environment:  $r[0].environment,
-              suite:        $r[0].suite,
-              startedAt:    $r[0].startedAt,
-              finishedAt:   $r[0].finishedAt,
-              durationMs:   $r[0].durationMs,
-              stats:        $r[0].stats
+              commit:         $r[0].commit,
+              environment:    $r[0].environment,
+              suite:          $r[0].suite,
+              startedAt:      $r[0].startedAt,
+              finishedAt:     $r[0].finishedAt,
+              durationMs:     $r[0].durationMs,
+              stats:          $r[0].stats
             }] + .runs) | .runs = (.runs | .[0:1000])
           ' index.json > index.json.tmp && mv index.json.tmp index.json
+          echo "index.json now has $(jq '.runs | length' index.json) entries"
 
       - name: Commit + push to results branch
         if: always()
         working-directory: ${{ github.workspace }}/results-branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
         run: |
+          set -e
           git config user.name  "xitester-test bot"
           git config user.email "actions@github.com"
-          git add runs/${{ github.run_id }}.json index.json
-          git commit -m "results: ${{ inputs.environment }} ${{ inputs.suite }} run ${{ github.run_id }}" || { echo "no changes"; exit 0; }
-          git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-          git push -u origin results || git push origin HEAD:results
+          git add "runs/${RUN_ID}.json" index.json
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+            exit 0
+          fi
+          git commit -m "results: ${{ inputs.environment }} ${{ inputs.suite }} run ${RUN_ID}"
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
+          git push origin HEAD:results
 
       - name: Propagate test failure
         if: steps.run-tests.outcome == 'failure'
         run: |
-          echo "::error::Playwright reported failures — see uploaded report"
+          echo "::error::Playwright reported failures — see the uploaded HTML report and the dashboard."
           exit 1
