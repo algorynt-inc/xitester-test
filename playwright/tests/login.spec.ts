@@ -87,6 +87,28 @@ test.describe('B. Error Handling', () => {
         expect(loginRequestFired, 'no API request should fire on empty submit').toBe(false)
         expect(page.url()).toMatch(/\/login(\?|$|#)/)
     })
+
+    test('TC-LI-007 — Invalid email format blocked by browser validation', async ({ page }) => {
+        let loginRequestFired = false
+        page.on('request', (req) => {
+            if (req.method() === 'POST' && req.url().includes('/api/v1/auth/login')) {
+                loginRequestFired = true
+            }
+        })
+
+        await gotoLogin(page)
+        await page.fill('#email', 'notanemail')
+        await page.fill('#password', 'anything')
+        await page.locator('button[type="submit"]').click()
+        await page.waitForTimeout(300)
+
+        expect(
+            await isInvalid(page, '#email'),
+            'Email field should be reported invalid by HTML5 (no @)',
+        ).toBe(true)
+        expect(loginRequestFired, 'no API request should fire when email is malformed').toBe(false)
+        expect(page.url()).toMatch(/\/login(\?|$|#)/)
+    })
 })
 
 // ============================================================

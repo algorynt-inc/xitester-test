@@ -55,6 +55,7 @@ This is a **public repo**. Real test-account credentials never live in source. E
 |----------------|--------|----------|-------------|-------|
 | TC-LI-002 — Wrong password shows error | Login / Errors | P0 | API returns 401. Sonner error toast appears. URL stays `/login`. Submit button re-enables. Email and password values are preserved. | 1. Open `/login`.<br>2. Type a valid email.<br>3. Type an incorrect password.<br>4. Click "Login".<br>5. Observe the error toast. |
 | TC-LI-003 — Empty fields blocked by browser validation | Login / Validation | P0 | HTML5 `required` blocks submit. Native browser tooltip appears on the Email field. No `POST /api/v1/auth/login` request fires. URL stays `/login`. | 1. Open `/login`.<br>2. Click "Login" without typing anything. |
+| TC-LI-007 — Invalid email format blocked by browser validation | Login / Validation | P0 | HTML5 `type="email"` rejects strings without `@`. Browser surfaces a native validation tooltip on the Email field. No `POST /api/v1/auth/login` request fires. URL stays `/login`. | 1. Open `/login`.<br>2. Type `notanemail` into Email.<br>3. Type any password.<br>4. Click "Login". |
 
 ## C. UI Affordances
 
