@@ -54,6 +54,7 @@ export default function RunDetail() {
             env: run.environment,
             suite,
             grep,
+            parent: run.runId,
         })
         navigate(`/trigger?${params.toString()}`)
     }

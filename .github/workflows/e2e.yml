@@ -26,6 +26,11 @@ on:
         required: false
         type: string
         default: ''
+      parent_run_id:
+        description: If set, merge this run's results into an existing dashboard run (re-run flow). Leave blank for a standalone run.
+        required: false
+        type: string
+        default: ''
 
 concurrency:
   group: e2e-${{ inputs.environment }}
@@ -100,6 +105,9 @@ jobs:
           XT_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
           XT_TOTP_SECRET: ${{ secrets.TEST_TOTP_SECRET }}
           GREP_INPUT: ${{ inputs.grep }}
+          # When parent_run_id is set, the reporter uses this as runId so
+          # attachments and JSON land under the parent's namespace.
+          XT_RESULT_RUN_ID: ${{ inputs.parent_run_id }}
         run: |
           GREP_FLAG=""
           if [ -n "$GREP_INPUT" ]; then
@@ -185,36 +193,121 @@ jobs:
         if: always()
         working-directory: ${{ github.workspace }}/results-branch
         env:
-          RUN_ID: ${{ github.run_id }}
+          ACTIONS_RUN_ID: ${{ github.run_id }}
+          PARENT_RUN_ID: ${{ inputs.parent_run_id }}
         run: |
           set -e
           mkdir -p runs
-          cp "../playwright/.results/run.json" "runs/${RUN_ID}.json"
-          # Copy any attachments the reporter staged (screenshots, videos, traces).
-          if [ -d "../playwright/.results/attachments/${RUN_ID}" ]; then
-            mkdir -p "runs/${RUN_ID}"
-            cp -R "../playwright/.results/attachments/${RUN_ID}/." "runs/${RUN_ID}/"
-            echo "Copied $(ls runs/${RUN_ID} | wc -l) attachment(s) for run ${RUN_ID}"
+
+          # The reporter has already written a JSON whose runId is either
+          # GITHUB_RUN_ID (fresh run) or PARENT_RUN_ID (re-run merge).
+          NEW_JSON="../playwright/.results/run.json"
+          REPORTED_RUN_ID=$(jq -r '.runId' "$NEW_JSON")
+          echo "Reporter wrote runId=${REPORTED_RUN_ID} (actionsRunId=${ACTIONS_RUN_ID}, parent=${PARENT_RUN_ID:-<none>})"
+
+          if [ -n "$PARENT_RUN_ID" ] && [ -f "runs/${PARENT_RUN_ID}.json" ]; then
+            echo "==== Re-run flow — merging ${ACTIONS_RUN_ID} into parent ${PARENT_RUN_ID} ===="
+            # Replace tests with matching (id, project) keys; append any new ones.
+            # Recompute stats. Bump finishedAt + durationMs to the new run's.
+            jq --slurpfile new "$NEW_JSON" '
+              . as $parent
+              | $new[0] as $n
+              | .tests = (
+                  ($parent.tests
+                    | map(
+                        . as $t
+                        | (
+                            $n.tests
+                            | map(select(.id == $t.id and .project == $t.project))
+                            | .[0]
+                          ) // $t
+                      ))
+                  + (
+                    $n.tests
+                    | map(
+                        . as $newT
+                        | select(
+                            ($parent.tests
+                              | map(.id + "::" + .project)
+                              | index($newT.id + "::" + $newT.project)) == null
+                          )
+                      )
+                  )
+                )
+              | .stats = (
+                  .tests
+                  | {
+                      total: length,
+                      passed: (map(select(.status == "passed")) | length),
+                      failed: (map(select(.status == "failed" or .status == "timedOut")) | length),
+                      skipped: (map(select(.status == "skipped")) | length),
+                      flaky: (map(select(.retries > 0 and .status == "passed")) | length)
+                    }
+                )
+              | .finishedAt = $n.finishedAt
+              | .durationMs = $n.durationMs
+              | .commit = ($n.commit // .commit)
+              | .workflowRunUrl = $n.workflowRunUrl
+              | .lineage = ((.lineage // []) + [{actionsRunId: $n.actionsRunId, finishedAt: $n.finishedAt, workflowRunUrl: $n.workflowRunUrl, grep: env.GREP_INPUT}])
+            ' "runs/${PARENT_RUN_ID}.json" > "runs/${PARENT_RUN_ID}.json.tmp" && mv "runs/${PARENT_RUN_ID}.json.tmp" "runs/${PARENT_RUN_ID}.json"
+
+            # Merge attachments under parent's dir (reporter already wrote them
+            # under XT_RESULT_RUN_ID = PARENT_RUN_ID, so this is just a copy).
+            if [ -d "../playwright/.results/attachments/${PARENT_RUN_ID}" ]; then
+              mkdir -p "runs/${PARENT_RUN_ID}"
+              cp -R "../playwright/.results/attachments/${PARENT_RUN_ID}/." "runs/${PARENT_RUN_ID}/"
+            fi
+
+            # Upsert index entry with refreshed stats. Move to top.
+            jq --slurpfile r "runs/${PARENT_RUN_ID}.json" '
+              .runs = (
+                [{
+                  runId:          $r[0].runId,
+                  workflowRunUrl: $r[0].workflowRunUrl,
+                  commit:         $r[0].commit,
+                  environment:    $r[0].environment,
+                  suite:          $r[0].suite,
+                  startedAt:      $r[0].startedAt,
+                  finishedAt:     $r[0].finishedAt,
+                  durationMs:     $r[0].durationMs,
+                  stats:          $r[0].stats
+                }]
+                + (.runs | map(select(.runId != $r[0].runId)))
+              ) | .runs = (.runs | .[0:1000])
+            ' index.json > index.json.tmp && mv index.json.tmp index.json
+            echo "Merged into parent ${PARENT_RUN_ID}. index.json has $(jq '.runs | length' index.json) entries."
           else
-            echo "No attachments staged for run ${RUN_ID}"
+            if [ -n "$PARENT_RUN_ID" ]; then
+              echo "::warning::parent_run_id=${PARENT_RUN_ID} requested but runs/${PARENT_RUN_ID}.json not found on results branch — falling back to standalone run."
+            fi
+
+            FRESH_ID="${REPORTED_RUN_ID}"
+            cp "$NEW_JSON" "runs/${FRESH_ID}.json"
+            if [ -d "../playwright/.results/attachments/${FRESH_ID}" ]; then
+              mkdir -p "runs/${FRESH_ID}"
+              cp -R "../playwright/.results/attachments/${FRESH_ID}/." "runs/${FRESH_ID}/"
+              echo "Copied $(ls runs/${FRESH_ID} | wc -l) attachment(s) for run ${FRESH_ID}"
+            else
+              echo "No attachments staged for run ${FRESH_ID}"
+            fi
+            if [ ! -f index.json ]; then
+              echo '{"runs": []}' > index.json
+            fi
+            jq --slurpfile r "runs/${FRESH_ID}.json" '
+              .runs = ([{
+                runId:          $r[0].runId,
+                workflowRunUrl: $r[0].workflowRunUrl,
+                commit:         $r[0].commit,
+                environment:    $r[0].environment,
+                suite:          $r[0].suite,
+                startedAt:      $r[0].startedAt,
+                finishedAt:     $r[0].finishedAt,
+                durationMs:     $r[0].durationMs,
+                stats:          $r[0].stats
+              }] + .runs) | .runs = (.runs | .[0:1000])
+            ' index.json > index.json.tmp && mv index.json.tmp index.json
+            echo "index.json now has $(jq '.runs | length' index.json) entries"
           fi
-          if [ ! -f index.json ]; then
-            echo '{"runs": []}' > index.json
-          fi
-          jq --slurpfile r "runs/${RUN_ID}.json" '
-            .runs = ([{
-              runId:          $r[0].runId,
-              workflowRunUrl: $r[0].workflowRunUrl,
-              commit:         $r[0].commit,
-              environment:    $r[0].environment,
-              suite:          $r[0].suite,
-              startedAt:      $r[0].startedAt,
-              finishedAt:     $r[0].finishedAt,
-              durationMs:     $r[0].durationMs,
-              stats:          $r[0].stats
-            }] + .runs) | .runs = (.runs | .[0:1000])
-          ' index.json > index.json.tmp && mv index.json.tmp index.json
-          echo "index.json now has $(jq '.runs | length' index.json) entries"
 
       - name: Commit + push to results branch
         if: always()
@@ -222,15 +315,17 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
-          RUN_ID: ${{ github.run_id }}
+          ACTIONS_RUN_ID: ${{ github.run_id }}
+          PARENT_RUN_ID: ${{ inputs.parent_run_id }}
         run: |
           set -e
           git config user.name  "xitester-test bot"
           git config user.email "actions@github.com"
-          git add "runs/${RUN_ID}.json" index.json
-          if [ -d "runs/${RUN_ID}" ]; then
-            git add "runs/${RUN_ID}"
-          fi
+
+          # Stage everything relevant: JSONs, attachment dirs, and the index.
+          git add index.json
+          git add runs/ 2>/dev/null || true
+
           echo "==== git status before commit ===="
           git status --short
           echo "==== files staged ===="
@@ -239,13 +334,20 @@ jobs:
             echo "Nothing to commit"
             exit 0
           fi
-          git commit -m "results: ${{ inputs.environment }} ${{ inputs.suite }} run ${RUN_ID}"
+
+          if [ -n "$PARENT_RUN_ID" ]; then
+            MSG="results: re-run ${{ inputs.environment }} ${{ inputs.suite }} into parent ${PARENT_RUN_ID} (actions ${ACTIONS_RUN_ID})"
+          else
+            MSG="results: ${{ inputs.environment }} ${{ inputs.suite }} run ${ACTIONS_RUN_ID}"
+          fi
+          git commit -m "$MSG"
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
           git push origin HEAD:results
-          echo "==== Pushed. Verifying remote contents ===="
-          if [ -d "runs/${RUN_ID}" ]; then
-            echo "Files committed under runs/${RUN_ID}:"
-            ls -la "runs/${RUN_ID}/"
+          echo "==== Pushed. Verifying ===="
+          TARGET="${PARENT_RUN_ID:-$ACTIONS_RUN_ID}"
+          if [ -d "runs/${TARGET}" ]; then
+            echo "Files under runs/${TARGET}:"
+            ls -la "runs/${TARGET}/"
           fi
 
       - name: Propagate test failure

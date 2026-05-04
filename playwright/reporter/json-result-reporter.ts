@@ -82,7 +82,11 @@ export default class JsonResultReporter implements Reporter {
         const finishedAt = new Date().toISOString()
         const durationMs = Math.max(0, Date.parse(finishedAt) - Date.parse(this.startedAt))
         const env = process.env
-        const runId = env.GITHUB_RUN_ID ?? `local-${Date.now()}`
+        // XT_RESULT_RUN_ID is set by the workflow when this is a re-run that
+        // should merge into an existing parent run. Falls back to the actual
+        // GitHub Actions run id for fresh runs.
+        const runId = env.XT_RESULT_RUN_ID || env.GITHUB_RUN_ID || `local-${Date.now()}`
+        const actionsRunId = env.GITHUB_RUN_ID || runId
 
         // Always start fresh — clean any leftover attachments dir from prior runs.
         await fs.rm(this.attachmentsRoot, { recursive: true, force: true })
@@ -154,8 +158,9 @@ export default class JsonResultReporter implements Reporter {
             flaky: this.flakyCount,
         }
 
-        const run: ResultRun = {
+        const run: ResultRun & { actionsRunId?: string } = {
             runId,
+            actionsRunId,
             workflowRunUrl:
                 env.GITHUB_RUN_ID && env.GITHUB_REPOSITORY
                     ? `https://github.com/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}`

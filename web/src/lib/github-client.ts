@@ -11,6 +11,8 @@ export interface DispatchInputs {
     suite: SuiteName
     browser: BrowserChoice
     grep?: string
+    /** Existing dashboard runId to merge into. Empty string for a fresh run. */
+    parentRunId?: string
 }
 
 export async function dispatchE2E(token: string, inputs: DispatchInputs): Promise<void> {
@@ -24,6 +26,7 @@ export async function dispatchE2E(token: string, inputs: DispatchInputs): Promis
             suite: inputs.suite,
             browser: inputs.browser,
             grep: inputs.grep ?? '',
+            parent_run_id: inputs.parentRunId ?? '',
         },
     })
 }

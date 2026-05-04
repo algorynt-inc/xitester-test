@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Card, Select, SelectItem, Text, TextInput, Title } from '@tremor/react'
+import { GitMerge } from 'lucide-react'
 import { useEnv } from '@/components/EnvContext'
 import { dispatchE2E, listRecentWorkflowRuns } from '@/lib/github-client'
 import { getToken } from '@/lib/auth/auth-store'
@@ -18,6 +19,7 @@ export default function Trigger() {
     const [error, setError] = useState<string | null>(null)
     const [confirmProd, setConfirmProd] = useState(false)
 
+    const parentRunId = params.get('parent') ?? ''
     const isProd = env === 'prod'
 
     useEffect(() => {
@@ -33,14 +35,21 @@ export default function Trigger() {
         try {
             const before = await listRecentWorkflowRuns(token, 5)
             const beforeIds = new Set(before.map(r => r.id))
-            await dispatchE2E(token, { environment: env, suite, browser, grep: grep.trim() })
+            await dispatchE2E(token, {
+                environment: env,
+                suite,
+                browser,
+                grep: grep.trim(),
+                parentRunId,
+            })
 
             for (let i = 0; i < 12; i++) {
                 await new Promise(r => setTimeout(r, 2000))
                 const recent = await listRecentWorkflowRuns(token, 5)
                 const fresh = recent.find(r => !beforeIds.has(r.id))
                 if (fresh) {
-                    navigate(`/in-flight/${fresh.id}`)
+                    const qs = parentRunId ? `?parent=${encodeURIComponent(parentRunId)}` : ''
+                    navigate(`/in-flight/${fresh.id}${qs}`)
                     return
                 }
             }
@@ -55,8 +64,27 @@ export default function Trigger() {
     return (
         <div className="space-y-6 max-w-2xl">
             <h1 className="text-2xl font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-                Trigger a run
+                {parentRunId ? 'Re-run into existing run' : 'Trigger a run'}
             </h1>
+
+            {parentRunId && (
+                <Card className="border-tremor-brand/40 bg-tremor-brand/5">
+                    <div className="flex items-start gap-3">
+                        <GitMerge className="h-5 w-5 text-tremor-brand mt-0.5" />
+                        <div className="flex-1">
+                            <Text className="text-tremor-content-strong dark:text-dark-tremor-content-strong">
+                                Merging into run{' '}
+                                <Link to={`/runs/${parentRunId}`} className="font-mono text-tremor-brand hover:underline">
+                                    {parentRunId}
+                                </Link>
+                            </Text>
+                            <Text className="text-xs mt-1">
+                                The new run won't appear as a separate dashboard entry — its results will replace the matching tests inside the parent run, and the parent's stats / finishedAt will refresh.
+                            </Text>
+                        </div>
+                    </div>
+                </Card>
+            )}
 
             <Card>
                 <Title>Configuration</Title>
