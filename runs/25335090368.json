@@ -1,0 +1,182 @@
+{
+  "runId": "25335090368",
+  "actionsRunId": "25335090368",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25335090368",
+  "commit": "01ae917ddc32ecf2caa4c7c8324dab8c24191bbc",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "login",
+  "startedAt": "2026-05-04T18:13:23.214Z",
+  "finishedAt": "2026-05-04T18:13:40.328Z",
+  "durationMs": 17114,
+  "stats": {
+    "total": 7,
+    "passed": 7,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "TC-LI-001",
+      "title": "TC-LI-001 — Successful login with valid credentials",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "A. Happy Path",
+      "status": "passed",
+      "durationMs": 4484,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25335090368/TC-LI-001-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25335090368/TC-LI-001-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-002",
+      "title": "TC-LI-002 — Wrong password shows error",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "B. Error Handling",
+      "status": "passed",
+      "durationMs": 4731,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25335090368/TC-LI-002-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25335090368/TC-LI-002-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-003",
+      "title": "TC-LI-003 — Empty fields blocked by browser validation",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "B. Error Handling",
+      "status": "passed",
+      "durationMs": 3867,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25335090368/TC-LI-003-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25335090368/TC-LI-003-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-007",
+      "title": "TC-LI-007 — Invalid email format blocked by browser validation",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "B. Error Handling",
+      "status": "passed",
+      "durationMs": 4069,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25335090368/TC-LI-007-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25335090368/TC-LI-007-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-004",
+      "title": "TC-LI-004 — Password visibility toggle",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "C. UI Affordances",
+      "status": "passed",
+      "durationMs": 3686,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25335090368/TC-LI-004-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25335090368/TC-LI-004-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-005",
+      "title": "TC-LI-005 — Forgot password link navigates correctly",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "D. Adjacent Links",
+      "status": "passed",
+      "durationMs": 3296,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25335090368/TC-LI-005-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25335090368/TC-LI-005-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-006",
+      "title": "TC-LI-006 — Create account link navigates correctly",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "D. Adjacent Links",
+      "status": "passed",
+      "durationMs": 2411,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25335090368/TC-LI-006-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25335090368/TC-LI-006-1-trace.zip"
+        }
+      ]
+    }
+  ]
+}
