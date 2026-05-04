@@ -7,29 +7,39 @@ import { useEnv } from '@/components/EnvContext'
 import LiveRunsBar from '@/components/widgets/LiveRunsBar'
 import StatusPill from '@/components/widgets/StatusPill'
 import { latestRunForSuite, loadIndex, passRate } from '@/lib/results-loader'
+import { loadCatalog, type Catalog } from '@/lib/catalog-loader'
 import { ENV_LABELS } from '@/lib/config'
 import { formatRelativeTime } from '@/lib/format'
-import type { RunSummary } from '@/types'
+import type { EnvName, RunSummary } from '@/types'
 
 export default function Suites() {
     const { env } = useEnv()
     const [allRuns, setAllRuns] = useState<RunSummary[]>([])
+    const [catalog, setCatalog] = useState<Catalog | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const ctrl = new AbortController()
-        loadIndex(ctrl.signal)
-            .then(idx => setAllRuns(idx.runs))
-            .finally(() => setLoading(false))
+        Promise.all([
+            loadIndex(ctrl.signal).then(idx => idx.runs).catch(() => [] as RunSummary[]),
+            loadCatalog().catch(() => null),
+        ]).then(([runs, cat]) => {
+            setAllRuns(runs)
+            setCatalog(cat)
+            setLoading(false)
+        })
         return () => ctrl.abort()
     }, [])
 
-    // Suites the dashboard knows about — anything that has shown up in a run.
+    // Suites are the union of (a) what playwright --list discovered and
+    // (b) anything that's appeared in a run. Catalog is the source of truth
+    // for "what tests exist"; runs add status/timing.
     const suites = useMemo(() => {
         const set = new Set<string>()
+        if (catalog) for (const s of catalog.suites) set.add(s)
         for (const r of allRuns) if (r.suite !== 'all') set.add(r.suite)
         return Array.from(set).sort()
-    }, [allRuns])
+    }, [catalog, allRuns])
 
     return (
         <motion.div
@@ -43,7 +53,10 @@ export default function Suites() {
                     Suites
                 </h1>
                 <Text>
-                    Filtered to <strong className="text-tremor-content-strong dark:text-dark-tremor-content-strong">{ENV_LABELS[env]}</strong>
+                    Status reflects latest run on{' '}
+                    <strong className="text-tremor-content-strong dark:text-dark-tremor-content-strong">
+                        {ENV_LABELS[env]}
+                    </strong>
                 </Text>
             </div>
 
@@ -53,13 +66,11 @@ export default function Suites() {
 
             {!loading && suites.length === 0 && (
                 <Card>
-                    <Text>No suites have run yet on any environment. Trigger a run to populate this list.</Text>
-                    <Link
-                        to="/trigger"
-                        className="mt-3 inline-block text-sm text-tremor-brand hover:underline"
-                    >
-                        Trigger a run →
-                    </Link>
+                    <Text>
+                        No suites discovered yet. Either the test catalog hasn't been built or
+                        no spec files match Playwright's discovery. Trigger a Pages workflow run
+                        to refresh, or trigger a test run from the Trigger page.
+                    </Text>
                 </Card>
             )}
 
@@ -72,7 +83,12 @@ export default function Suites() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.25, delay: i * 0.05 }}
                         >
-                            <SuiteCard suite={suite} runs={allRuns} env={env} />
+                            <SuiteCard
+                                suite={suite}
+                                runs={allRuns}
+                                env={env}
+                                catalog={catalog}
+                            />
                         </motion.div>
                     ))}
                 </div>
@@ -85,10 +101,12 @@ function SuiteCard({
     suite,
     runs,
     env,
+    catalog,
 }: {
     suite: string
     runs: RunSummary[]
-    env: string
+    env: EnvName
+    catalog: Catalog | null
 }) {
     const latest = latestRunForSuite(runs, suite, env)
     const rate = latest ? passRate(latest.stats) : null
@@ -101,6 +119,9 @@ function SuiteCard({
             ? 'skipped'
             : 'passed'
 
+    const catalogTotal = catalog ? catalog.tests.filter(t => t.suite === suite).length : null
+    const catalogCategories = catalog?.categoriesBySuite[suite]?.length ?? null
+
     return (
         <Link
             to={`/suites/${suite}`}
@@ -110,17 +131,30 @@ function SuiteCard({
                 <div className="h-9 w-9 rounded-tremor-default flex items-center justify-center bg-tremor-background-muted dark:bg-dark-tremor-background-muted text-tremor-content dark:text-dark-tremor-content">
                     <FolderTree className="h-4 w-4" />
                 </div>
-                <div className="flex-1">
-                    <div className="flex items-baseline gap-2">
+                <div className="flex-1 min-w-0">
+                    <div className="flex items-baseline gap-2 flex-wrap">
                         <Title className="capitalize">{suite}</Title>
-                        {latest && <StatusPill status={status} />}
+                        {latest ? (
+                            <StatusPill status={status} />
+                        ) : (
+                            <span className="status-pill status-pill-skipped">never run</span>
+                        )}
                     </div>
+                    {catalogTotal !== null && (
+                        <Text className="mt-1 text-xs">
+                            {catalogTotal} test{catalogTotal === 1 ? '' : 's'}
+                            {catalogCategories !== null && ` · ${catalogCategories} categor${catalogCategories === 1 ? 'y' : 'ies'}`}
+                        </Text>
+                    )}
                     {latest ? (
-                        <Text className="mt-1">
-                            {latest.stats.passed}/{latest.stats.total} passed{rate !== null ? ` · ${rate}%` : ''} · last run {formatRelativeTime(latest.finishedAt)} on {ENV_LABELS[latest.environment]}
+                        <Text className="mt-2">
+                            {latest.stats.passed}/{latest.stats.total} passed
+                            {rate !== null ? ` · ${rate}%` : ''} · last run {formatRelativeTime(latest.finishedAt)} on {ENV_LABELS[latest.environment]}
                         </Text>
                     ) : (
-                        <Text className="mt-1">No runs in selected environment yet.</Text>
+                        <Text className="mt-2 text-tremor-content dark:text-dark-tremor-content">
+                            No runs in {ENV_LABELS[env]} yet. Click to view the catalog and trigger one.
+                        </Text>
                     )}
                     {latest && (latest.stats.failed > 0 || latest.stats.skipped > 0) && (
                         <div className="mt-2 flex items-center gap-3 text-xs">

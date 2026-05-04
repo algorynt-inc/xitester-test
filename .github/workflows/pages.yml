@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'web/**'
+      - 'playwright/**'
+      - 'test-cases/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -17,12 +19,12 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: web
 
     steps:
       - uses: actions/checkout@v4
@@ -35,9 +37,34 @@ jobs:
         with:
           version: 9
 
-      - run: pnpm install --no-frozen-lockfile
+      - name: Install playwright deps (for --list)
+        working-directory: playwright
+        run: pnpm install --no-frozen-lockfile
 
-      - run: pnpm build
+      - name: Generate static test catalog
+        working-directory: playwright
+        run: |
+          # `playwright test --list --reporter=json` enumerates every test
+          # without launching a browser. Capture into web/public so Vite
+          # ships it as a static asset under /xitester-test/test-catalog.json.
+          mkdir -p ../web/public
+          XT_ENV=local pnpm exec playwright test --list --reporter=json > ../web/public/test-catalog.json || {
+            echo "::warning::playwright --list failed; shipping empty catalog"
+            echo '{"suites":[]}' > ../web/public/test-catalog.json
+          }
+          echo "Catalog summary:"
+          jq '{
+            suites: (.suites | length),
+            total_specs: ([.. | objects | select(.specs?) | .specs | length] | add // 0)
+          }' ../web/public/test-catalog.json || true
+
+      - name: Install web deps
+        working-directory: web
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build web
+        working-directory: web
+        run: pnpm build
 
       - uses: actions/configure-pages@v5
 

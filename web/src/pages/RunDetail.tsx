@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, Title, Metric, Text, Bold } from '@tremor/react'
 import { motion } from 'framer-motion'
-import { AlertTriangle, Download, ExternalLink, FolderTree, Loader2, RefreshCw } from 'lucide-react'
+import { AlertTriangle, Download, ExternalLink, Loader2, Play, RefreshCw } from 'lucide-react'
 import StatusPill from '@/components/widgets/StatusPill'
 import AttachmentGallery from '@/components/widgets/AttachmentGallery'
+import Accordion from '@/components/Accordion'
 import {
     buildGrepFromTestIds,
     downloadArtifactZip,
@@ -13,7 +14,7 @@ import {
     type WorkflowRunSummary,
 } from '@/lib/github-client'
 import { getToken } from '@/lib/auth/auth-store'
-import { loadRun } from '@/lib/results-loader'
+import { attachmentUrl, buildTraceViewerUrl, loadRun } from '@/lib/results-loader'
 import { ENV_LABELS } from '@/lib/config'
 import { formatDuration, formatRelativeTime, shortSha } from '@/lib/format'
 import type { ResultRun, ResultTest } from '@/types'
@@ -95,6 +96,14 @@ export default function RunDetail() {
         failedByCategory.set(key, list)
     }
 
+    // Build "Open suite trace" URL: every trace.zip attachment across all tests.
+    const allTraceUrls = run.tests
+        .flatMap(t => t.attachments)
+        .filter(a => (a.contentType ?? '').includes('zip') || a.name.toLowerCase().includes('trace'))
+        .map(a => attachmentUrl(a))
+        .filter((u): u is string => u !== null)
+    const suiteTraceUrl = buildTraceViewerUrl(allTraceUrls)
+
     const summaryCards = [
         { label: 'Environment', value: ENV_LABELS[run.environment] },
         { label: 'Suite', value: <span className="capitalize">{run.suite}</span> },
@@ -123,17 +132,30 @@ export default function RunDetail() {
                 <h1 className="text-2xl font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong tracking-tight">
                     Run {run.runId}
                 </h1>
-                {run.workflowRunUrl && (
-                    <a
-                        href={run.workflowRunUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="ml-auto inline-flex items-center gap-1 text-xs text-tremor-content dark:text-dark-tremor-content hover:underline"
-                    >
-                        <ExternalLink className="h-3 w-3" />
-                        Open in Actions
-                    </a>
-                )}
+                <div className="ml-auto flex items-center gap-2">
+                    {suiteTraceUrl && (
+                        <a
+                            href={suiteTraceUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-tremor-default text-xs font-medium bg-tremor-brand text-white hover:opacity-90 transition-opacity"
+                        >
+                            <Play className="h-3 w-3" />
+                            Open suite trace ({allTraceUrls.length})
+                        </a>
+                    )}
+                    {run.workflowRunUrl && (
+                        <a
+                            href={run.workflowRunUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-xs text-tremor-content dark:text-dark-tremor-content hover:underline"
+                        >
+                            <ExternalLink className="h-3 w-3" />
+                            Open in Actions
+                        </a>
+                    )}
+                </div>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -162,28 +184,28 @@ export default function RunDetail() {
                             Re-run all failed
                         </Button>
                     </div>
-                    <div className="mt-4 space-y-8">
+                    <div className="mt-4 space-y-2">
                         {Array.from(failedByCategory.entries()).map(([category, tests]) => (
-                            <div key={category}>
-                                <div className="flex items-center gap-2 pb-2 border-b border-tremor-border dark:border-dark-tremor-border">
-                                    <FolderTree className="h-3.5 w-3.5 text-tremor-content dark:text-dark-tremor-content" />
-                                    <h3 className="text-sm font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-                                        {category}
-                                    </h3>
-                                    <span className="text-xs text-rose-500 dark:text-rose-400">
-                                        {tests.length} failed
-                                    </span>
-                                    <Button
-                                        size="xs"
-                                        variant="light"
-                                        icon={RefreshCw}
-                                        onClick={() => reRunCategory(category)}
-                                        className="ml-auto"
-                                    >
-                                        Re-run category
+                            <Accordion
+                                key={category}
+                                defaultOpen
+                                header={
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        <span className="text-sm font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
+                                            {category}
+                                        </span>
+                                        <span className="text-xs text-rose-500 dark:text-rose-400">
+                                            {tests.length} failed
+                                        </span>
+                                    </div>
+                                }
+                                actions={
+                                    <Button size="xs" variant="light" icon={RefreshCw} onClick={() => reRunCategory(category)}>
+                                        Re-run
                                     </Button>
-                                </div>
-                                <ul className="mt-4 space-y-6">
+                                }
+                            >
+                                <ul className="mt-3 space-y-6">
                                     {tests.map((t, idx) => (
                                         <motion.li
                                             key={`${t.id}-${t.project}`}
@@ -217,71 +239,79 @@ export default function RunDetail() {
                                         </motion.li>
                                     ))}
                                 </ul>
-                            </div>
+                            </Accordion>
                         ))}
                     </div>
                 </Card>
             )}
 
             <Card>
-                <Title>All tests by category</Title>
-                <div className="mt-4 space-y-6">
+                <div className="flex items-center justify-between">
+                    <Title>All tests by category</Title>
+                    <Text className="text-xs">click a category to expand</Text>
+                </div>
+                <div className="mt-4 space-y-2">
                     {Array.from(allByCategory.entries()).map(([category, tests]) => {
                         const passed = tests.filter(t => t.status === 'passed').length
                         const failed = tests.filter(t => t.status === 'failed' || t.status === 'timedOut').length
                         const skipped = tests.filter(t => t.status === 'skipped').length
                         return (
-                            <div key={category}>
-                                <div className="flex items-center gap-2 pb-2 border-b border-tremor-border dark:border-dark-tremor-border">
-                                    <FolderTree className="h-3.5 w-3.5 text-tremor-content dark:text-dark-tremor-content" />
-                                    <h3 className="text-sm font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-                                        {category}
-                                    </h3>
-                                    <div className="flex items-center gap-2 text-xs">
-                                        <span className="text-emerald-600 dark:text-emerald-400">{passed} passed</span>
-                                        {failed > 0 && <span className="text-rose-500 dark:text-rose-400">· {failed} failed</span>}
-                                        {skipped > 0 && <span className="text-tremor-content dark:text-dark-tremor-content">· {skipped} skipped</span>}
+                            <Accordion
+                                key={category}
+                                defaultOpen={failed > 0}
+                                header={
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        <span className="text-sm font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
+                                            {category}
+                                        </span>
+                                        <span className="text-xs text-tremor-content dark:text-dark-tremor-content">
+                                            ({tests.length})
+                                        </span>
+                                        <div className="flex items-center gap-2 text-xs">
+                                            <span className="text-emerald-600 dark:text-emerald-400">{passed} passed</span>
+                                            {failed > 0 && <span className="text-rose-500 dark:text-rose-400">{failed} failed</span>}
+                                            {skipped > 0 && <span className="text-tremor-content dark:text-dark-tremor-content">{skipped} skipped</span>}
+                                        </div>
                                     </div>
-                                    <Button
-                                        size="xs"
-                                        variant="light"
-                                        icon={RefreshCw}
-                                        onClick={() => reRunCategory(category)}
-                                        className="ml-auto"
-                                    >
-                                        Run category
+                                }
+                                actions={
+                                    <Button size="xs" variant="light" icon={RefreshCw} onClick={() => reRunCategory(category)}>
+                                        Run
                                     </Button>
+                                }
+                            >
+                                <div className="scroll-card-body mt-2">
+                                    <table className="w-full text-sm">
+                                        <tbody>
+                                            {tests.map(t => (
+                                                <tr
+                                                    key={`${t.id}-${t.project}`}
+                                                    className="border-t border-tremor-border dark:border-dark-tremor-border first:border-t-0 group hover:bg-tremor-background-muted dark:hover:bg-dark-tremor-background-muted transition-colors"
+                                                >
+                                                    <td className="py-1.5 pr-4 w-24"><StatusPill status={t.status} /></td>
+                                                    <td className="py-1.5 pr-4 w-36 font-mono text-xs">
+                                                        <Link to={`/tests/${t.id}`} className="hover:underline">{t.id}</Link>
+                                                    </td>
+                                                    <td className="py-1.5 pr-4">{t.title}</td>
+                                                    <td className="py-1.5 pr-4 w-24 text-tremor-content dark:text-dark-tremor-content text-xs">{t.project}</td>
+                                                    <td className="py-1.5 pr-4 w-20 text-right text-xs">{formatDuration(t.durationMs)}</td>
+                                                    <td className="py-1.5 pr-2 w-24 text-right">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => reRun(t.id)}
+                                                            className="inline-flex items-center gap-1 text-xs text-tremor-brand hover:underline opacity-0 group-hover:opacity-100 transition-opacity"
+                                                            title={`Re-run ${t.id}`}
+                                                        >
+                                                            <RefreshCw className="h-3 w-3" />
+                                                            Re-run
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <table className="mt-2 w-full text-sm">
-                                    <tbody>
-                                        {tests.map(t => (
-                                            <tr
-                                                key={`${t.id}-${t.project}`}
-                                                className="border-t border-tremor-border dark:border-dark-tremor-border group hover:bg-tremor-background-muted dark:hover:bg-dark-tremor-background-muted transition-colors"
-                                            >
-                                                <td className="py-1.5 pr-4 w-24"><StatusPill status={t.status} /></td>
-                                                <td className="py-1.5 pr-4 w-36 font-mono text-xs">
-                                                    <Link to={`/tests/${t.id}`} className="hover:underline">{t.id}</Link>
-                                                </td>
-                                                <td className="py-1.5 pr-4">{t.title}</td>
-                                                <td className="py-1.5 pr-4 w-24 text-tremor-content dark:text-dark-tremor-content text-xs">{t.project}</td>
-                                                <td className="py-1.5 pr-4 w-20 text-right text-xs">{formatDuration(t.durationMs)}</td>
-                                                <td className="py-1.5 pr-2 w-24 text-right">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => reRun(t.id)}
-                                                        className="inline-flex items-center gap-1 text-xs text-tremor-brand hover:underline opacity-0 group-hover:opacity-100 transition-opacity"
-                                                        title={`Re-run ${t.id}`}
-                                                    >
-                                                        <RefreshCw className="h-3 w-3" />
-                                                        Re-run
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                            </Accordion>
                         )
                     })}
                 </div>

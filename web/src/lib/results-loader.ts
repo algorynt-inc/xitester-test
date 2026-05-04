@@ -81,3 +81,15 @@ export function suiteFromFile(file: string): string {
     const m = file.match(/([^/\\]+)\.spec\.[tj]sx?$/)
     return m?.[1] ?? file
 }
+
+/**
+ * Build a multi-trace URL for trace.playwright.dev. The trace viewer accepts
+ * multiple `?trace=URL` parameters and renders them as a single navigable
+ * timeline. Empty list returns null.
+ */
+export function buildTraceViewerUrl(traceUrls: string[]): string | null {
+    const unique = Array.from(new Set(traceUrls.filter(Boolean)))
+    if (unique.length === 0) return null
+    const params = unique.map(u => `trace=${encodeURIComponent(u)}`).join('&')
+    return `https://trace.playwright.dev/?${params}`
+}
