@@ -8,6 +8,8 @@ import RunDetail from './pages/RunDetail'
 import Trigger from './pages/Trigger'
 import InFlight from './pages/InFlight'
 import TestHistory from './pages/TestHistory'
+import Suites from './pages/Suites'
+import SuiteDetail from './pages/SuiteDetail'
 
 export default function App() {
     return (
@@ -21,6 +23,8 @@ export default function App() {
                 }
             >
                 <Route index element={<Overview />} />
+                <Route path="suites" element={<Suites />} />
+                <Route path="suites/:suite" element={<SuiteDetail />} />
                 <Route path="runs" element={<Runs />} />
                 <Route path="runs/:runId" element={<RunDetail />} />
                 <Route path="trigger" element={<Trigger />} />

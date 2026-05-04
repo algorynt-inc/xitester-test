@@ -11,6 +11,7 @@ import clsx from 'clsx'
 
 const TABS = [
     { to: '/', label: 'Overview' },
+    { to: '/suites', label: 'Suites' },
     { to: '/runs', label: 'Runs' },
     { to: '/trigger', label: 'Trigger' },
 ] as const

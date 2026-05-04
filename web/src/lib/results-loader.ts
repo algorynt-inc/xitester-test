@@ -52,3 +52,32 @@ export function passRate(stats: { total: number; passed: number }): number {
     if (stats.total === 0) return 0
     return Math.round((stats.passed / stats.total) * 1000) / 10
 }
+
+/**
+ * Find the most recent run that matches a suite filter. Falls back to the
+ * latest "all" run if no exact match exists, since that contains the suite's
+ * tests too.
+ */
+export function latestRunForSuite(
+    runs: RunSummary[],
+    suite: string,
+    environment?: string,
+): RunSummary | undefined {
+    const envOk = (r: RunSummary) => !environment || environment === 'all' || r.environment === environment
+    const exact = runs
+        .filter(r => envOk(r) && r.suite === suite)
+        .sort((a, b) => b.finishedAt.localeCompare(a.finishedAt))
+    if (exact.length > 0) return exact[0]
+    const fallback = runs
+        .filter(r => envOk(r) && r.suite === 'all')
+        .sort((a, b) => b.finishedAt.localeCompare(a.finishedAt))
+    return fallback[0]
+}
+
+/**
+ * Derive a suite name from a test's source file path. Falls back to the path.
+ */
+export function suiteFromFile(file: string): string {
+    const m = file.match(/([^/\\]+)\.spec\.[tj]sx?$/)
+    return m?.[1] ?? file
+}
