@@ -1,0 +1,283 @@
+{
+  "runId": "25338406975",
+  "actionsRunId": "25338406975",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25338406975",
+  "commit": "f45d8cbc3739bebece96269a0ddb4fbc8150b71b",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "orgs",
+  "startedAt": "2026-05-04T19:18:36.489Z",
+  "finishedAt": "2026-05-04T19:19:30.212Z",
+  "durationMs": 53723,
+  "stats": {
+    "total": 8,
+    "passed": 1,
+    "failed": 6,
+    "skipped": 1,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 4253,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25338406975/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25338406975/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-001",
+      "title": "TC-ORG-001 — View organization list",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "A. Browse & Search",
+      "status": "failed",
+      "durationMs": 16365,
+      "retries": 1,
+      "error": {
+        "message": "Error: at least one org card should be visible\n\nexpect(locator).toBeVisible() failed\n\nLocator: locator('main button').filter({ hasNotText: 'New organization' }).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n  - at least one org card should be visible with timeout 10000ms\n  - waiting for locator('main button').filter({ hasNotText: 'New organization' }).first()\n",
+        "snippet": "  71 |             orgButtons.first(),\n  72 |             'at least one org card should be visible',\n> 73 |         ).toBeVisible({ timeout: 10_000 })\n     |           ^\n  74 |     })\n  75 |\n  76 |     test('TC-ORG-002 — Search filters the org list', async ({ page }) => {"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25338406975/TC-ORG-001-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25338406975/TC-ORG-001-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25338406975/TC-ORG-001-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25338406975/TC-ORG-001-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-002",
+      "title": "TC-ORG-002 — Search filters the org list",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "A. Browse & Search",
+      "status": "failed",
+      "durationMs": 5361,
+      "retries": 1,
+      "error": {
+        "message": "Error: expected at least one org for search test\n\nexpect(received).toBeGreaterThan(expected)\n\nExpected: > 0\nReceived:   0",
+        "snippet": "  83 |         const orgButtons = page.locator('main button').filter({ hasNotText: 'New organization' })\n  84 |         const initialCount = await orgButtons.count()\n> 85 |         expect(initialCount, 'expected at least one org for search test').toBeGreaterThan(0)\n     |                                                                           ^\n  86 |\n  87 |         // Positive: searching for \"XiTester\" should leave the XiTester card visible.\n  88 |         await search.fill('XiTester')"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25338406975/TC-ORG-002-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25338406975/TC-ORG-002-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25338406975/TC-ORG-002-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25338406975/TC-ORG-002-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-003",
+      "title": "TC-ORG-003 — View organization settings",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "B. View",
+      "status": "failed",
+      "durationMs": 13393,
+      "retries": 1,
+      "error": {
+        "message": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n  - waiting for locator('main button').filter({ hasNotText: 'New organization' }).first()\n",
+        "snippet": "  120 |         await page.goto('/organizations')\n  121 |         const orgButtons = page.locator('main button').filter({ hasNotText: 'New organization' })\n> 122 |         await orgButtons.first().click()\n      |                                  ^\n  123 |\n  124 |         await gotoOrgSettings(page, 'general')\n  125 |"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25338406975/TC-ORG-003-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25338406975/TC-ORG-003-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25338406975/TC-ORG-003-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25338406975/TC-ORG-003-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-004",
+      "title": "TC-ORG-004 — Create a new organization",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "C. Create",
+      "status": "skipped",
+      "durationMs": 5579,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25338406975/TC-ORG-004-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25338406975/TC-ORG-004-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-007",
+      "title": "TC-ORG-007 — Create rejects duplicate name",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "C. Create",
+      "status": "failed",
+      "durationMs": 1336,
+      "retries": 1,
+      "error": {
+        "message": "Error: createTempOrg 409: {\"detail\":\"You can belong to at most 10 organizations.\"}",
+        "snippet": "  34 |     if (!res.ok()) {\n  35 |         const txt = await res.text().catch(() => '')\n> 36 |         throw new Error(`createTempOrg ${res.status()}: ${txt}`)\n     |               ^\n  37 |     }\n  38 |     const data = (await res.json()) as { id: string; name: string; slug?: string }\n  39 |     return { id: data.id, name: data.name, slug: data.slug }"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25338406975/TC-ORG-007-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25338406975/TC-ORG-007-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25338406975/TC-ORG-007-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25338406975/TC-ORG-007-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-005",
+      "title": "TC-ORG-005 — Update organization name",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "D. Update",
+      "status": "failed",
+      "durationMs": 1329,
+      "retries": 1,
+      "error": {
+        "message": "Error: createTempOrg 409: {\"detail\":\"You can belong to at most 10 organizations.\"}",
+        "snippet": "  34 |     if (!res.ok()) {\n  35 |         const txt = await res.text().catch(() => '')\n> 36 |         throw new Error(`createTempOrg ${res.status()}: ${txt}`)\n     |               ^\n  37 |     }\n  38 |     const data = (await res.json()) as { id: string; name: string; slug?: string }\n  39 |     return { id: data.id, name: data.name, slug: data.slug }"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25338406975/TC-ORG-005-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25338406975/TC-ORG-005-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25338406975/TC-ORG-005-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25338406975/TC-ORG-005-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-006",
+      "title": "TC-ORG-006 — Delete an organization via danger zone",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "E. Delete",
+      "status": "failed",
+      "durationMs": 1247,
+      "retries": 1,
+      "error": {
+        "message": "Error: createTempOrg 409: {\"detail\":\"You can belong to at most 10 organizations.\"}",
+        "snippet": "  34 |     if (!res.ok()) {\n  35 |         const txt = await res.text().catch(() => '')\n> 36 |         throw new Error(`createTempOrg ${res.status()}: ${txt}`)\n     |               ^\n  37 |     }\n  38 |     const data = (await res.json()) as { id: string; name: string; slug?: string }\n  39 |     return { id: data.id, name: data.name, slug: data.slug }"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25338406975/TC-ORG-006-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25338406975/TC-ORG-006-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25338406975/TC-ORG-006-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25338406975/TC-ORG-006-3-trace.zip"
+        }
+      ]
+    }
+  ]
+}
