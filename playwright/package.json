@@ -1,0 +1,25 @@
+{
+    "name": "xitester-playwright",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "description": "Playwright suite for XiTester manual test cases under test-cases/. Mirrors test-cases/login.md.",
+    "scripts": {
+        "test": "playwright test",
+        "test:local": "XT_ENV=local playwright test",
+        "test:dev": "XT_ENV=dev playwright test",
+        "test:stage": "XT_ENV=stage playwright test",
+        "test:qa": "XT_ENV=qa playwright test",
+        "test:prod": "XT_ENV=prod playwright test",
+        "test:headed": "playwright test --headed",
+        "test:ui": "playwright test --ui",
+        "test:login": "playwright test tests/login.spec.ts",
+        "report": "playwright show-report",
+        "install-browsers": "playwright install chromium"
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.50.0",
+        "@types/node": "^22.0.0",
+        "typescript": "^5.5.0"
+    }
+}

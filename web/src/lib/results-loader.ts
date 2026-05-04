@@ -1,0 +1,45 @@
+import { rawResultsUrl } from './config'
+import type { IndexFile, ResultRun, RunSummary } from '@/types'
+
+const cache = new Map<string, unknown>()
+
+async function fetchJson<T>(path: string, signal?: AbortSignal): Promise<T> {
+    const url = rawResultsUrl(path) + `?t=${Math.floor(Date.now() / 30_000)}` // 30s cache buster
+    if (cache.has(url)) return cache.get(url) as T
+    const res = await fetch(url, { signal })
+    if (!res.ok) throw new Error(`Failed to fetch ${path}: ${res.status}`)
+    const data = (await res.json()) as T
+    cache.set(url, data)
+    return data
+}
+
+export async function loadIndex(signal?: AbortSignal): Promise<IndexFile> {
+    try {
+        return await fetchJson<IndexFile>('index.json', signal)
+    } catch (err) {
+        if ((err as Error).message.includes('404')) return { runs: [] }
+        throw err
+    }
+}
+
+export async function loadRun(runId: string, signal?: AbortSignal): Promise<ResultRun> {
+    return fetchJson<ResultRun>(`runs/${runId}.json`, signal)
+}
+
+export function filterRuns(
+    runs: RunSummary[],
+    opts: { environment?: string; suite?: string; from?: Date; to?: Date },
+): RunSummary[] {
+    return runs.filter(r => {
+        if (opts.environment && opts.environment !== 'all' && r.environment !== opts.environment) return false
+        if (opts.suite && opts.suite !== 'all' && r.suite !== opts.suite) return false
+        if (opts.from && new Date(r.finishedAt) < opts.from) return false
+        if (opts.to && new Date(r.finishedAt) > opts.to) return false
+        return true
+    })
+}
+
+export function passRate(stats: { total: number; passed: number }): number {
+    if (stats.total === 0) return 0
+    return Math.round((stats.passed / stats.total) * 1000) / 10
+}

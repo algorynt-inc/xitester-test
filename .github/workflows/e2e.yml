@@ -1,0 +1,176 @@
+name: E2E
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        required: true
+        type: choice
+        options: [dev, stage, qa, prod]
+        default: dev
+      suite:
+        description: Suite to run
+        required: true
+        type: choice
+        options: [all, login, signup]
+        default: all
+      browser:
+        description: Project to run
+        required: true
+        type: choice
+        options: [chromium, mobile-chromium, both]
+        default: chromium
+
+concurrency:
+  group: e2e-${{ inputs.environment }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  e2e:
+    name: Playwright (${{ inputs.environment }} / ${{ inputs.suite }})
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    timeout-minutes: 30
+
+    defaults:
+      run:
+        working-directory: playwright
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Resolve project filter
+        id: project
+        run: |
+          case "${{ inputs.browser }}" in
+            both) echo "filter=" >> "$GITHUB_OUTPUT" ;;
+            *)    echo "filter=--project=${{ inputs.browser }}" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      - name: Resolve suite filter
+        id: suite
+        run: |
+          case "${{ inputs.suite }}" in
+            all)   echo "filter=" >> "$GITHUB_OUTPUT" ;;
+            *)     echo "filter=tests/${{ inputs.suite }}.spec.ts" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run Playwright
+        env:
+          XT_ENV: ${{ inputs.environment }}
+          XT_SUITE: ${{ inputs.suite }}
+          XT_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+          XT_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+          XT_TOTP_SECRET: ${{ secrets.TEST_TOTP_SECRET }}
+        run: pnpm exec playwright test ${{ steps.project.outputs.filter }} ${{ steps.suite.outputs.filter }}
+        continue-on-error: true
+        id: run-tests
+
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ github.run_id }}
+          path: playwright/playwright-report/
+          retention-days: 30
+
+      - name: Upload raw test-results (videos, traces, screenshots)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ github.run_id }}
+          path: playwright/test-results/
+          retention-days: 30
+
+      - name: Sanity-check run.json
+        if: always()
+        run: |
+          if [ ! -f .results/run.json ]; then
+            echo "::error::JSON reporter did not emit playwright/.results/run.json"
+            exit 1
+          fi
+          jq '.stats' .results/run.json
+
+      - name: Checkout results branch
+        if: always()
+        uses: actions/checkout@v4
+        with:
+          ref: results
+          path: results-branch
+          fetch-depth: 1
+        continue-on-error: true
+
+      - name: Initialize results branch if missing
+        if: always()
+        working-directory: ${{ github.workspace }}
+        run: |
+          if [ ! -d results-branch/.git ]; then
+            mkdir -p results-branch
+            cd results-branch
+            git init -b results
+            git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+            mkdir -p runs
+            echo '{"runs": []}' > index.json
+          fi
+
+      - name: Append run.json + update index.json
+        if: always()
+        working-directory: ${{ github.workspace }}/results-branch
+        run: |
+          mkdir -p runs
+          cp ../playwright/.results/run.json "runs/${{ github.run_id }}.json"
+          if [ ! -f index.json ]; then
+            echo '{"runs": []}' > index.json
+          fi
+          jq --slurpfile r "runs/${{ github.run_id }}.json" '
+            .runs = ([{
+              runId:        $r[0].runId,
+              workflowRunUrl: $r[0].workflowRunUrl,
+              commit:       $r[0].commit,
+              environment:  $r[0].environment,
+              suite:        $r[0].suite,
+              startedAt:    $r[0].startedAt,
+              finishedAt:   $r[0].finishedAt,
+              durationMs:   $r[0].durationMs,
+              stats:        $r[0].stats
+            }] + .runs) | .runs = (.runs | .[0:1000])
+          ' index.json > index.json.tmp && mv index.json.tmp index.json
+
+      - name: Commit + push to results branch
+        if: always()
+        working-directory: ${{ github.workspace }}/results-branch
+        run: |
+          git config user.name  "xitester-test bot"
+          git config user.email "actions@github.com"
+          git add runs/${{ github.run_id }}.json index.json
+          git commit -m "results: ${{ inputs.environment }} ${{ inputs.suite }} run ${{ github.run_id }}" || { echo "no changes"; exit 0; }
+          git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git push -u origin results || git push origin HEAD:results
+
+      - name: Propagate test failure
+        if: steps.run-tests.outcome == 'failure'
+        run: |
+          echo "::error::Playwright reported failures — see uploaded report"
+          exit 1

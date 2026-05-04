@@ -1,0 +1,26 @@
+node_modules/
+.pnpm-store/
+
+# Playwright
+playwright/test-results/
+playwright/playwright-report/
+playwright/.results/
+playwright/blob-report/
+
+# Build output
+web/dist/
+web/.vite/
+test-cases/build/
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+*.log
+*.swp
+.cache/
