@@ -7,7 +7,7 @@ import { listLiveWorkflowRuns, type WorkflowRunSummary } from '@/lib/github-clie
 import { getToken } from '@/lib/auth/auth-store'
 import { formatRelativeTime } from '@/lib/format'
 
-const POLL_MS = 10_000
+const POLL_MS = 5_000
 
 export default function LiveRunsBar() {
     const [runs, setRuns] = useState<WorkflowRunSummary[] | null>(null)

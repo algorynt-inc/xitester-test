@@ -31,6 +31,8 @@ export interface ResultTest {
     title: string
     file: string
     project: string
+    /** Closest `test.describe(...)` block title — used as the "category" for grouping. */
+    category?: string | null
     status: TestStatus
     durationMs: number
     retries: number

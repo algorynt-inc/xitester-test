@@ -25,6 +25,8 @@ interface ResultTest {
     title: string
     file: string
     project: string
+    /** Immediate `test.describe(...)` block title, e.g. "A. Form Validation (Client-Side)". Null if test isn't inside one. */
+    category: string | null
     status: 'passed' | 'failed' | 'skipped' | 'timedOut' | 'interrupted'
     durationMs: number
     retries: number
@@ -65,8 +67,11 @@ export default class JsonResultReporter implements Reporter {
     private flakyCount = 0
 
     constructor(options: { outputFile?: string; attachmentsRoot?: string } = {}) {
-        this.outputFile = options.outputFile ?? 'playwright/.results/run.json'
-        this.attachmentsRoot = options.attachmentsRoot ?? 'playwright/.results/attachments'
+        // Defaults are relative to the Playwright project's cwd (i.e. `playwright/`),
+        // because that's where Playwright invokes reporters from. The workflow's
+        // attachment-copy step expects them at `playwright/.results/...`.
+        this.outputFile = options.outputFile ?? '.results/run.json'
+        this.attachmentsRoot = options.attachmentsRoot ?? '.results/attachments'
     }
 
     onBegin(_config: FullConfig, suite: Suite): void {
@@ -102,31 +107,42 @@ export default class JsonResultReporter implements Reporter {
                 const id = idMatch?.[1] ?? t.title.slice(0, 24)
                 if (last.status === 'passed' && t.results.length > 1) this.flakyCount++
 
-                // Copy attachments. We keep all for failed/timedOut tests; for passed
-                // tests we keep videos (often retained) but skip raw screenshots.
-                const isFailure = last.status === 'failed' || last.status === 'timedOut'
+                // Copy ALL attachments Playwright provides (screenshot/video/trace).
+                // Playwright only emits these for failed tests anyway when configured
+                // with screenshot:'only-on-failure' / video:'retain-on-failure' /
+                // trace:'retain-on-failure', so we don't need to filter ourselves.
                 const safeId = id.replace(SAFE_NAME_RE, '_')
                 const copied: ResultAttachment[] = []
                 for (let i = 0; i < last.attachments.length; i++) {
                     const att = last.attachments[i]
-                    if (!att.path) continue
+                    if (!att.path) {
+                        // eslint-disable-next-line no-console
+                        console.log(`[json-reporter] skip ${id}#${i} (${att.name}): no path`)
+                        continue
+                    }
                     const exists = await fs.access(att.path).then(() => true).catch(() => false)
-                    if (!exists) continue
-                    const isVideo = (att.contentType ?? '').startsWith('video/')
-                    if (!isFailure && !isVideo) continue
+                    if (!exists) {
+                        // eslint-disable-next-line no-console
+                        console.log(`[json-reporter] skip ${id}#${i} (${att.name}): path missing ${att.path}`)
+                        continue
+                    }
 
                     const ext = extname(att.path) || ''
                     const destName = `${safeId}-${i}-${basename(att.name).replace(SAFE_NAME_RE, '_')}${ext}`
                     const dest = `${this.attachmentsRoot}/${runId}/${destName}`
                     try {
                         await fs.copyFile(att.path, dest)
+                        const stat = await fs.stat(dest).catch(() => null)
                         copied.push({
                             name: att.name,
                             contentType: att.contentType ?? guessContentType(ext),
                             url: `${runId}/${destName}`,
                         })
-                    } catch {
-                        // Skip unreadable attachments rather than failing the whole report.
+                        // eslint-disable-next-line no-console
+                        console.log(`[json-reporter] copied ${id}#${i} (${att.name}, ${stat?.size ?? '?'} bytes) → ${dest}`)
+                    } catch (err) {
+                        // eslint-disable-next-line no-console
+                        console.log(`[json-reporter] copy FAILED ${id}#${i} (${att.name}) ${att.path} → ${dest}: ${(err as Error).message}`)
                     }
                 }
 
@@ -135,6 +151,7 @@ export default class JsonResultReporter implements Reporter {
                     title: t.title,
                     file: t.location?.file?.replace(/^.*\/playwright\//, 'playwright/') ?? '',
                     project: (t.parent as Suite | undefined)?.project()?.name ?? '',
+                    category: extractCategory(t.parent),
                     status: STATUS_MAP[last.status] ?? 'failed',
                     durationMs: last.duration,
                     retries: t.results.length - 1,
@@ -190,6 +207,22 @@ export default class JsonResultReporter implements Reporter {
 function stripAnsi(s: string): string {
     // eslint-disable-next-line no-control-regex
     return s.replace(/\[[0-9;]*m/g, '')
+}
+
+/**
+ * Walk up from the test's parent. Return the title of the closest `describe`
+ * block (i.e. a Suite whose title isn't a file path or empty). Falls back to
+ * null for tests that aren't inside a describe.
+ */
+function extractCategory(parent: Suite | undefined): string | null {
+    let s: Suite | undefined = parent
+    while (s) {
+        const title = (s.title ?? '').trim()
+        const isFileSuite = /\.(spec|test)\.[tj]sx?$/.test(title) || title.includes('/')
+        if (title && !isFileSuite) return title
+        s = s.parent
+    }
+    return null
 }
 
 function guessContentType(ext: string): string {

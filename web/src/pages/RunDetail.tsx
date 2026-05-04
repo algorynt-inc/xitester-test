@@ -2,15 +2,21 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, Title, Metric, Text, Bold } from '@tremor/react'
 import { motion } from 'framer-motion'
-import { AlertTriangle, ExternalLink, RefreshCw } from 'lucide-react'
+import { AlertTriangle, Download, ExternalLink, FolderTree, Loader2, RefreshCw } from 'lucide-react'
 import StatusPill from '@/components/widgets/StatusPill'
 import AttachmentGallery from '@/components/widgets/AttachmentGallery'
-import { buildGrepFromTestIds, getWorkflowRun, listRunArtifacts, type WorkflowRunSummary } from '@/lib/github-client'
+import {
+    buildGrepFromTestIds,
+    downloadArtifactZip,
+    getWorkflowRun,
+    listRunArtifacts,
+    type WorkflowRunSummary,
+} from '@/lib/github-client'
 import { getToken } from '@/lib/auth/auth-store'
 import { loadRun } from '@/lib/results-loader'
 import { ENV_LABELS } from '@/lib/config'
 import { formatDuration, formatRelativeTime, shortSha } from '@/lib/format'
-import type { ResultRun } from '@/types'
+import type { ResultRun, ResultTest } from '@/types'
 
 export default function RunDetail() {
     const { runId } = useParams<{ runId: string }>()
@@ -18,7 +24,7 @@ export default function RunDetail() {
     const [run, setRun] = useState<ResultRun | null>(null)
     const [loadError, setLoadError] = useState<string | null>(null)
     const [workflowRun, setWorkflowRun] = useState<WorkflowRunSummary | null>(null)
-    const [artifacts, setArtifacts] = useState<Array<{ id: number; name: string; archive_download_url: string }>>([])
+    const [artifacts, setArtifacts] = useState<Array<{ id: number; name: string; size_in_bytes: number; archive_download_url: string }>>([])
 
     const fetchAll = (signal?: AbortSignal) => {
         if (!runId) return
@@ -62,6 +68,31 @@ export default function RunDetail() {
     const reRunAllFailed = () => {
         const grep = buildGrepFromTestIds(failedTests.map(t => t.id))
         reRun(grep)
+    }
+
+    const reRunCategory = (category: string) => {
+        // Playwright matches --grep against the full title path "<describe> > <test>",
+        // so the describe-block title is sufficient. Anchor and escape regex specials.
+        const escaped = category.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        reRun(escaped)
+    }
+
+    // Group ALL tests by category (preserves describe ordering via Map insertion order).
+    const allByCategory = new Map<string, ResultTest[]>()
+    for (const t of run.tests) {
+        const key = t.category ?? 'Uncategorised'
+        const list = allByCategory.get(key) ?? []
+        list.push(t)
+        allByCategory.set(key, list)
+    }
+
+    // Group only failed tests for the Failures section.
+    const failedByCategory = new Map<string, ResultTest[]>()
+    for (const t of failedTests) {
+        const key = t.category ?? 'Uncategorised'
+        const list = failedByCategory.get(key) ?? []
+        list.push(t)
+        failedByCategory.set(key, list)
     }
 
     const summaryCards = [
@@ -131,100 +162,203 @@ export default function RunDetail() {
                             Re-run all failed
                         </Button>
                     </div>
-                    <ul className="mt-4 space-y-6">
-                        {failedTests.map((t, idx) => (
-                            <motion.li
-                                key={`${t.id}-${t.project}`}
-                                initial={{ opacity: 0, y: 6 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: idx * 0.04 }}
-                                className="group rounded-tremor-default border border-tremor-border dark:border-dark-tremor-border p-4 bg-tremor-background dark:bg-dark-tremor-background"
-                            >
-                                <div className="flex items-baseline gap-2 flex-wrap">
-                                    <code className="font-mono text-xs text-rose-500 dark:text-rose-400">{t.id}</code>
-                                    <Bold>{t.title}</Bold>
-                                    <span className="text-tremor-content dark:text-dark-tremor-content text-xs">{t.project}</span>
-                                    <span className="text-tremor-content dark:text-dark-tremor-content text-xs ml-auto">
-                                        {formatDuration(t.durationMs)} · {t.retries} retries
+                    <div className="mt-4 space-y-8">
+                        {Array.from(failedByCategory.entries()).map(([category, tests]) => (
+                            <div key={category}>
+                                <div className="flex items-center gap-2 pb-2 border-b border-tremor-border dark:border-dark-tremor-border">
+                                    <FolderTree className="h-3.5 w-3.5 text-tremor-content dark:text-dark-tremor-content" />
+                                    <h3 className="text-sm font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
+                                        {category}
+                                    </h3>
+                                    <span className="text-xs text-rose-500 dark:text-rose-400">
+                                        {tests.length} failed
                                     </span>
-                                    <Button size="xs" variant="light" icon={RefreshCw} onClick={() => reRun(t.id)}>
-                                        Re-run
+                                    <Button
+                                        size="xs"
+                                        variant="light"
+                                        icon={RefreshCw}
+                                        onClick={() => reRunCategory(category)}
+                                        className="ml-auto"
+                                    >
+                                        Re-run category
                                     </Button>
                                 </div>
-                                {t.error?.message && (
-                                    <pre className="mt-3 text-xs whitespace-pre-wrap text-tremor-content dark:text-dark-tremor-content bg-tremor-background-muted dark:bg-dark-tremor-background-muted p-3 rounded-tremor-default overflow-x-auto">
-                                        {t.error.message}
-                                        {t.error.snippet ? `\n\n${t.error.snippet}` : ''}
-                                    </pre>
-                                )}
-                                {t.attachments.length > 0 && (
-                                    <div className="mt-4">
-                                        <AttachmentGallery attachments={t.attachments} />
-                                    </div>
-                                )}
-                            </motion.li>
+                                <ul className="mt-4 space-y-6">
+                                    {tests.map((t, idx) => (
+                                        <motion.li
+                                            key={`${t.id}-${t.project}`}
+                                            initial={{ opacity: 0, y: 6 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: idx * 0.04 }}
+                                            className="group rounded-tremor-default border border-tremor-border dark:border-dark-tremor-border p-4 bg-tremor-background dark:bg-dark-tremor-background"
+                                        >
+                                            <div className="flex items-baseline gap-2 flex-wrap">
+                                                <code className="font-mono text-xs text-rose-500 dark:text-rose-400">{t.id}</code>
+                                                <Bold>{t.title}</Bold>
+                                                <span className="text-tremor-content dark:text-dark-tremor-content text-xs">{t.project}</span>
+                                                <span className="text-tremor-content dark:text-dark-tremor-content text-xs ml-auto">
+                                                    {formatDuration(t.durationMs)} · {t.retries} retries
+                                                </span>
+                                                <Button size="xs" variant="light" icon={RefreshCw} onClick={() => reRun(t.id)}>
+                                                    Re-run
+                                                </Button>
+                                            </div>
+                                            {t.error?.message && (
+                                                <pre className="mt-3 text-xs whitespace-pre-wrap text-tremor-content dark:text-dark-tremor-content bg-tremor-background-muted dark:bg-dark-tremor-background-muted p-3 rounded-tremor-default overflow-x-auto">
+                                                    {t.error.message}
+                                                    {t.error.snippet ? `\n\n${t.error.snippet}` : ''}
+                                                </pre>
+                                            )}
+                                            {t.attachments.length > 0 && (
+                                                <div className="mt-4">
+                                                    <AttachmentGallery attachments={t.attachments} />
+                                                </div>
+                                            )}
+                                        </motion.li>
+                                    ))}
+                                </ul>
+                            </div>
                         ))}
-                    </ul>
+                    </div>
                 </Card>
             )}
 
             <Card>
-                <Title>All tests</Title>
-                <div className="mt-4 space-y-4">
-                    {Array.from(byFile.entries()).map(([file, tests]) => (
-                        <div key={file}>
-                            <h3 className="text-sm font-mono text-tremor-content dark:text-dark-tremor-content">{file}</h3>
-                            <table className="mt-1 w-full text-sm">
-                                <tbody>
-                                    {tests.map(t => (
-                                        <tr
-                                            key={`${t.id}-${t.project}`}
-                                            className="border-t border-tremor-border dark:border-dark-tremor-border group hover:bg-tremor-background-muted dark:hover:bg-dark-tremor-background-muted transition-colors"
-                                        >
-                                            <td className="py-1.5 pr-4 w-24"><StatusPill status={t.status} /></td>
-                                            <td className="py-1.5 pr-4 w-36 font-mono text-xs">
-                                                <Link to={`/tests/${t.id}`} className="hover:underline">{t.id}</Link>
-                                            </td>
-                                            <td className="py-1.5 pr-4">{t.title}</td>
-                                            <td className="py-1.5 pr-4 w-24 text-tremor-content dark:text-dark-tremor-content text-xs">{t.project}</td>
-                                            <td className="py-1.5 pr-4 w-20 text-right text-xs">{formatDuration(t.durationMs)}</td>
-                                            <td className="py-1.5 pr-2 w-24 text-right">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => reRun(t.id)}
-                                                    className="inline-flex items-center gap-1 text-xs text-tremor-brand hover:underline opacity-0 group-hover:opacity-100 transition-opacity"
-                                                    title={`Re-run ${t.id}`}
-                                                >
-                                                    <RefreshCw className="h-3 w-3" />
-                                                    Re-run
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    ))}
+                <Title>All tests by category</Title>
+                <div className="mt-4 space-y-6">
+                    {Array.from(allByCategory.entries()).map(([category, tests]) => {
+                        const passed = tests.filter(t => t.status === 'passed').length
+                        const failed = tests.filter(t => t.status === 'failed' || t.status === 'timedOut').length
+                        const skipped = tests.filter(t => t.status === 'skipped').length
+                        return (
+                            <div key={category}>
+                                <div className="flex items-center gap-2 pb-2 border-b border-tremor-border dark:border-dark-tremor-border">
+                                    <FolderTree className="h-3.5 w-3.5 text-tremor-content dark:text-dark-tremor-content" />
+                                    <h3 className="text-sm font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
+                                        {category}
+                                    </h3>
+                                    <div className="flex items-center gap-2 text-xs">
+                                        <span className="text-emerald-600 dark:text-emerald-400">{passed} passed</span>
+                                        {failed > 0 && <span className="text-rose-500 dark:text-rose-400">· {failed} failed</span>}
+                                        {skipped > 0 && <span className="text-tremor-content dark:text-dark-tremor-content">· {skipped} skipped</span>}
+                                    </div>
+                                    <Button
+                                        size="xs"
+                                        variant="light"
+                                        icon={RefreshCw}
+                                        onClick={() => reRunCategory(category)}
+                                        className="ml-auto"
+                                    >
+                                        Run category
+                                    </Button>
+                                </div>
+                                <table className="mt-2 w-full text-sm">
+                                    <tbody>
+                                        {tests.map(t => (
+                                            <tr
+                                                key={`${t.id}-${t.project}`}
+                                                className="border-t border-tremor-border dark:border-dark-tremor-border group hover:bg-tremor-background-muted dark:hover:bg-dark-tremor-background-muted transition-colors"
+                                            >
+                                                <td className="py-1.5 pr-4 w-24"><StatusPill status={t.status} /></td>
+                                                <td className="py-1.5 pr-4 w-36 font-mono text-xs">
+                                                    <Link to={`/tests/${t.id}`} className="hover:underline">{t.id}</Link>
+                                                </td>
+                                                <td className="py-1.5 pr-4">{t.title}</td>
+                                                <td className="py-1.5 pr-4 w-24 text-tremor-content dark:text-dark-tremor-content text-xs">{t.project}</td>
+                                                <td className="py-1.5 pr-4 w-20 text-right text-xs">{formatDuration(t.durationMs)}</td>
+                                                <td className="py-1.5 pr-2 w-24 text-right">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => reRun(t.id)}
+                                                        className="inline-flex items-center gap-1 text-xs text-tremor-brand hover:underline opacity-0 group-hover:opacity-100 transition-opacity"
+                                                        title={`Re-run ${t.id}`}
+                                                    >
+                                                        <RefreshCw className="h-3 w-3" />
+                                                        Re-run
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )
+                    })}
                 </div>
             </Card>
 
-            {artifacts.length > 0 && (
-                <Card>
-                    <Title>Raw workflow artifacts</Title>
-                    <Text className="mt-1 text-xs">
-                        Authenticated downloads from GitHub Actions (90-day retention). Uses your PAT.
-                    </Text>
-                    <ul className="mt-3 text-sm space-y-1">
-                        {artifacts.map(a => (
-                            <li key={a.id}>
-                                <a href={a.archive_download_url} className="text-tremor-brand hover:underline">{a.name}</a>
-                            </li>
-                        ))}
-                    </ul>
-                </Card>
-            )}
+            {artifacts.length > 0 && <ArtifactsCard artifacts={artifacts} />}
         </motion.div>
     )
+}
+
+function ArtifactsCard({
+    artifacts,
+}: {
+    artifacts: Array<{ id: number; name: string; size_in_bytes: number; archive_download_url: string }>
+}) {
+    const [downloading, setDownloading] = useState<number | null>(null)
+    const [error, setError] = useState<string | null>(null)
+
+    const onDownload = async (id: number, name: string) => {
+        const token = getToken()
+        if (!token) {
+            setError('Not signed in')
+            return
+        }
+        setError(null)
+        setDownloading(id)
+        try {
+            await downloadArtifactZip(token, id, name)
+        } catch (err) {
+            setError((err as Error).message)
+        } finally {
+            setDownloading(null)
+        }
+    }
+
+    return (
+        <Card>
+            <Title>Raw workflow artifacts</Title>
+            <Text className="mt-1 text-xs">
+                Authenticated download via your PAT. 90-day retention.
+            </Text>
+            {error && (
+                <div className="mt-3 rounded-tremor-default bg-rose-500/10 text-rose-500 dark:text-rose-400 px-3 py-2 text-sm">
+                    {error}
+                </div>
+            )}
+            <ul className="mt-3 text-sm space-y-2">
+                {artifacts.map(a => (
+                    <li key={a.id} className="flex items-center gap-3">
+                        <button
+                            type="button"
+                            onClick={() => onDownload(a.id, a.name)}
+                            disabled={downloading === a.id}
+                            className="inline-flex items-center gap-1.5 text-tremor-brand hover:underline disabled:opacity-50"
+                        >
+                            {downloading === a.id ? (
+                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                                <Download className="h-3.5 w-3.5" />
+                            )}
+                            {a.name}
+                        </button>
+                        <span className="text-tremor-content dark:text-dark-tremor-content text-xs">
+                            {formatBytes(a.size_in_bytes)}
+                        </span>
+                    </li>
+                ))}
+            </ul>
+        </Card>
+    )
+}
+
+function formatBytes(bytes: number): string {
+    if (bytes < 1024) return `${bytes} B`
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+    if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+    return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`
 }
 
 function RunUnavailable({

@@ -118,3 +118,34 @@ export async function listRunArtifacts(
         archive_download_url: a.archive_download_url,
     }))
 }
+
+/**
+ * Download a workflow artifact zip with auth, then trigger a browser save.
+ * Necessary because <a href="archive_download_url"> hits the GH API without
+ * the Bearer header and gets a 401.
+ */
+export async function downloadArtifactZip(
+    token: string,
+    artifactId: number,
+    filename: string,
+): Promise<void> {
+    const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/artifacts/${artifactId}/zip`
+    const res = await fetch(url, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/vnd.github+json',
+        },
+    })
+    if (!res.ok) {
+        throw new Error(`Failed to download artifact ${artifactId}: ${res.status} ${res.statusText}`)
+    }
+    const blob = await res.blob()
+    const blobUrl = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = blobUrl
+    a.download = filename.endsWith('.zip') ? filename : `${filename}.zip`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000)
+}
