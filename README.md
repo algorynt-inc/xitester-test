@@ -6,7 +6,7 @@ This repo houses three things:
 
 - **`test-cases/`** — manual QA test cases in markdown, formatted per `test-cases/PATTERN.md`. The build pipeline (`build-pdf.sh`) renders them to PDFs.
 - **`playwright/`** — Playwright e2e suite that automates those test cases. Multi-environment (`local` / `dev` / `stage` / `qa` / `prod`) selected via `XT_ENV`.
-- **`web/`** — Static SPA dashboard hosted on **GitHub Pages** at `https://algorynt.github.io/xitester-test/`. Triggers Playwright runs via `workflow_dispatch`, reads JSON results from the `results` branch, lets the team browse history.
+- **`web/`** — Static SPA dashboard hosted on **GitHub Pages** at `https://algorynt-inc.github.io/xitester-test/`. Triggers Playwright runs via `workflow_dispatch`, reads JSON results from the `results` branch, lets the team browse history.
 
 ## Architecture
 
@@ -23,7 +23,7 @@ This repo houses three things:
                  │
                  ▼
 ┌────────────────────────────────────────────────────┐
-│  GitHub repo — algorynt/xitester-test              │
+│  GitHub repo — algorynt-inc/xitester-test              │
 │                                                    │
 │  main branch:        web/  playwright/  test-cases/│
 │  results branch:     runs/<runId>.json + index.json│
@@ -70,7 +70,7 @@ These steps cannot be done from code — perform them once after the repo is cre
 
 ### 1. Pages
 - **Settings → Pages → Source:** GitHub Actions.
-- After the first push to `main`, the `pages.yml` workflow will publish `https://algorynt.github.io/xitester-test/`.
+- After the first push to `main`, the `pages.yml` workflow will publish `https://algorynt-inc.github.io/xitester-test/`.
 
 ### 2. Workflow permissions
 - **Settings → Actions → General → Workflow permissions:** Read and write (so `e2e.yml` can push to the `results` branch).
@@ -89,10 +89,10 @@ The dashboard's environment selector picks which environment the workflow dispat
 ### 4. GitHub OAuth App (for Device-Flow login)
 Optional — without it the dashboard only offers PAT-paste login.
 
-- **algorynt org → Settings → Developer settings → OAuth Apps → New OAuth App**
+- **algorynt-inc org → Settings → Developer settings → OAuth Apps → New OAuth App**
   - Application name: `xitester-test-dashboard`
-  - Homepage URL: `https://algorynt.github.io/xitester-test/`
-  - Authorization callback URL: `https://algorynt.github.io/xitester-test/` (unused by device flow but required)
+  - Homepage URL: `https://algorynt-inc.github.io/xitester-test/`
+  - Authorization callback URL: `https://algorynt-inc.github.io/xitester-test/` (unused by device flow but required)
   - Enable Device Flow.
 - Copy the **Client ID** into the Pages build environment as `VITE_GITHUB_CLIENT_ID` (set this as a repo secret and reference in `pages.yml`, or hardcode in `web/.env.production`).
 
