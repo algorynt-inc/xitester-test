@@ -84,10 +84,26 @@ test.describe('A. Browse & Search', () => {
         const initialCount = await orgButtons.count()
         expect(initialCount, 'expected at least one org for search test').toBeGreaterThan(0)
 
+        // Positive: searching for "XiTester" should leave the XiTester card visible.
+        await search.fill('XiTester')
+        await expect(
+            page.locator('main button').filter({ hasText: /XiTester/i }).first(),
+            '"XiTester" card should remain visible when filtering by "XiTester"',
+        ).toBeVisible({ timeout: 4_000 })
+
+        // Positive: searching for "API" should leave the API-Tester card visible.
+        await search.fill('API')
+        await expect(
+            page.locator('main button').filter({ hasText: /API-?Tester/i }).first(),
+            '"API-Tester" card should remain visible when filtering by "API"',
+        ).toBeVisible({ timeout: 4_000 })
+
+        // Negative: a string that matches no org should hide every card.
         const noMatch = `xt-nomatch-${ts()}`
         await search.fill(noMatch)
         await expect(orgButtons).toHaveCount(0, { timeout: 4_000 })
 
+        // Clearing restores the full list.
         await search.fill('')
         await expect(orgButtons.first()).toBeVisible({ timeout: 4_000 })
     })

@@ -58,7 +58,7 @@ Create / Delete tests mutate org state. They use a unique throwaway name per run
 | Test case name | Plugin | Priority | Description | Steps |
 |----------------|--------|----------|-------------|-------|
 | TC-ORG-001 — View organization list | Orgs / Browse | P0 | After login, `/organizations` renders with the search field, sort filter, and at least one org button visible. No console errors on load. | 1. Sign in as the test user.<br>2. Navigate to `/organizations`.<br>3. Confirm the search input and at least one org card are visible. |
-| TC-ORG-002 — Search filters the org list | Orgs / Browse | P1 | Typing a string that matches no org name in the search field hides every org card. Clearing the field restores them. Filter is case-insensitive against org name only. | 1. Open `/organizations`.<br>2. Note an org name visible.<br>3. Type a string that doesn't match (e.g. `qa-no-match-${ts}`) into the search field.<br>4. Observe the org disappears.<br>5. Clear the field.<br>6. Observe the org reappears. |
+| TC-ORG-002 — Search filters the org list | Orgs / Browse | P1 | Filter is case-insensitive substring match against org name. Searching for `XiTester` keeps the `XiTester` card visible. Searching for `API` keeps the `API-Tester` card visible. Searching for a no-match string hides every card. Clearing the field restores all of them. | 1. Open `/organizations`.<br>2. Type `XiTester` into the search field; verify the `XiTester` org card is still visible.<br>3. Type `API` into the search field; verify the `API-Tester` org card is still visible.<br>4. Type a string that matches nothing (e.g. `qa-no-match-${ts}`); verify all org cards disappear.<br>5. Clear the field; verify the cards return. |
 
 ## B. View
 
