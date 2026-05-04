@@ -10,22 +10,64 @@ const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD
 /** One token per worker — avoids hammering /auth/login. */
 let cachedToken: Promise<string> | null = null
 
+/**
+ * Log in via the JSON API. Surfaces a clear diagnostic when the response
+ * is HTML (typically means apiBase points at the SPA host, not the API).
+ */
 async function loginViaApi(request: APIRequestContext): Promise<string> {
     const res = await request.post(LOGIN_API, {
         data: { email: ENV.user.email, password: ENV.user.password },
         failOnStatusCode: false,
     })
+    const text = await res.text()
+    const ctype = res.headers()['content-type'] ?? ''
     if (!res.ok()) {
-        throw new Error(`POST /auth/login returned ${res.status()}`)
+        throw new Error(`POST ${LOGIN_API} returned ${res.status()}: ${text.slice(0, 200)}`)
     }
-    const body = (await res.json()) as { access_token?: string; token?: string }
+    if (!ctype.includes('json')) {
+        throw new Error(
+            `POST ${LOGIN_API} returned non-JSON (content-type=${ctype || '?'}). ` +
+                `apiBase is likely wrong — should target the API host (api-${ENV.name}…), ` +
+                `not the SPA host (app-${ENV.name}…). Body starts with: ${text.slice(0, 80)}`,
+        )
+    }
+    const body = JSON.parse(text) as { access_token?: string; token?: string }
     const token = body.access_token ?? body.token
     if (!token) throw new Error('login response had no token')
     return token
 }
 
-async function ensureToken(request: APIRequestContext): Promise<string> {
-    if (!cachedToken) cachedToken = loginViaApi(request)
+/**
+ * Fallback: log in via the actual UI form, then read the token the SPA
+ * stored in localStorage. Slower (full page load + form submit), but
+ * works even when apiBase is misconfigured because the SPA itself knows
+ * the right API URL.
+ */
+async function loginViaUi(page: Page): Promise<string> {
+    await page.goto('/login')
+    await page.locator('#email').waitFor({ state: 'visible', timeout: 15_000 })
+    await page.fill('#email', ENV.user.email)
+    await page.fill('#password', ENV.user.password)
+    await Promise.all([
+        page.waitForURL(url => !url.pathname.startsWith('/login'), { timeout: 20_000 }),
+        page.locator('button[type="submit"]').click(),
+    ])
+    const token = await page.evaluate(() => window.localStorage.getItem('auth_token_v1'))
+    if (!token) throw new Error('UI login completed but no auth_token_v1 in localStorage')
+    return token
+}
+
+async function ensureToken(page: Page, request: APIRequestContext): Promise<string> {
+    if (cachedToken) return cachedToken
+    cachedToken = (async () => {
+        try {
+            return await loginViaApi(request)
+        } catch (err) {
+            // eslint-disable-next-line no-console
+            console.warn(`[orgs.spec] API login failed, falling back to UI login: ${(err as Error).message}`)
+            return await loginViaUi(page)
+        }
+    })()
     return cachedToken
 }
 
@@ -84,7 +126,7 @@ const ts = () => new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14)
 test.describe('A. Browse & Search', () => {
     test('TC-ORG-001 — View organization list', async ({ page, context, request }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        const token = await ensureToken(request)
+        const token = await ensureToken(page, request)
         await seedAuth(context, token)
 
         await page.goto('/organizations')
@@ -106,7 +148,7 @@ test.describe('A. Browse & Search', () => {
 
     test('TC-ORG-002 — Search filters the org list', async ({ page, context, request }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        const token = await ensureToken(request)
+        const token = await ensureToken(page, request)
         await seedAuth(context, token)
 
         await page.goto('/organizations')
@@ -133,7 +175,7 @@ test.describe('A. Browse & Search', () => {
 test.describe('B. View', () => {
     test('TC-ORG-003 — View organization settings', async ({ page, context, request }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        const token = await ensureToken(request)
+        const token = await ensureToken(page, request)
         await seedAuth(context, token)
 
         await page.goto('/organizations')
@@ -167,7 +209,9 @@ test.describe('C. Create', () => {
 
     test.afterEach(async ({ request }) => {
         if (createdOrgId) {
-            const token = await ensureToken(request).catch(() => null)
+            // Reuse the worker-cached token rather than logging in again.
+            // If for some reason it isn't set, skip cleanup quietly.
+            const token = await (cachedToken ?? Promise.resolve(null)).catch(() => null)
             if (token) await deleteCurrentOrg(request, token)
             createdOrgId = null
         }
@@ -175,7 +219,7 @@ test.describe('C. Create', () => {
 
     test('TC-ORG-004 — Create a new organization', async ({ page, context, request }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        const token = await ensureToken(request)
+        const token = await ensureToken(page, request)
         await seedAuth(context, token)
 
         await page.goto('/organizations')
@@ -217,7 +261,7 @@ test.describe('C. Create', () => {
 
     test('TC-ORG-007 — Create rejects duplicate name', async ({ page, context, request }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        const token = await ensureToken(request)
+        const token = await ensureToken(page, request)
         await seedAuth(context, token)
 
         // Seed: create the first org via API. If plan-tier blocks it, skip.
@@ -287,7 +331,7 @@ test.describe('D. Update', () => {
 
     test.afterEach(async ({ request }) => {
         if (tempOrgId) {
-            const token = await ensureToken(request).catch(() => null)
+            const token = await (cachedToken ?? Promise.resolve(null)).catch(() => null)
             if (token) await deleteCurrentOrg(request, token)
             tempOrgId = null
         }
@@ -295,7 +339,7 @@ test.describe('D. Update', () => {
 
     test('TC-ORG-005 — Update organization name', async ({ page, context, request }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        const token = await ensureToken(request)
+        const token = await ensureToken(page, request)
         await seedAuth(context, token)
 
         const tempName = `qa-tmp-${ts()}`
@@ -338,7 +382,7 @@ test.describe('D. Update', () => {
 test.describe('E. Delete', () => {
     test('TC-ORG-006 — Delete an organization via danger zone', async ({ page, context, request }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        const token = await ensureToken(request)
+        const token = await ensureToken(page, request)
         await seedAuth(context, token)
 
         const tempName = `qa-del-${ts()}`
