@@ -1,8 +1,8 @@
 export type EnvName = 'dev' | 'stage' | 'qa' | 'prod'
 export const ENVS: EnvName[] = ['dev', 'stage', 'qa', 'prod']
 
-export type SuiteName = 'all' | 'login' | 'signup'
-export const SUITES: SuiteName[] = ['all', 'login', 'signup']
+export type SuiteName = 'all' | 'login' | 'signup' | 'orgs'
+export const SUITES: SuiteName[] = ['all', 'login', 'signup', 'orgs']
 
 export type BrowserChoice = 'chromium' | 'mobile-chromium' | 'both'
 export const BROWSERS: BrowserChoice[] = ['chromium', 'mobile-chromium', 'both']
