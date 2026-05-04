@@ -11,34 +11,20 @@ const ORG_API = `${ENV.apiBase}/api/v1/organizations`
 
 const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD secret bundle.`
 
-/**
- * Read the auth token the SPA placed in localStorage during auth.setup.
- * Required for direct API calls (createTempOrg / deleteCurrentOrg). Pages
- * already use the cookie/storage from storageState, so no re-auth is needed.
- */
-async function readToken(page: Page): Promise<string> {
-    if (!page.url().startsWith(ENV.baseURL)) {
-        await page.goto('/')
-    }
-    const token = await page.evaluate(() => window.localStorage.getItem('auth_token_v1'))
-    if (!token) {
-        throw new Error(
-            'no auth_token_v1 in localStorage — auth.setup did not run or was unable to log in. ' +
-                'Check the `setup` project output in the Actions log.',
-        )
-    }
-    return token
-}
-
 interface CreatedOrg {
     id: string
     name: string
     slug?: string
 }
 
-async function createTempOrg(request: APIRequestContext, token: string, name: string): Promise<CreatedOrg> {
+/**
+ * IMPORTANT: API helpers receive `page.request`, NOT the worker-scoped
+ * `request` fixture. The SUT uses HTTP-only auth cookies that live on
+ * the page's context — `page.request` automatically sends them, while
+ * the standalone `request` fixture would 401 because it has no cookies.
+ */
+async function createTempOrg(request: APIRequestContext, name: string): Promise<CreatedOrg> {
     const res = await request.post(ORG_API, {
-        headers: { Authorization: `Bearer ${token}` },
         data: { name, description: 'Created by Playwright orgs.spec.ts' },
         failOnStatusCode: false,
     })
@@ -53,11 +39,8 @@ async function createTempOrg(request: APIRequestContext, token: string, name: st
     return { id: data.id, name: data.name, slug: data.slug }
 }
 
-async function deleteCurrentOrg(request: APIRequestContext, token: string): Promise<void> {
-    await request.delete(ORG_API, {
-        headers: { Authorization: `Bearer ${token}` },
-        failOnStatusCode: false,
-    })
+async function deleteCurrentOrg(request: APIRequestContext): Promise<void> {
+    await request.delete(ORG_API, { failOnStatusCode: false })
 }
 
 async function gotoOrgSettings(page: Page, tab: 'general' | 'danger-zone' = 'general'): Promise<void> {
@@ -146,11 +129,11 @@ test.describe('C. Create', () => {
     let createdOrgId: string | null = null
     let pageRef: Page | null = null
 
-    test.afterEach(async ({ request }) => {
+    test.afterEach(async () => {
         if (createdOrgId && pageRef) {
             try {
-                const token = await readToken(pageRef)
-                await deleteCurrentOrg(request, token)
+                // Use the page's request context so the auth cookie is sent.
+                await deleteCurrentOrg(pageRef.request)
             } catch {
                 /* swallow cleanup errors so they don't mask the test failure */
             }
@@ -159,7 +142,7 @@ test.describe('C. Create', () => {
         }
     })
 
-    test('TC-ORG-004 — Create a new organization', async ({ page, request }) => {
+    test('TC-ORG-004 — Create a new organization', async ({ page }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
         pageRef = page
 
@@ -196,21 +179,17 @@ test.describe('C. Create', () => {
         // Modal should close and the new org name should be visible somewhere on the page.
         await expect(nameInput).toBeHidden({ timeout: 5_000 })
         await expect(page.getByText(tempName)).toBeVisible({ timeout: 8_000 })
-
-        // Suppress the unused `request` lint — afterEach uses it.
-        void request
     })
 
-    test('TC-ORG-007 — Create rejects duplicate name', async ({ page, request }) => {
+    test('TC-ORG-007 — Create rejects duplicate name', async ({ page }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
         pageRef = page
-        const token = await readToken(page)
 
-        // Seed: create the first org via API. If plan-tier blocks it, skip.
+        // Seed: create the first org via the SAME context so auth cookies flow.
         const sharedName = `qa-dup-${ts()}`
         let temp: CreatedOrg
         try {
-            temp = await createTempOrg(request, token, sharedName)
+            temp = await createTempOrg(page.request, sharedName)
         } catch (err) {
             if ((err as Error).message.startsWith('PLAN_BLOCKED:')) {
                 test.skip(true, 'Org creation blocked by plan tier — cannot test duplicate-name without a seed.')
@@ -260,11 +239,10 @@ test.describe('D. Update', () => {
     let tempOrgId: string | null = null
     let pageRef: Page | null = null
 
-    test.afterEach(async ({ request }) => {
+    test.afterEach(async () => {
         if (tempOrgId && pageRef) {
             try {
-                const token = await readToken(pageRef)
-                await deleteCurrentOrg(request, token)
+                await deleteCurrentOrg(pageRef.request)
             } catch {
                 /* swallow */
             }
@@ -273,15 +251,14 @@ test.describe('D. Update', () => {
         }
     })
 
-    test('TC-ORG-005 — Update organization name', async ({ page, request }) => {
+    test('TC-ORG-005 — Update organization name', async ({ page }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
         pageRef = page
-        const token = await readToken(page)
 
         const tempName = `qa-tmp-${ts()}`
         let temp: CreatedOrg
         try {
-            temp = await createTempOrg(request, token, tempName)
+            temp = await createTempOrg(page.request, tempName)
         } catch (err) {
             if ((err as Error).message.startsWith('PLAN_BLOCKED:')) {
                 test.skip(true, 'Org creation blocked by plan tier — cannot test update without writable temp org.')
@@ -316,14 +293,13 @@ test.describe('D. Update', () => {
 // ============================================================
 
 test.describe('E. Delete', () => {
-    test('TC-ORG-006 — Delete an organization via danger zone', async ({ page, request }) => {
+    test('TC-ORG-006 — Delete an organization via danger zone', async ({ page }) => {
         test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        const token = await readToken(page)
 
         const tempName = `qa-del-${ts()}`
         let temp: CreatedOrg
         try {
-            temp = await createTempOrg(request, token, tempName)
+            temp = await createTempOrg(page.request, tempName)
         } catch (err) {
             if ((err as Error).message.startsWith('PLAN_BLOCKED:')) {
                 test.skip(true, 'Org creation blocked by plan tier — cannot test delete without writable temp org.')
