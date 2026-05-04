@@ -15,9 +15,14 @@ export default defineConfig({
 
     use: {
         baseURL: ENV.baseURL,
-        trace: 'retain-on-failure',
+        // Capture for EVERY test (passed + failed) so the dashboard can offer
+        // playback regardless of outcome. Trace files are gzipped; video uses
+        // a smaller capture frame to keep per-run storage reasonable.
+        trace: 'on',
+        video: { mode: 'on', size: { width: 1024, height: 576 } },
+        // Screenshots remain failure-only — they're per-action and noisy
+        // on green runs; the video covers the visual story for passed tests.
         screenshot: 'only-on-failure',
-        video: 'retain-on-failure',
         actionTimeout: 10_000,
         navigationTimeout: 15_000,
     },

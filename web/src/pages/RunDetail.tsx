@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, Title, Metric, Text, Bold } from '@tremor/react'
 import { motion } from 'framer-motion'
-import { AlertTriangle, Download, ExternalLink, Loader2, Play, RefreshCw } from 'lucide-react'
+import { AlertTriangle, Download, ExternalLink, Film, Loader2, Play, RefreshCw } from 'lucide-react'
 import StatusPill from '@/components/widgets/StatusPill'
 import AttachmentGallery from '@/components/widgets/AttachmentGallery'
 import Accordion from '@/components/Accordion'
@@ -15,6 +15,7 @@ import {
 } from '@/lib/github-client'
 import { getToken } from '@/lib/auth/auth-store'
 import { attachmentUrl, buildTraceViewerUrl, loadRun } from '@/lib/results-loader'
+import type { ResultAttachment } from '@/types'
 import { ENV_LABELS } from '@/lib/config'
 import { formatDuration, formatRelativeTime, shortSha } from '@/lib/format'
 import type { ResultRun, ResultTest } from '@/types'
@@ -285,29 +286,11 @@ export default function RunDetail() {
                                     <table className="w-full text-sm">
                                         <tbody>
                                             {tests.map(t => (
-                                                <tr
+                                                <TestRow
                                                     key={`${t.id}-${t.project}`}
-                                                    className="border-t border-tremor-border dark:border-dark-tremor-border first:border-t-0 group hover:bg-tremor-background-muted dark:hover:bg-dark-tremor-background-muted transition-colors"
-                                                >
-                                                    <td className="py-1.5 pr-4 w-24"><StatusPill status={t.status} /></td>
-                                                    <td className="py-1.5 pr-4 w-36 font-mono text-xs">
-                                                        <Link to={`/tests/${t.id}`} className="hover:underline">{t.id}</Link>
-                                                    </td>
-                                                    <td className="py-1.5 pr-4">{t.title}</td>
-                                                    <td className="py-1.5 pr-4 w-24 text-tremor-content dark:text-dark-tremor-content text-xs">{t.project}</td>
-                                                    <td className="py-1.5 pr-4 w-20 text-right text-xs">{formatDuration(t.durationMs)}</td>
-                                                    <td className="py-1.5 pr-2 w-24 text-right">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => reRun(t.id)}
-                                                            className="inline-flex items-center gap-1 text-xs text-tremor-brand hover:underline opacity-0 group-hover:opacity-100 transition-opacity"
-                                                            title={`Re-run ${t.id}`}
-                                                        >
-                                                            <RefreshCw className="h-3 w-3" />
-                                                            Re-run
-                                                        </button>
-                                                    </td>
-                                                </tr>
+                                                    test={t}
+                                                    onReRun={() => reRun(t.id)}
+                                                />
                                             ))}
                                         </tbody>
                                     </table>
@@ -321,6 +304,81 @@ export default function RunDetail() {
             {artifacts.length > 0 && <ArtifactsCard artifacts={artifacts} />}
         </motion.div>
     )
+}
+
+function TestRow({
+    test,
+    onReRun,
+}: {
+    test: ResultTest
+    onReRun: () => void
+}) {
+    const traceAtt = test.attachments.find(a => isTrace(a))
+    const videoAtt = test.attachments.find(a => isVideo(a))
+    const traceUrl = traceAtt ? attachmentUrl(traceAtt) : null
+    const videoUrl = videoAtt ? attachmentUrl(videoAtt) : null
+    const traceViewerHref = traceUrl
+        ? `https://trace.playwright.dev/?trace=${encodeURIComponent(traceUrl)}`
+        : null
+    const traceFilename = (traceAtt?.url ?? '').split('/').pop()
+    const videoFilename = (videoAtt?.url ?? '').split('/').pop()
+
+    return (
+        <tr className="border-t border-tremor-border dark:border-dark-tremor-border first:border-t-0 group hover:bg-tremor-background-muted dark:hover:bg-dark-tremor-background-muted transition-colors">
+            <td className="py-1.5 pr-4 w-24"><StatusPill status={test.status} /></td>
+            <td className="py-1.5 pr-4 w-36 font-mono text-xs">
+                <Link to={`/tests/${test.id}`} className="hover:underline">{test.id}</Link>
+            </td>
+            <td className="py-1.5 pr-4">{test.title}</td>
+            <td className="py-1.5 pr-4 w-24 text-tremor-content dark:text-dark-tremor-content text-xs">{test.project}</td>
+            <td className="py-1.5 pr-4 w-20 text-right text-xs">{formatDuration(test.durationMs)}</td>
+            <td className="py-1.5 pr-1 w-44 text-right">
+                <div className="inline-flex items-center gap-1.5">
+                    {traceViewerHref && (
+                        <a
+                            href={traceViewerHref}
+                            target="_blank"
+                            rel="noreferrer"
+                            title={`Open ${traceFilename ?? 'trace.zip'} in Trace Viewer`}
+                            className="inline-flex items-center gap-1 text-xs text-tremor-brand hover:underline"
+                        >
+                            <Play className="h-3 w-3" />
+                            Trace
+                        </a>
+                    )}
+                    {videoUrl && (
+                        <a
+                            href={videoUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            title={`Open ${videoFilename ?? 'video.webm'} in a new tab`}
+                            className="inline-flex items-center gap-1 text-xs text-tremor-brand hover:underline"
+                        >
+                            <Film className="h-3 w-3" />
+                            Video
+                        </a>
+                    )}
+                    <button
+                        type="button"
+                        onClick={onReRun}
+                        className="inline-flex items-center gap-1 text-xs text-tremor-brand hover:underline opacity-0 group-hover:opacity-100 transition-opacity"
+                        title={`Re-run ${test.id}`}
+                    >
+                        <RefreshCw className="h-3 w-3" />
+                        Re-run
+                    </button>
+                </div>
+            </td>
+        </tr>
+    )
+}
+
+function isTrace(a: ResultAttachment): boolean {
+    return (a.contentType ?? '').includes('zip') || a.name.toLowerCase().includes('trace')
+}
+
+function isVideo(a: ResultAttachment): boolean {
+    return (a.contentType ?? '').startsWith('video/')
 }
 
 function ArtifactsCard({
