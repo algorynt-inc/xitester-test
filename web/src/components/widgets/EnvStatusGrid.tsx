@@ -1,10 +1,12 @@
+import { useEffect, useState } from 'react'
 import { Card, Title } from '@tremor/react'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
-import type { EnvName, RunSummary, SuiteName } from '@/types'
-import { ENVS, SUITES } from '@/types'
+import type { EnvName, RunSummary } from '@/types'
+import { ENVS } from '@/types'
 import { ENV_LABELS } from '@/lib/config'
 import { passRate } from '@/lib/results-loader'
+import { loadCatalog } from '@/lib/catalog-loader'
 
 function rateColor(rate: number | null): string {
     if (rate === null) return 'border-tremor-border dark:border-dark-tremor-border bg-tremor-background-muted dark:bg-dark-tremor-background-muted'
@@ -21,6 +23,12 @@ function rateText(rate: number | null): string {
 }
 
 export default function EnvStatusGrid({ runs }: { runs: RunSummary[] }) {
+    const [catalogSuites, setCatalogSuites] = useState<string[]>([])
+
+    useEffect(() => {
+        loadCatalog().then(c => setCatalogSuites(c.suites)).catch(() => undefined)
+    }, [])
+
     // Pick the latest run per (env, suite) combo.
     const grid = new Map<string, RunSummary>()
     for (const r of runs) {
@@ -29,7 +37,10 @@ export default function EnvStatusGrid({ runs }: { runs: RunSummary[] }) {
         if (!prev || new Date(r.finishedAt) > new Date(prev.finishedAt)) grid.set(key, r)
     }
 
-    const visibleSuites = SUITES.filter(s => s !== 'all')
+    // Suites = catalog ∪ run-history, minus the meta "all" pseudo-suite.
+    const suiteSet = new Set<string>(catalogSuites)
+    for (const r of runs) if (r.suite !== 'all') suiteSet.add(r.suite)
+    const visibleSuites = Array.from(suiteSet).sort()
 
     return (
         <Card>
@@ -55,7 +66,14 @@ export default function EnvStatusGrid({ runs }: { runs: RunSummary[] }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {visibleSuites.map((suite: SuiteName) => (
+                        {visibleSuites.length === 0 && (
+                            <tr>
+                                <td colSpan={ENVS.length + 1} className="py-3 text-tremor-content dark:text-dark-tremor-content text-xs">
+                                    No suites in catalog yet. The next Pages deploy will populate this list.
+                                </td>
+                            </tr>
+                        )}
+                        {visibleSuites.map((suite: string) => (
                             <tr key={suite}>
                                 <td className="pr-2 align-middle font-medium capitalize text-tremor-content-strong dark:text-dark-tremor-content-strong">
                                     {suite}

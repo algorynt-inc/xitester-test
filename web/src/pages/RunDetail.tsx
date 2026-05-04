@@ -138,10 +138,11 @@ export default function RunDetail() {
                             href={suiteTraceUrl}
                             target="_blank"
                             rel="noreferrer"
+                            title={`Opens trace.playwright.dev with ${allTraceUrls.length} Playwright .zip trace${allTraceUrls.length === 1 ? '' : 's'} from this run`}
                             className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-tremor-default text-xs font-medium bg-tremor-brand text-white hover:opacity-90 transition-opacity"
                         >
                             <Play className="h-3 w-3" />
-                            Open suite trace ({allTraceUrls.length})
+                            Open suite trace · {allTraceUrls.length} .zip
                         </a>
                     )}
                     {run.workflowRunUrl && (

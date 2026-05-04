@@ -214,6 +214,68 @@ test.describe('C. Create', () => {
         await expect(nameInput).toBeHidden({ timeout: 5_000 })
         await expect(page.getByText(tempName)).toBeVisible({ timeout: 8_000 })
     })
+
+    test('TC-ORG-007 — Create rejects duplicate name', async ({ page, context, request }) => {
+        test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
+        const token = await ensureToken(request)
+        await seedAuth(context, token)
+
+        // Seed: create the first org via API. If plan-tier blocks it, skip.
+        const sharedName = `qa-dup-${ts()}`
+        let temp: CreatedOrg
+        try {
+            temp = await createTempOrg(request, token, sharedName)
+        } catch (err) {
+            if ((err as Error).message.startsWith('PLAN_BLOCKED:')) {
+                test.skip(true, 'Org creation blocked by plan tier — cannot test duplicate-name without a seed.')
+                return
+            }
+            throw err
+        }
+        // Track for cleanup
+        createdOrgId = temp.id
+
+        await page.goto('/organizations')
+        const newBtn = page.locator('button', { hasText: 'New organization' }).first()
+        await expect(newBtn).toBeVisible({ timeout: 10_000 })
+        const enabled = await newBtn.isEnabled()
+        test.skip(!enabled, 'Create button disabled (plan tier).')
+
+        await newBtn.click()
+        const nameInput = page.locator('#orgName')
+        await expect(nameInput).toBeVisible({ timeout: 5_000 })
+        await nameInput.fill(temp.name)
+
+        const submit = page.locator('button[type="submit"]', { hasText: /^Create/ }).first()
+        const [response] = await Promise.all([
+            page.waitForResponse(r => /\/api\/v1\/organizations\b/.test(r.url()) && r.request().method() === 'POST'),
+            submit.click(),
+        ])
+
+        // Backend should reject the duplicate. Common shapes:
+        //   409 Conflict, 422 Unprocessable Entity, 400 Bad Request.
+        expect(response.status(), 'duplicate-name create should fail with 4xx').toBeGreaterThanOrEqual(400)
+        expect(response.status()).toBeLessThan(500)
+
+        // Modal should still be open (the create did not succeed).
+        await expect(nameInput, 'modal should remain open after duplicate error').toBeVisible()
+
+        // Some error must be surfaced — either inline in the modal or via toast.
+        // Match common phrasings without locking us to one exact string.
+        const ERR_RE = /(already|exists|duplicate|taken|in use)/i
+        const inlineErr = page
+            .locator('div[role="dialog"]')
+            .getByText(ERR_RE)
+            .first()
+        const toastErr = page
+            .locator('[data-sonner-toaster]')
+            .getByText(ERR_RE)
+            .first()
+        await expect(
+            inlineErr.or(toastErr),
+            'an "already exists / duplicate / taken / in use" error should be visible',
+        ).toBeVisible({ timeout: 5_000 })
+    })
 })
 
 // ============================================================

@@ -66,23 +66,41 @@ export default function AttachmentGallery({ attachments }: Props) {
             )}
 
             {traces.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                    {traces.map(a => {
-                        const url = attachmentUrl(a)!
-                        const traceViewerUrl = `https://trace.playwright.dev/?trace=${encodeURIComponent(url)}`
-                        return (
-                            <a
-                                key={a.url}
-                                href={traceViewerUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-tremor-default text-sm font-medium bg-tremor-brand text-white hover:opacity-90 transition-opacity"
-                            >
-                                <Play className="h-3.5 w-3.5" />
-                                Open in Trace Viewer
-                            </a>
-                        )
-                    })}
+                <div>
+                    <div className="text-xs text-tremor-content dark:text-dark-tremor-content mb-2">
+                        Traces (Playwright <code className="font-mono">.zip</code>) — opened in{' '}
+                        <a
+                            href="https://trace.playwright.dev"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-tremor-brand hover:underline"
+                        >
+                            trace.playwright.dev
+                        </a>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                        {traces.map(a => {
+                            const url = attachmentUrl(a)!
+                            const traceViewerUrl = `https://trace.playwright.dev/?trace=${encodeURIComponent(url)}`
+                            const filename = (a.url ?? '').split('/').pop() ?? 'trace.zip'
+                            return (
+                                <a
+                                    key={a.url}
+                                    href={traceViewerUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    title={`Open ${filename} in Trace Viewer`}
+                                    className="group inline-flex items-center gap-2 pl-3 pr-3 py-1.5 rounded-tremor-default text-sm font-medium bg-tremor-brand text-white hover:opacity-90 transition-opacity"
+                                >
+                                    <Play className="h-3.5 w-3.5" />
+                                    <span>Open in Trace Viewer</span>
+                                    <span className="text-xs font-mono opacity-80 max-w-[200px] truncate">
+                                        {filename}
+                                    </span>
+                                </a>
+                            )
+                        })}
+                    </div>
                 </div>
             )}
 

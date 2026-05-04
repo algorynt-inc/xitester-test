@@ -11,7 +11,7 @@ Manual QA test cases for the XiTester organization-management surface. Covers li
 
 ## Out of Scope
 
-- **Duplicate organization** — no such feature exists in the SUT (no API endpoint, no UI control). Tests intentionally omitted. Add a `TC-ORG-NNN` row here when/if a clone-org feature lands.
+- **Clone organization** — no such feature exists in the SUT (no API endpoint, no UI control for copying an org's settings/data). Tests intentionally omitted. Add a `TC-ORG-NNN` row here when/if a clone-org feature lands. (Note: TC-ORG-007 below covers a *different* meaning of "duplicate" — same-name collision on create.)
 - Members, invitations, plan-tier upgrade UI, audit-trail tab, billing — separate suites.
 
 ## Environment
@@ -71,6 +71,7 @@ Create / Delete tests mutate org state. They use a unique throwaway name per run
 | Test case name | Plugin | Priority | Description | Steps |
 |----------------|--------|----------|-------------|-------|
 | TC-ORG-004 — Create a new organization | Orgs / Create | P0 | `POST /api/v1/organizations` returns 200/201. Modal closes, a new org card appears in `/organizations`, and the new org is selectable. **Skips** when the "New organization" button is disabled (free-tier accounts). The test cleans up by deleting the created org via API in `afterEach`. | 1. Open `/organizations`.<br>2. Click "New organization".<br>3. Type `qa-tmp-${ts}` into Name.<br>4. Optional: type a short description into Description.<br>5. Click "Create".<br>6. Wait for the modal to close and verify the new org name appears in the list. |
+| TC-ORG-007 — Create rejects duplicate name | Orgs / Create | P0 | An org with name `X` exists (created via API). Submitting the Create modal with the same name returns an error from `POST /api/v1/organizations` (4xx — typically 409 Conflict or 422). The modal stays open, an error message is surfaced (modal-inline or Sonner toast), and no second org with that name is added to the list. The pre-existing org is cleaned up via API. | 1. (setup) Create org `qa-dup-${ts}` via API.<br>2. Open `/organizations`.<br>3. Click "New organization".<br>4. Type the *same* name `qa-dup-${ts}` into Name.<br>5. Click "Create".<br>6. Verify the API returned 4xx, the error is visible (modal or toast), and the modal did not close. |
 
 ## D. Update
 

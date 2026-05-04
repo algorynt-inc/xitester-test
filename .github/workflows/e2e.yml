@@ -10,10 +10,9 @@ on:
         options: [dev, stage, qa, prod]
         default: dev
       suite:
-        description: Suite to run
+        description: 'Suite to run — "all" or any spec basename without .spec.ts (e.g. login, orgs). Dashboard sources values from test-catalog.json.'
         required: true
-        type: choice
-        options: [all, login, signup, orgs]
+        type: string
         default: all
       browser:
         description: Project to run

@@ -5,22 +5,42 @@ import { GitMerge } from 'lucide-react'
 import { useEnv } from '@/components/EnvContext'
 import { dispatchE2E, listRecentWorkflowRuns } from '@/lib/github-client'
 import { getToken } from '@/lib/auth/auth-store'
-import { BROWSERS, ENVS, SUITES } from '@/types'
+import { loadCatalog } from '@/lib/catalog-loader'
+import { BROWSERS, ENVS } from '@/types'
 import type { BrowserChoice, EnvName, SuiteName } from '@/types'
 
 export default function Trigger() {
     const { env, setEnv } = useEnv()
     const navigate = useNavigate()
     const [params] = useSearchParams()
-    const [suite, setSuite] = useState<SuiteName>(() => (params.get('suite') as SuiteName) || 'login')
+    const [suite, setSuite] = useState<SuiteName>(() => (params.get('suite') as SuiteName) || 'all')
     const [browser, setBrowser] = useState<BrowserChoice>('chromium')
     const [grep, setGrep] = useState<string>(params.get('grep') ?? '')
     const [busy, setBusy] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [confirmProd, setConfirmProd] = useState(false)
+    const [availableSuites, setAvailableSuites] = useState<SuiteName[]>(['all'])
 
     const parentRunId = params.get('parent') ?? ''
     const isProd = env === 'prod'
+
+    // Derive the Suite dropdown from the static test catalog produced by
+    // `playwright test --list`. Any new spec file appears here automatically
+    // on the next Pages deploy — no manual SUITES enum to update.
+    useEffect(() => {
+        let stop = false
+        loadCatalog().then(cat => {
+            if (stop) return
+            const list: SuiteName[] = ['all', ...(cat.suites as SuiteName[])]
+            setAvailableSuites(list)
+            // If the URL-prefilled suite isn't in the catalog yet (e.g. just
+            // pushed but Pages hasn't redeployed), keep what the URL said —
+            // the workflow accepts arbitrary strings.
+        }).catch(() => undefined)
+        return () => {
+            stop = true
+        }
+    }, [])
 
     useEffect(() => {
         const envParam = params.get('env') as EnvName | null
@@ -100,10 +120,13 @@ export default function Trigger() {
                     <div>
                         <Text>Suite</Text>
                         <Select value={suite} onValueChange={v => setSuite(v as SuiteName)} className="mt-1">
-                            {SUITES.map(s => (
+                            {availableSuites.map(s => (
                                 <SelectItem key={s} value={s}>{s}</SelectItem>
                             ))}
                         </Select>
+                        <Text className="mt-1 text-xs">
+                            Sourced from <code className="font-mono">test-catalog.json</code> (regenerated each Pages deploy from <code className="font-mono">playwright test --list</code>).
+                        </Text>
                     </div>
                     <div>
                         <Text>Browser</Text>
