@@ -1,14 +1,14 @@
 {
   "runId": "25334359398",
   "actionsRunId": "25334359398",
-  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25334359398",
-  "commit": "117adc0b2f9fe157bdbe638c9488ccb09bdfa042",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25334617394",
+  "commit": "7db1c19760a087dfe410c4b51519f20cb8bf68d7",
   "branch": "main",
   "environment": "dev",
   "suite": "orgs",
   "startedAt": "2026-05-04T17:53:09.401Z",
-  "finishedAt": "2026-05-04T17:53:32.422Z",
-  "durationMs": 23021,
+  "finishedAt": "2026-05-04T17:58:38.110Z",
+  "durationMs": 5850,
   "stats": {
     "total": 7,
     "passed": 0,
@@ -24,7 +24,7 @@
       "project": "chromium",
       "category": "A. Browse & Search",
       "status": "failed",
-      "durationMs": 1205,
+      "durationMs": 1189,
       "retries": 2,
       "error": {
         "message": "SyntaxError: Unexpected token '<', \"<!doctype \"... is not valid JSON",
@@ -268,6 +268,14 @@
           "url": "25334359398/TC-ORG-006-3-trace.zip"
         }
       ]
+    }
+  ],
+  "lineage": [
+    {
+      "actionsRunId": "25334617394",
+      "finishedAt": "2026-05-04T17:58:38.110Z",
+      "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25334617394",
+      "grep": null
     }
   ]
 }
