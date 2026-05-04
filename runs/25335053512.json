@@ -1,0 +1,273 @@
+{
+  "runId": "25335053512",
+  "actionsRunId": "25335053512",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25335053512",
+  "commit": "01ae917ddc32ecf2caa4c7c8324dab8c24191bbc",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "orgs",
+  "startedAt": "2026-05-04T18:07:27.102Z",
+  "finishedAt": "2026-05-04T18:12:05.623Z",
+  "durationMs": 278521,
+  "stats": {
+    "total": 7,
+    "passed": 0,
+    "failed": 7,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "TC-ORG-001",
+      "title": "TC-ORG-001 — View organization list",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "A. Browse & Search",
+      "status": "failed",
+      "durationMs": 25040,
+      "retries": 2,
+      "error": {
+        "message": "TimeoutError: page.waitForURL: Timeout 20000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================",
+        "snippet": "  50 |     await page.fill('#password', ENV.user.password)\n  51 |     await Promise.all([\n> 52 |         page.waitForURL(url => !url.pathname.startsWith('/login'), { timeout: 20_000 }),\n     |              ^\n  53 |         page.locator('button[type=\"submit\"]').click(),\n  54 |     ])\n  55 |     const token = await page.evaluate(() => window.localStorage.getItem('auth_token_v1'))"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25335053512/TC-ORG-001-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25335053512/TC-ORG-001-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25335053512/TC-ORG-001-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25335053512/TC-ORG-001-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-002",
+      "title": "TC-ORG-002 — Search filters the org list",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "A. Browse & Search",
+      "status": "failed",
+      "durationMs": 24739,
+      "retries": 2,
+      "error": {
+        "message": "TimeoutError: page.waitForURL: Timeout 20000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================",
+        "snippet": "  50 |     await page.fill('#password', ENV.user.password)\n  51 |     await Promise.all([\n> 52 |         page.waitForURL(url => !url.pathname.startsWith('/login'), { timeout: 20_000 }),\n     |              ^\n  53 |         page.locator('button[type=\"submit\"]').click(),\n  54 |     ])\n  55 |     const token = await page.evaluate(() => window.localStorage.getItem('auth_token_v1'))"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25335053512/TC-ORG-002-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25335053512/TC-ORG-002-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25335053512/TC-ORG-002-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25335053512/TC-ORG-002-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-003",
+      "title": "TC-ORG-003 — View organization settings",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "B. View",
+      "status": "failed",
+      "durationMs": 24573,
+      "retries": 2,
+      "error": {
+        "message": "TimeoutError: page.waitForURL: Timeout 20000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================",
+        "snippet": "  50 |     await page.fill('#password', ENV.user.password)\n  51 |     await Promise.all([\n> 52 |         page.waitForURL(url => !url.pathname.startsWith('/login'), { timeout: 20_000 }),\n     |              ^\n  53 |         page.locator('button[type=\"submit\"]').click(),\n  54 |     ])\n  55 |     const token = await page.evaluate(() => window.localStorage.getItem('auth_token_v1'))"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25335053512/TC-ORG-003-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25335053512/TC-ORG-003-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25335053512/TC-ORG-003-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25335053512/TC-ORG-003-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-004",
+      "title": "TC-ORG-004 — Create a new organization",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "C. Create",
+      "status": "failed",
+      "durationMs": 24743,
+      "retries": 2,
+      "error": {
+        "message": "TimeoutError: page.waitForURL: Timeout 20000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================",
+        "snippet": "  50 |     await page.fill('#password', ENV.user.password)\n  51 |     await Promise.all([\n> 52 |         page.waitForURL(url => !url.pathname.startsWith('/login'), { timeout: 20_000 }),\n     |              ^\n  53 |         page.locator('button[type=\"submit\"]').click(),\n  54 |     ])\n  55 |     const token = await page.evaluate(() => window.localStorage.getItem('auth_token_v1'))"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25335053512/TC-ORG-004-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25335053512/TC-ORG-004-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25335053512/TC-ORG-004-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25335053512/TC-ORG-004-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-007",
+      "title": "TC-ORG-007 — Create rejects duplicate name",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "C. Create",
+      "status": "failed",
+      "durationMs": 24628,
+      "retries": 2,
+      "error": {
+        "message": "TimeoutError: page.waitForURL: Timeout 20000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================",
+        "snippet": "  50 |     await page.fill('#password', ENV.user.password)\n  51 |     await Promise.all([\n> 52 |         page.waitForURL(url => !url.pathname.startsWith('/login'), { timeout: 20_000 }),\n     |              ^\n  53 |         page.locator('button[type=\"submit\"]').click(),\n  54 |     ])\n  55 |     const token = await page.evaluate(() => window.localStorage.getItem('auth_token_v1'))"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25335053512/TC-ORG-007-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25335053512/TC-ORG-007-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25335053512/TC-ORG-007-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25335053512/TC-ORG-007-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-005",
+      "title": "TC-ORG-005 — Update organization name",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "D. Update",
+      "status": "failed",
+      "durationMs": 24773,
+      "retries": 2,
+      "error": {
+        "message": "TimeoutError: page.waitForURL: Timeout 20000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================",
+        "snippet": "  50 |     await page.fill('#password', ENV.user.password)\n  51 |     await Promise.all([\n> 52 |         page.waitForURL(url => !url.pathname.startsWith('/login'), { timeout: 20_000 }),\n     |              ^\n  53 |         page.locator('button[type=\"submit\"]').click(),\n  54 |     ])\n  55 |     const token = await page.evaluate(() => window.localStorage.getItem('auth_token_v1'))"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25335053512/TC-ORG-005-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25335053512/TC-ORG-005-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25335053512/TC-ORG-005-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25335053512/TC-ORG-005-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-006",
+      "title": "TC-ORG-006 — Delete an organization via danger zone",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "E. Delete",
+      "status": "failed",
+      "durationMs": 24016,
+      "retries": 2,
+      "error": {
+        "message": "TimeoutError: page.waitForURL: Timeout 20000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================",
+        "snippet": "  50 |     await page.fill('#password', ENV.user.password)\n  51 |     await Promise.all([\n> 52 |         page.waitForURL(url => !url.pathname.startsWith('/login'), { timeout: 20_000 }),\n     |              ^\n  53 |         page.locator('button[type=\"submit\"]').click(),\n  54 |     ])\n  55 |     const token = await page.evaluate(() => window.localStorage.getItem('auth_token_v1'))"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25335053512/TC-ORG-006-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25335053512/TC-ORG-006-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25335053512/TC-ORG-006-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25335053512/TC-ORG-006-3-trace.zip"
+        }
+      ]
+    }
+  ]
+}
