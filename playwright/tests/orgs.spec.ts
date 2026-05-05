@@ -1,347 +1,281 @@
-import { test, expect, type APIRequestContext, type Page } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
 import { ENV } from '../env'
 
 // Every test in this file starts already authenticated, courtesy of the
-// `setup` project (auth.setup.ts) which runs once per workflow execution
-// and saves storageState to playwright/.auth/user.json. Zero login attempts
-// in this spec — the orgs suite reuses the single workflow-wide login.
+// `setup` project (auth.setup.ts). Zero login attempts in this spec.
 test.use({ storageState: 'playwright/.auth/user.json' })
 
-const ORG_API = `${ENV.apiBase}/api/v1/organizations`
-
 const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD secret bundle.`
-
-interface CreatedOrg {
-    id: string
-    name: string
-    slug?: string
-}
-
-/**
- * IMPORTANT: API helpers receive `page.request`, NOT the worker-scoped
- * `request` fixture. The SUT uses HTTP-only auth cookies that live on
- * the page's context — `page.request` automatically sends them, while
- * the standalone `request` fixture would 401 because it has no cookies.
- */
-async function createTempOrg(request: APIRequestContext, name: string): Promise<CreatedOrg> {
-    const res = await request.post(ORG_API, {
-        data: { name, description: 'Created by Playwright orgs.spec.ts' },
-        failOnStatusCode: false,
-    })
-    if (res.status() === 403 || res.status() === 402) {
-        throw new Error(`PLAN_BLOCKED:${res.status()}`)
-    }
-    if (!res.ok()) {
-        const txt = await res.text().catch(() => '')
-        throw new Error(`createTempOrg ${res.status()}: ${txt}`)
-    }
-    const data = (await res.json()) as { id: string; name: string; slug?: string }
-    return { id: data.id, name: data.name, slug: data.slug }
-}
-
-async function deleteCurrentOrg(request: APIRequestContext): Promise<void> {
-    await request.delete(ORG_API, { failOnStatusCode: false })
-}
-
-async function gotoOrgSettings(page: Page, tab: 'general' | 'danger-zone' = 'general'): Promise<void> {
-    await page.goto(`/org/settings/${tab}`)
-    await page.waitForLoadState('domcontentloaded')
-}
-
 const ts = () => new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14)
 
 // ============================================================
-// A. Browse & Search
+// Helpers — UI-only, no API calls. Each helper drives the actual SPA
+// just like a real user would, so the SUT's own client/SDK does the
+// network work.
 // ============================================================
 
-test.describe('A. Browse & Search', () => {
-    test('TC-ORG-001 — View organization list', async ({ page }) => {
-        test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
+const PLAN_BLOCKED = 'PLAN_BLOCKED:UI'
 
-        await page.goto('/organizations')
-        await expect(
-            page.locator('input[placeholder="Search for an organization"]'),
-            'org search input should be visible',
-        ).toBeVisible({ timeout: 10_000 })
+/**
+ * Click "New organization", fill the modal, submit. Throws PLAN_BLOCKED
+ * when the button is disabled (free-tier accounts). The newly created
+ * org becomes the user's current context (the SPA switches automatically
+ * after a successful create).
+ */
+async function uiCreateOrg(page: Page, name: string, description?: string): Promise<void> {
+    await page.goto('/organizations')
+    const newBtn = page.locator('button', { hasText: 'New organization' }).first()
+    await expect(newBtn).toBeVisible({ timeout: 10_000 })
+    if (!(await newBtn.isEnabled())) {
+        throw new Error(PLAN_BLOCKED)
+    }
+    await newBtn.click()
 
-        const orgButtons = page
-            .locator('main button')
-            .filter({ hasNotText: 'New organization' })
-        await expect(
-            orgButtons.first(),
-            'at least one org card should be visible',
-        ).toBeVisible({ timeout: 10_000 })
-    })
+    const nameInput = page.locator('#orgName')
+    await expect(nameInput).toBeVisible({ timeout: 5_000 })
+    await nameInput.fill(name)
+    if (description) {
+        await page.locator('#orgDesc').fill(description)
+    }
 
-    test('TC-ORG-002 — Search filters the org list', async ({ page }) => {
-        test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
+    await Promise.all([
+        page.waitForResponse(r => /\/api\/v1\/organizations\b/.test(r.url()) && r.request().method() === 'POST'),
+        page.locator('button[type="submit"]', { hasText: /^Create/ }).first().click(),
+    ])
+    // Modal closes on success.
+    await expect(nameInput).toBeHidden({ timeout: 5_000 })
+}
 
-        await page.goto('/organizations')
-        const search = page.locator('input[placeholder="Search for an organization"]')
-        await expect(search).toBeVisible({ timeout: 10_000 })
+/** Click an org card on /organizations to switch context to it. */
+async function uiSwitchToOrg(page: Page, name: string): Promise<void> {
+    await page.goto('/organizations')
+    await page.locator('main button', { hasText: name }).first().click()
+    await page.waitForLoadState('domcontentloaded')
+}
 
-        const orgButtons = page.locator('main button').filter({ hasNotText: 'New organization' })
-        const initialCount = await orgButtons.count()
-        expect(initialCount, 'expected at least one org for search test').toBeGreaterThan(0)
+/** Drive the danger-zone delete dialog. Assumes the named org is the current context. */
+async function uiDeleteOrg(page: Page, name: string): Promise<void> {
+    await page.goto('/org/settings/danger-zone')
+    await page.locator('button', { hasText: 'Delete this organization' }).first().click()
 
-        // Positive: searching for "XiTester" should leave the XiTester card visible.
-        await search.fill('XiTester')
-        await expect(
-            page.locator('main button').filter({ hasText: /XiTester/i }).first(),
-            '"XiTester" card should remain visible when filtering by "XiTester"',
-        ).toBeVisible({ timeout: 4_000 })
+    const confirmInput = page.locator('div[role="dialog"] input').first()
+    await expect(confirmInput).toBeVisible({ timeout: 5_000 })
+    await confirmInput.fill(name)
 
-        // Positive: searching for "API" should leave the API-Tester card visible.
-        await search.fill('API')
-        await expect(
-            page.locator('main button').filter({ hasText: /API-?Tester/i }).first(),
-            '"API-Tester" card should remain visible when filtering by "API"',
-        ).toBeVisible({ timeout: 4_000 })
+    await Promise.all([
+        page.waitForResponse(r => /\/api\/v1\/organizations\b/.test(r.url()) && r.request().method() === 'DELETE'),
+        page.locator('div[role="dialog"] button', { hasText: /^Delete Organization/ }).first().click(),
+    ])
+    await page.waitForURL(url => !url.pathname.startsWith('/org/settings'), { timeout: 10_000 })
+}
 
-        // Negative: a string that matches no org should hide every card.
-        const noMatch = `xt-nomatch-${ts()}`
-        await search.fill(noMatch)
-        await expect(orgButtons).toHaveCount(0, { timeout: 4_000 })
+// ============================================================
+// Tests — flat list, no categories
+// ============================================================
 
-        // Clearing restores the full list.
-        await search.fill('')
-        await expect(orgButtons.first()).toBeVisible({ timeout: 4_000 })
-    })
+test('TC-ORG-001 — View organization list', async ({ page }) => {
+    test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
+
+    await page.goto('/organizations')
+    await expect(
+        page.locator('input[placeholder="Search for an organization"]'),
+    ).toBeVisible({ timeout: 10_000 })
+
+    const orgButtons = page
+        .locator('main button')
+        .filter({ hasNotText: 'New organization' })
+    await expect(orgButtons.first()).toBeVisible({ timeout: 10_000 })
 })
 
-// ============================================================
-// B. View
-// ============================================================
+test('TC-ORG-002 — Search filters the org list', async ({ page }) => {
+    test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
 
-test.describe('B. View', () => {
-    test('TC-ORG-003 — View organization settings', async ({ page }) => {
-        test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
+    await page.goto('/organizations')
+    const search = page.locator('input[placeholder="Search for an organization"]')
+    await expect(search).toBeVisible({ timeout: 10_000 })
 
-        await page.goto('/organizations')
-        const orgButtons = page.locator('main button').filter({ hasNotText: 'New organization' })
-        await orgButtons.first().click()
+    const orgButtons = page.locator('main button').filter({ hasNotText: 'New organization' })
+    expect(await orgButtons.count()).toBeGreaterThan(0)
 
-        await gotoOrgSettings(page, 'general')
+    // Positive: searching for "XiTester" keeps the XiTester card visible.
+    await search.fill('XiTester')
+    await expect(
+        page.locator('main button').filter({ hasText: /XiTester/i }).first(),
+        '"XiTester" card should remain visible when filtering by "XiTester"',
+    ).toBeVisible({ timeout: 4_000 })
 
-        const orgName = page.locator('#orgName')
-        const orgSlug = page.locator('#orgSlug')
-        const orgDescription = page.locator('#orgDescription')
+    // Positive: searching for "API" keeps the API-Tester card visible.
+    await search.fill('API')
+    await expect(
+        page.locator('main button').filter({ hasText: /API-?Tester/i }).first(),
+        '"API-Tester" card should remain visible when filtering by "API"',
+    ).toBeVisible({ timeout: 4_000 })
 
-        await expect(orgName).toBeVisible({ timeout: 10_000 })
-        await expect(orgSlug).toBeVisible()
-        await expect(orgDescription).toBeVisible()
+    // Negative: a string that matches no org hides every card.
+    await search.fill(`xt-nomatch-${ts()}`)
+    await expect(orgButtons).toHaveCount(0, { timeout: 4_000 })
 
-        await expect(orgName).not.toHaveValue('')
-        await expect(orgSlug).not.toHaveValue('')
-        await expect(orgSlug).toHaveAttribute('readonly', '')
-    })
+    // Clearing restores the full list.
+    await search.fill('')
+    await expect(orgButtons.first()).toBeVisible({ timeout: 4_000 })
 })
 
-// ============================================================
-// C. Create
-// ============================================================
+test('TC-ORG-003 — View organization settings', async ({ page }) => {
+    test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
 
-test.describe('C. Create', () => {
-    let createdOrgId: string | null = null
-    let pageRef: Page | null = null
+    await page.goto('/organizations')
+    await page.locator('main button').filter({ hasNotText: 'New organization' }).first().click()
 
-    test.afterEach(async () => {
-        if (createdOrgId && pageRef) {
-            try {
-                // Use the page's request context so the auth cookie is sent.
-                await deleteCurrentOrg(pageRef.request)
-            } catch {
-                /* swallow cleanup errors so they don't mask the test failure */
-            }
-            createdOrgId = null
-            pageRef = null
-        }
-    })
+    await page.goto('/org/settings/general')
 
-    test('TC-ORG-004 — Create a new organization', async ({ page }) => {
-        test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        pageRef = page
+    const orgName = page.locator('#orgName')
+    const orgSlug = page.locator('#orgSlug')
+    const orgDescription = page.locator('#orgDescription')
 
-        await page.goto('/organizations')
-        const newBtn = page.locator('button', { hasText: 'New organization' }).first()
-        await expect(newBtn).toBeVisible({ timeout: 10_000 })
+    await expect(orgName).toBeVisible({ timeout: 10_000 })
+    await expect(orgSlug).toBeVisible()
+    await expect(orgDescription).toBeVisible()
 
-        const enabled = await newBtn.isEnabled()
-        test.skip(!enabled, 'Create button is disabled — likely a plan-tier restriction.')
-
-        await newBtn.click()
-        const nameInput = page.locator('#orgName')
-        const descInput = page.locator('#orgDesc')
-        await expect(nameInput).toBeVisible({ timeout: 5_000 })
-
-        const tempName = `qa-tmp-${ts()}`
-        await nameInput.fill(tempName)
-        await descInput.fill('Created by Playwright TC-ORG-004')
-
-        const submit = page.locator('button[type="submit"]', { hasText: /^Create/ }).first()
-        const [response] = await Promise.all([
-            page.waitForResponse(r => /\/api\/v1\/organizations\b/.test(r.url()) && r.request().method() === 'POST'),
-            submit.click(),
-        ])
-        expect([200, 201]).toContain(response.status())
-
-        try {
-            const body = (await response.json()) as { id?: string }
-            createdOrgId = body.id ?? null
-        } catch {
-            /* ignore */
-        }
-
-        // Modal should close and the new org name should be visible somewhere on the page.
-        await expect(nameInput).toBeHidden({ timeout: 5_000 })
-        await expect(page.getByText(tempName)).toBeVisible({ timeout: 8_000 })
-    })
-
-    test('TC-ORG-007 — Create rejects duplicate name', async ({ page }) => {
-        test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        pageRef = page
-
-        // Seed: create the first org via the SAME context so auth cookies flow.
-        const sharedName = `qa-dup-${ts()}`
-        let temp: CreatedOrg
-        try {
-            temp = await createTempOrg(page.request, sharedName)
-        } catch (err) {
-            if ((err as Error).message.startsWith('PLAN_BLOCKED:')) {
-                test.skip(true, 'Org creation blocked by plan tier — cannot test duplicate-name without a seed.')
-                return
-            }
-            throw err
-        }
-        createdOrgId = temp.id
-
-        await page.goto('/organizations')
-        const newBtn = page.locator('button', { hasText: 'New organization' }).first()
-        await expect(newBtn).toBeVisible({ timeout: 10_000 })
-        const enabled = await newBtn.isEnabled()
-        test.skip(!enabled, 'Create button disabled (plan tier).')
-
-        await newBtn.click()
-        const nameInput = page.locator('#orgName')
-        await expect(nameInput).toBeVisible({ timeout: 5_000 })
-        await nameInput.fill(temp.name)
-
-        const submit = page.locator('button[type="submit"]', { hasText: /^Create/ }).first()
-        const [response] = await Promise.all([
-            page.waitForResponse(r => /\/api\/v1\/organizations\b/.test(r.url()) && r.request().method() === 'POST'),
-            submit.click(),
-        ])
-
-        expect(response.status(), 'duplicate-name create should fail with 4xx').toBeGreaterThanOrEqual(400)
-        expect(response.status()).toBeLessThan(500)
-
-        await expect(nameInput, 'modal should remain open after duplicate error').toBeVisible()
-
-        const ERR_RE = /(already|exists|duplicate|taken|in use)/i
-        const inlineErr = page.locator('div[role="dialog"]').getByText(ERR_RE).first()
-        const toastErr = page.locator('[data-sonner-toaster]').getByText(ERR_RE).first()
-        await expect(
-            inlineErr.or(toastErr),
-            'an "already exists / duplicate / taken / in use" error should be visible',
-        ).toBeVisible({ timeout: 5_000 })
-    })
+    await expect(orgName).not.toHaveValue('')
+    await expect(orgSlug).not.toHaveValue('')
+    await expect(orgSlug).toHaveAttribute('readonly', '')
 })
 
-// ============================================================
-// D. Update
-// ============================================================
+test('TC-ORG-004 — Create a new organization', async ({ page }) => {
+    test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
+    const tempName = `qa-tmp-${ts()}`
 
-test.describe('D. Update', () => {
-    let tempOrgId: string | null = null
-    let pageRef: Page | null = null
-
-    test.afterEach(async () => {
-        if (tempOrgId && pageRef) {
-            try {
-                await deleteCurrentOrg(pageRef.request)
-            } catch {
-                /* swallow */
-            }
-            tempOrgId = null
-            pageRef = null
+    try {
+        await uiCreateOrg(page, tempName, 'Created by Playwright TC-ORG-004')
+    } catch (err) {
+        if ((err as Error).message === PLAN_BLOCKED) {
+            test.skip(true, 'Create button is disabled — likely a plan-tier restriction.')
+            return
         }
-    })
+        throw err
+    }
 
-    test('TC-ORG-005 — Update organization name', async ({ page }) => {
-        test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-        pageRef = page
+    // The new org should be visible somewhere on the page (org list or top bar).
+    await page.goto('/organizations')
+    await expect(page.locator('main button', { hasText: tempName }).first()).toBeVisible({ timeout: 8_000 })
 
-        const tempName = `qa-tmp-${ts()}`
-        let temp: CreatedOrg
-        try {
-            temp = await createTempOrg(page.request, tempName)
-        } catch (err) {
-            if ((err as Error).message.startsWith('PLAN_BLOCKED:')) {
-                test.skip(true, 'Org creation blocked by plan tier — cannot test update without writable temp org.')
-                return
-            }
-            throw err
-        }
-        tempOrgId = temp.id
-
-        await gotoOrgSettings(page, 'general')
-
-        const nameInput = page.locator('#orgName')
-        await expect(nameInput).toBeVisible({ timeout: 10_000 })
-
-        const newName = `qa-renamed-${ts()}`
-        await nameInput.fill(newName)
-
-        const save = page.locator('button', { hasText: 'Save Changes' }).first()
-        const [response] = await Promise.all([
-            page.waitForResponse(r => /\/api\/v1\/organizations\b/.test(r.url()) && r.request().method() === 'PUT'),
-            save.click(),
-        ])
-        expect(response.status()).toBe(200)
-
-        await expect(page.locator('[data-sonner-toaster]')).toContainText(/updated successfully/i, { timeout: 5_000 })
-        await expect(save).toBeDisabled({ timeout: 3_000 })
-    })
+    // Cleanup via UI — switch to the org and delete it.
+    await uiSwitchToOrg(page, tempName)
+    await uiDeleteOrg(page, tempName)
 })
 
-// ============================================================
-// E. Delete
-// ============================================================
+test('TC-ORG-005 — Update organization name', async ({ page }) => {
+    test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
+    const tempName = `qa-tmp-${ts()}`
 
-test.describe('E. Delete', () => {
-    test('TC-ORG-006 — Delete an organization via danger zone', async ({ page }) => {
-        test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-
-        const tempName = `qa-del-${ts()}`
-        let temp: CreatedOrg
-        try {
-            temp = await createTempOrg(page.request, tempName)
-        } catch (err) {
-            if ((err as Error).message.startsWith('PLAN_BLOCKED:')) {
-                test.skip(true, 'Org creation blocked by plan tier — cannot test delete without writable temp org.')
-                return
-            }
-            throw err
+    try {
+        await uiCreateOrg(page, tempName)
+    } catch (err) {
+        if ((err as Error).message === PLAN_BLOCKED) {
+            test.skip(true, 'Org creation disabled — plan tier.')
+            return
         }
+        throw err
+    }
+    await uiSwitchToOrg(page, tempName)
 
-        await gotoOrgSettings(page, 'danger-zone')
+    await page.goto('/org/settings/general')
+    const nameInput = page.locator('#orgName')
+    await expect(nameInput).toBeVisible({ timeout: 10_000 })
 
-        const deleteBtn = page.locator('button', { hasText: 'Delete this organization' }).first()
-        await expect(deleteBtn).toBeVisible({ timeout: 10_000 })
-        await deleteBtn.click()
+    const newName = `qa-renamed-${ts()}`
+    await nameInput.fill(newName)
 
-        const confirmInput = page.locator('div[role="dialog"] input').first()
-        await expect(confirmInput).toBeVisible({ timeout: 5_000 })
-        await confirmInput.fill(temp.name)
+    const save = page.locator('button', { hasText: 'Save Changes' }).first()
+    const [response] = await Promise.all([
+        page.waitForResponse(r => /\/api\/v1\/organizations\b/.test(r.url()) && r.request().method() === 'PUT'),
+        save.click(),
+    ])
+    expect(response.status()).toBe(200)
 
-        const confirmBtn = page.locator('div[role="dialog"] button', { hasText: /^Delete Organization/ }).first()
-        const [response] = await Promise.all([
-            page.waitForResponse(r => /\/api\/v1\/organizations\b/.test(r.url()) && r.request().method() === 'DELETE'),
-            confirmBtn.click(),
-        ])
-        expect([200, 204]).toContain(response.status())
+    await expect(page.locator('[data-sonner-toaster]')).toContainText(/updated successfully/i, { timeout: 5_000 })
+    await expect(save).toBeDisabled({ timeout: 3_000 })
 
-        await expect(page.locator('[data-sonner-toaster]')).toContainText(/deleted successfully/i, { timeout: 5_000 })
-        await page.waitForURL(url => !url.pathname.startsWith('/org/settings'), { timeout: 8_000 })
-    })
+    // Cleanup
+    await uiDeleteOrg(page, newName)
+})
+
+test('TC-ORG-006 — Delete an organization via danger zone', async ({ page }) => {
+    test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
+    const tempName = `qa-del-${ts()}`
+
+    try {
+        await uiCreateOrg(page, tempName)
+    } catch (err) {
+        if ((err as Error).message === PLAN_BLOCKED) {
+            test.skip(true, 'Org creation disabled — plan tier.')
+            return
+        }
+        throw err
+    }
+    await uiSwitchToOrg(page, tempName)
+
+    // The delete IS the test — no separate cleanup needed.
+    await page.goto('/org/settings/danger-zone')
+    await page.locator('button', { hasText: 'Delete this organization' }).first().click()
+
+    const confirmInput = page.locator('div[role="dialog"] input').first()
+    await expect(confirmInput).toBeVisible({ timeout: 5_000 })
+    await confirmInput.fill(tempName)
+
+    const [response] = await Promise.all([
+        page.waitForResponse(r => /\/api\/v1\/organizations\b/.test(r.url()) && r.request().method() === 'DELETE'),
+        page.locator('div[role="dialog"] button', { hasText: /^Delete Organization/ }).first().click(),
+    ])
+    expect([200, 204]).toContain(response.status())
+
+    await expect(page.locator('[data-sonner-toaster]')).toContainText(/deleted successfully/i, { timeout: 5_000 })
+    await page.waitForURL(url => !url.pathname.startsWith('/org/settings'), { timeout: 10_000 })
+})
+
+test('TC-ORG-007 — Create rejects duplicate name', async ({ page }) => {
+    test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
+    const sharedName = `qa-dup-${ts()}`
+
+    // Seed the first org via the same UI flow.
+    try {
+        await uiCreateOrg(page, sharedName)
+    } catch (err) {
+        if ((err as Error).message === PLAN_BLOCKED) {
+            test.skip(true, 'Org creation disabled — plan tier.')
+            return
+        }
+        throw err
+    }
+
+    // Now try to create another with the SAME name.
+    await page.goto('/organizations')
+    const newBtn = page.locator('button', { hasText: 'New organization' }).first()
+    await newBtn.click()
+
+    const nameInput = page.locator('#orgName')
+    await expect(nameInput).toBeVisible({ timeout: 5_000 })
+    await nameInput.fill(sharedName)
+
+    const submit = page.locator('button[type="submit"]', { hasText: /^Create/ }).first()
+    const [response] = await Promise.all([
+        page.waitForResponse(r => /\/api\/v1\/organizations\b/.test(r.url()) && r.request().method() === 'POST'),
+        submit.click(),
+    ])
+    expect(response.status(), 'duplicate-name create should fail with 4xx').toBeGreaterThanOrEqual(400)
+    expect(response.status()).toBeLessThan(500)
+
+    // Modal stays open + an error message surfaces somewhere.
+    await expect(nameInput).toBeVisible()
+    const ERR_RE = /(already|exists|duplicate|taken|in use)/i
+    const inlineErr = page.locator('div[role="dialog"]').getByText(ERR_RE).first()
+    const toastErr = page.locator('[data-sonner-toaster]').getByText(ERR_RE).first()
+    await expect(inlineErr.or(toastErr)).toBeVisible({ timeout: 5_000 })
+
+    // Close the modal so cleanup doesn't fight it.
+    await page.locator('div[role="dialog"] button', { hasText: /^Cancel/i }).first().click().catch(() => undefined)
+
+    // Cleanup the seeded org.
+    await uiSwitchToOrg(page, sharedName)
+    await uiDeleteOrg(page, sharedName)
 })

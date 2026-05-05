@@ -6,7 +6,6 @@ import { Play, RefreshCw } from 'lucide-react'
 import { useEnv } from '@/components/EnvContext'
 import LiveRunsBar from '@/components/widgets/LiveRunsBar'
 import StatusPill from '@/components/widgets/StatusPill'
-import Accordion from '@/components/Accordion'
 import { latestRunForSuite, loadIndex, loadRun, passRate, suiteFromFile } from '@/lib/results-loader'
 import { loadCatalog, type Catalog, type CatalogTest } from '@/lib/catalog-loader'
 import { ENV_LABELS } from '@/lib/config'
@@ -117,16 +116,6 @@ export default function SuiteDetail() {
         }))
     }, [catalogTests, runTests])
 
-    const byCategory = useMemo(() => {
-        const m = new Map<string, ResolvedTest[]>()
-        for (const t of resolved) {
-            const list = m.get(t.category) ?? []
-            list.push(t)
-            m.set(t.category, list)
-        }
-        return m
-    }, [resolved])
-
     const totals = useMemo(() => {
         const passed = resolved.filter(t => t.status === 'passed').length
         const failed = resolved.filter(t => t.status === 'failed' || t.status === 'timedOut').length
@@ -179,7 +168,7 @@ export default function SuiteDetail() {
                             {resolved.length}
                         </p>
                         <Text className="mt-1 text-xs">
-                            {byCategory.size} categor{byCategory.size === 1 ? 'y' : 'ies'}
+                            {resolved.length === 1 ? '1 test' : `${resolved.length} tests`}
                         </Text>
                     </div>
                     <div>
@@ -225,57 +214,11 @@ export default function SuiteDetail() {
             {loadingRun && <Text>Loading test catalog…</Text>}
 
             <Card>
-                <div className="flex items-center justify-between">
-                    <Title>Test cases by category ({resolved.length})</Title>
-                    <Text className="text-xs">click a category to expand</Text>
-                </div>
-                <div className="mt-4 space-y-2">
-                    {Array.from(byCategory.entries()).map(([category, list], idx) => {
-                        const passed = list.filter(t => t.status === 'passed').length
-                        const failed = list.filter(t => t.status === 'failed' || t.status === 'timedOut').length
-                        const skipped = list.filter(t => t.status === 'skipped').length
-                        const notRun = list.filter(t => t.status === null).length
-                        const escaped = category.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-                        const hasFailures = failed > 0
-
-                        return (
-                            <Accordion
-                                key={category}
-                                defaultOpen={idx === 0 || hasFailures}
-                                header={
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                        <span className="text-sm font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-                                            {category}
-                                        </span>
-                                        <span className="text-xs text-tremor-content dark:text-dark-tremor-content">
-                                            ({list.length})
-                                        </span>
-                                        <div className="flex items-center gap-2 text-xs">
-                                            {passed > 0 && (
-                                                <span className="text-emerald-600 dark:text-emerald-400">{passed} passed</span>
-                                            )}
-                                            {failed > 0 && (
-                                                <span className="text-rose-500 dark:text-rose-400">{failed} failed</span>
-                                            )}
-                                            {skipped > 0 && (
-                                                <span className="text-tremor-content dark:text-dark-tremor-content">{skipped} skipped</span>
-                                            )}
-                                            {notRun > 0 && (
-                                                <span className="text-tremor-content-subtle dark:text-dark-tremor-content-subtle">{notRun} not run</span>
-                                            )}
-                                        </div>
-                                    </div>
-                                }
-                                actions={
-                                    <Button size="xs" variant="light" icon={RefreshCw} onClick={() => triggerSuite(escaped)}>
-                                        Run
-                                    </Button>
-                                }
-                            >
-                                <div className="scroll-card-body">
-                                    <table className="w-full text-sm">
-                                        <tbody>
-                                            {list.map(t => (
+                <Title>Test cases ({resolved.length})</Title>
+                <div className="scroll-card-body mt-4">
+                    <table className="w-full text-sm">
+                        <tbody>
+                            {resolved.map(t => (
                                                 <tr
                                                     key={`${t.id}-${t.project}`}
                                                     className="border-t border-tremor-border dark:border-dark-tremor-border first:border-t-0 group hover:bg-tremor-background-muted dark:hover:bg-dark-tremor-background-muted transition-colors"
@@ -318,12 +261,8 @@ export default function SuiteDetail() {
                                                     </td>
                                                 </tr>
                                             ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </Accordion>
-                        )
-                    })}
+                        </tbody>
+                    </table>
                 </div>
             </Card>
         </motion.div>

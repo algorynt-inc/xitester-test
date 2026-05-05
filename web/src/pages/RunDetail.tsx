@@ -5,7 +5,6 @@ import { motion } from 'framer-motion'
 import { AlertTriangle, Download, ExternalLink, Film, Loader2, Play, RefreshCw } from 'lucide-react'
 import StatusPill from '@/components/widgets/StatusPill'
 import AttachmentGallery from '@/components/widgets/AttachmentGallery'
-import Accordion from '@/components/Accordion'
 import {
     buildGrepFromTestIds,
     downloadArtifactZip,
@@ -70,31 +69,6 @@ export default function RunDetail() {
     const reRunAllFailed = () => {
         const grep = buildGrepFromTestIds(failedTests.map(t => t.id))
         reRun(grep)
-    }
-
-    const reRunCategory = (category: string) => {
-        // Playwright matches --grep against the full title path "<describe> > <test>",
-        // so the describe-block title is sufficient. Anchor and escape regex specials.
-        const escaped = category.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-        reRun(escaped)
-    }
-
-    // Group ALL tests by category (preserves describe ordering via Map insertion order).
-    const allByCategory = new Map<string, ResultTest[]>()
-    for (const t of run.tests) {
-        const key = t.category ?? 'Uncategorised'
-        const list = allByCategory.get(key) ?? []
-        list.push(t)
-        allByCategory.set(key, list)
-    }
-
-    // Group only failed tests for the Failures section.
-    const failedByCategory = new Map<string, ResultTest[]>()
-    for (const t of failedTests) {
-        const key = t.category ?? 'Uncategorised'
-        const list = failedByCategory.get(key) ?? []
-        list.push(t)
-        failedByCategory.set(key, list)
     }
 
     // Build "Open suite trace" URL: every trace.zip attachment across all tests.
@@ -186,118 +160,57 @@ export default function RunDetail() {
                             Re-run all failed
                         </Button>
                     </div>
-                    <div className="mt-4 space-y-2">
-                        {Array.from(failedByCategory.entries()).map(([category, tests]) => (
-                            <Accordion
-                                key={category}
-                                defaultOpen
-                                header={
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                        <span className="text-sm font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-                                            {category}
-                                        </span>
-                                        <span className="text-xs text-rose-500 dark:text-rose-400">
-                                            {tests.length} failed
-                                        </span>
-                                    </div>
-                                }
-                                actions={
-                                    <Button size="xs" variant="light" icon={RefreshCw} onClick={() => reRunCategory(category)}>
+                    <ul className="mt-4 space-y-6">
+                        {failedTests.map((t, idx) => (
+                            <motion.li
+                                key={`${t.id}-${t.project}`}
+                                initial={{ opacity: 0, y: 6 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: idx * 0.04 }}
+                                className="group rounded-tremor-default border border-tremor-border dark:border-dark-tremor-border p-4 bg-tremor-background dark:bg-dark-tremor-background"
+                            >
+                                <div className="flex items-baseline gap-2 flex-wrap">
+                                    <code className="font-mono text-xs text-rose-500 dark:text-rose-400">{t.id}</code>
+                                    <Bold>{t.title}</Bold>
+                                    <span className="text-tremor-content dark:text-dark-tremor-content text-xs">{t.project}</span>
+                                    <span className="text-tremor-content dark:text-dark-tremor-content text-xs ml-auto">
+                                        {formatDuration(t.durationMs)} · {t.retries} retries
+                                    </span>
+                                    <Button size="xs" variant="light" icon={RefreshCw} onClick={() => reRun(t.id)}>
                                         Re-run
                                     </Button>
-                                }
-                            >
-                                <ul className="mt-3 space-y-6">
-                                    {tests.map((t, idx) => (
-                                        <motion.li
-                                            key={`${t.id}-${t.project}`}
-                                            initial={{ opacity: 0, y: 6 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: idx * 0.04 }}
-                                            className="group rounded-tremor-default border border-tremor-border dark:border-dark-tremor-border p-4 bg-tremor-background dark:bg-dark-tremor-background"
-                                        >
-                                            <div className="flex items-baseline gap-2 flex-wrap">
-                                                <code className="font-mono text-xs text-rose-500 dark:text-rose-400">{t.id}</code>
-                                                <Bold>{t.title}</Bold>
-                                                <span className="text-tremor-content dark:text-dark-tremor-content text-xs">{t.project}</span>
-                                                <span className="text-tremor-content dark:text-dark-tremor-content text-xs ml-auto">
-                                                    {formatDuration(t.durationMs)} · {t.retries} retries
-                                                </span>
-                                                <Button size="xs" variant="light" icon={RefreshCw} onClick={() => reRun(t.id)}>
-                                                    Re-run
-                                                </Button>
-                                            </div>
-                                            {t.error?.message && (
-                                                <pre className="mt-3 text-xs whitespace-pre-wrap text-tremor-content dark:text-dark-tremor-content bg-tremor-background-muted dark:bg-dark-tremor-background-muted p-3 rounded-tremor-default overflow-x-auto">
-                                                    {t.error.message}
-                                                    {t.error.snippet ? `\n\n${t.error.snippet}` : ''}
-                                                </pre>
-                                            )}
-                                            {t.attachments.length > 0 && (
-                                                <div className="mt-4">
-                                                    <AttachmentGallery attachments={t.attachments} />
-                                                </div>
-                                            )}
-                                        </motion.li>
-                                    ))}
-                                </ul>
-                            </Accordion>
+                                </div>
+                                {t.error?.message && (
+                                    <pre className="mt-3 text-xs whitespace-pre-wrap text-tremor-content dark:text-dark-tremor-content bg-tremor-background-muted dark:bg-dark-tremor-background-muted p-3 rounded-tremor-default overflow-x-auto">
+                                        {t.error.message}
+                                        {t.error.snippet ? `\n\n${t.error.snippet}` : ''}
+                                    </pre>
+                                )}
+                                {t.attachments.length > 0 && (
+                                    <div className="mt-4">
+                                        <AttachmentGallery attachments={t.attachments} />
+                                    </div>
+                                )}
+                            </motion.li>
                         ))}
-                    </div>
+                    </ul>
                 </Card>
             )}
 
             <Card>
-                <div className="flex items-center justify-between">
-                    <Title>All tests by category</Title>
-                    <Text className="text-xs">click a category to expand</Text>
-                </div>
-                <div className="mt-4 space-y-2">
-                    {Array.from(allByCategory.entries()).map(([category, tests]) => {
-                        const passed = tests.filter(t => t.status === 'passed').length
-                        const failed = tests.filter(t => t.status === 'failed' || t.status === 'timedOut').length
-                        const skipped = tests.filter(t => t.status === 'skipped').length
-                        return (
-                            <Accordion
-                                key={category}
-                                defaultOpen={failed > 0}
-                                header={
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                        <span className="text-sm font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-                                            {category}
-                                        </span>
-                                        <span className="text-xs text-tremor-content dark:text-dark-tremor-content">
-                                            ({tests.length})
-                                        </span>
-                                        <div className="flex items-center gap-2 text-xs">
-                                            <span className="text-emerald-600 dark:text-emerald-400">{passed} passed</span>
-                                            {failed > 0 && <span className="text-rose-500 dark:text-rose-400">{failed} failed</span>}
-                                            {skipped > 0 && <span className="text-tremor-content dark:text-dark-tremor-content">{skipped} skipped</span>}
-                                        </div>
-                                    </div>
-                                }
-                                actions={
-                                    <Button size="xs" variant="light" icon={RefreshCw} onClick={() => reRunCategory(category)}>
-                                        Run
-                                    </Button>
-                                }
-                            >
-                                <div className="scroll-card-body mt-2">
-                                    <table className="w-full text-sm">
-                                        <tbody>
-                                            {tests.map(t => (
-                                                <TestRow
-                                                    key={`${t.id}-${t.project}`}
-                                                    test={t}
-                                                    onReRun={() => reRun(t.id)}
-                                                />
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </Accordion>
-                        )
-                    })}
+                <Title>All tests ({run.tests.length})</Title>
+                <div className="scroll-card-body mt-4">
+                    <table className="w-full text-sm">
+                        <tbody>
+                            {run.tests.map(t => (
+                                <TestRow
+                                    key={`${t.id}-${t.project}`}
+                                    test={t}
+                                    onReRun={() => reRun(t.id)}
+                                />
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </Card>
 

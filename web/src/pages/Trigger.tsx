@@ -63,9 +63,11 @@ export default function Trigger() {
                 parentRunId,
             })
 
-            for (let i = 0; i < 12; i++) {
-                await new Promise(r => setTimeout(r, 2000))
-                const recent = await listRecentWorkflowRuns(token, 5)
+            // GitHub can take 30-60s to materialise a dispatched run when its
+            // queue is busy; poll for up to ~90s before falling through.
+            for (let i = 0; i < 30; i++) {
+                await new Promise(r => setTimeout(r, 3000))
+                const recent = await listRecentWorkflowRuns(token, 10)
                 const fresh = recent.find(r => !beforeIds.has(r.id))
                 if (fresh) {
                     const qs = parentRunId ? `?parent=${encodeURIComponent(parentRunId)}` : ''
@@ -73,7 +75,10 @@ export default function Trigger() {
                     return
                 }
             }
-            setError('Workflow dispatched, but the run did not appear within 24s. Check GitHub Actions.')
+            setError(
+                'Workflow dispatched, but the run did not appear within 90s. ' +
+                    'GitHub can lag during peak queue load — check the Actions tab; the run may still arrive.',
+            )
         } catch (err) {
             setError((err as Error).message)
         } finally {
