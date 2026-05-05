@@ -2,6 +2,8 @@
 
 Public test suite + dashboard for XiTester.
 
+> **New here?** See **[SETUP.md](./SETUP.md)** for clone-to-running instructions (deps, credentials, local dev, CI run dispatch). The rest of this README is the architecture overview.
+
 This repo houses three things:
 
 - **`test-cases/`** — manual QA test cases in markdown, formatted per `test-cases/PATTERN.md`. The build pipeline (`build-pdf.sh`) renders them to PDFs.
