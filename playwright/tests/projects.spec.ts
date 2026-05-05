@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Locator, type Page } from '@playwright/test'
 import { ENV } from '../env'
 
 // Authenticated via auth.setup.
@@ -7,10 +7,16 @@ test.use({ storageState: 'playwright/.auth/user.json' })
 const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD secret bundle.`
 const ts = () => new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14)
 
+// "Default Project" is seeded in every XiTester organisation; the View test
+// uses it deterministically rather than picking the first card it sees.
+const DEFAULT_PROJECT_NAME = 'Default Project'
+
 // ============================================================
-// Helpers — UI-only. The SUT exposes project CRUD as modal dialogs
-// on /org/projects (no separate routes), driven via "New project",
-// kebab → Edit, kebab → Delete.
+// Helpers — drive the actual SPA modals like a real user would.
+// ------------------------------------------------------------
+// Important: shadcn <Input> components have NO id attribute. Inputs are
+// identified by placeholder text, scoped to the open dialog so the create
+// and edit modals don't collide on shared placeholders.
 // ============================================================
 
 async function gotoProjects(page: Page): Promise<void> {
@@ -18,61 +24,81 @@ async function gotoProjects(page: Page): Promise<void> {
     await page.locator('input[placeholder="Search for a project"]').waitFor({ state: 'visible', timeout: 15_000 })
 }
 
+/**
+ * Locate the project card whose visible name is `name`. Project cards are
+ * <div onClick> elements (not buttons) wrapping an h3 (grid view) or a
+ * .font-medium div (list view) that displays the name. We climb to the
+ * nearest cursor-pointer ancestor, which is the clickable card root and
+ * also contains the kebab button.
+ */
+function projectCard(page: Page, name: string): Locator {
+    return page
+        .locator('main')
+        .getByText(name, { exact: true })
+        .locator('xpath=ancestor::div[contains(@class, "cursor-pointer")][1]')
+}
+
 async function uiCreateProject(page: Page, name: string, description?: string): Promise<void> {
     await gotoProjects(page)
     await page.locator('button', { hasText: 'New project' }).first().click()
 
-    const nameInput = page.locator('#createName')
-    await expect(nameInput).toBeVisible({ timeout: 5_000 })
-    await nameInput.fill(name)
+    const dialog = page.locator('div[role="dialog"]', { hasText: 'Create New Project' })
+    await dialog.waitFor({ state: 'visible', timeout: 5_000 })
+
+    await dialog.getByPlaceholder('My Project').fill(name)
     if (description) {
-        await page.locator('#createDescription').fill(description)
+        await dialog.getByPlaceholder('Optional description...').fill(description)
     }
 
     await Promise.all([
         page.waitForResponse(r => /\/api\/v1\/projects\/?\b/.test(r.url()) && r.request().method() === 'POST'),
-        page.locator('button', { hasText: 'Create Project' }).first().click(),
+        dialog.locator('button', { hasText: 'Create Project' }).first().click(),
     ])
-    // SPA navigates to /dashboard for the new project on success. Wait for that
-    // OR for the modal to close — either is success.
-    await page.waitForLoadState('domcontentloaded')
+    // SPA closes the dialog and navigates to /dashboard on success.
+    await dialog.waitFor({ state: 'hidden', timeout: 10_000 })
 }
 
-/** Open the kebab menu on the project card matching `name` and click an action. */
 async function openKebabAction(page: Page, projectName: string, action: 'Edit' | 'Delete'): Promise<void> {
     await gotoProjects(page)
-    // Each card is a flex row containing the project name; the kebab is its
-    // sibling. We scope to the row that contains the name.
-    const card = page
-        .locator('main')
-        .locator('article, [role="button"], div')
-        .filter({ has: page.getByText(projectName, { exact: true }) })
-        .first()
-    // Try multiple kebab-button shapes — Lucide MoreHorizontal usually has aria-label.
-    const kebab = card
-        .locator('button[aria-haspopup], button[aria-label*="menu" i], button[aria-label*="more" i]')
-        .first()
-    await kebab.click()
+    const card = projectCard(page, projectName)
+    await expect(card, `card for "${projectName}" should be in the list`).toBeVisible({ timeout: 8_000 })
+
+    // Kebab is `opacity-0 group-hover:opacity-100` — hover the card first
+    // so the button becomes visible and clickable like for a real user.
+    await card.hover()
+    const kebab = card.locator('button').first()
+    await kebab.click({ force: true })
+
     await page.getByRole('menuitem', { name: action }).click()
 }
 
-async function uiUpdateProject(page: Page, currentName: string, newName: string): Promise<void> {
+async function uiUpdateProjectName(page: Page, currentName: string, newName: string): Promise<void> {
     await openKebabAction(page, currentName, 'Edit')
-    const nameInput = page.locator('#editName')
-    await expect(nameInput).toBeVisible({ timeout: 5_000 })
+
+    const dialog = page.locator('div[role="dialog"]', { hasText: 'Edit Project' })
+    await dialog.waitFor({ state: 'visible', timeout: 5_000 })
+
+    const nameInput = dialog.getByPlaceholder('My Project')
     await nameInput.fill(newName)
+
     await Promise.all([
         page.waitForResponse(r => /\/api\/v1\/projects\/?\b/.test(r.url()) && r.request().method() === 'PUT'),
-        page.locator('button', { hasText: 'Save changes' }).first().click(),
+        dialog.locator('button', { hasText: 'Save changes' }).first().click(),
     ])
+    await dialog.waitFor({ state: 'hidden', timeout: 8_000 })
 }
 
 async function uiDeleteProject(page: Page, name: string): Promise<void> {
     await openKebabAction(page, name, 'Delete')
+
+    const dialog = page.locator('div[role="dialog"]', { hasText: 'Delete Project' })
+    await dialog.waitFor({ state: 'visible', timeout: 5_000 })
+
     await Promise.all([
         page.waitForResponse(r => /\/api\/v1\/projects\/?\b/.test(r.url()) && r.request().method() === 'DELETE'),
-        page.locator('div[role="dialog"] button', { hasText: 'Delete Project' }).first().click(),
+        dialog.locator('button', { hasText: 'Delete Project' }).first().click(),
     ])
+    await dialog.waitFor({ state: 'hidden', timeout: 8_000 })
     await expect(page.getByText(name, { exact: true })).toBeHidden({ timeout: 8_000 })
 }
 
@@ -86,11 +112,9 @@ test('TC-PR-001 — View project list', async ({ page }) => {
     await gotoProjects(page)
     await expect(
         page.locator('input[placeholder="Search for a project"]'),
-        'project search input should be visible',
     ).toBeVisible({ timeout: 10_000 })
     await expect(
         page.locator('button', { hasText: 'New project' }).first(),
-        '"New project" button should be visible',
     ).toBeVisible()
 })
 
@@ -100,61 +124,73 @@ test('TC-PR-002 — Create a new project', async ({ page }) => {
 
     await uiCreateProject(page, tempName, 'Created by Playwright TC-PR-002')
 
-    // After create, the SPA selects the new project and navigates to the
-    // dashboard. Going back to /org/projects should list the new card.
+    // After create, return to the list and confirm the new card appears.
     await gotoProjects(page)
-    await expect(page.getByText(tempName, { exact: true })).toBeVisible({ timeout: 8_000 })
+    await expect(projectCard(page, tempName)).toBeVisible({ timeout: 8_000 })
 
-    // Cleanup
+    // Cleanup — delete the project we just created (per user spec).
     await uiDeleteProject(page, tempName)
 })
 
-test('TC-PR-003 — View an existing project', async ({ page }) => {
+test('TC-PR-003 — Open Default Project and land on the dashboard', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
 
     await gotoProjects(page)
 
-    // Click the first project card.
-    const firstCardName = page
-        .locator('main')
-        .locator('button, article, [role="button"]')
-        .filter({ hasNotText: /New project|Search|Active|Inactive|Name|Date/i })
-        .first()
-    await expect(firstCardName).toBeVisible({ timeout: 10_000 })
-    await firstCardName.click()
+    // Default Project is seeded in every org — deterministic target.
+    const card = projectCard(page, DEFAULT_PROJECT_NAME)
+    await expect(
+        card,
+        `"${DEFAULT_PROJECT_NAME}" card should be present in /org/projects`,
+    ).toBeVisible({ timeout: 10_000 })
+    await card.click()
 
-    // SPA navigates to /dashboard scoped to the project.
-    await page.waitForURL(/\/(dashboard|api-tester|test-cases|test-plans)/, { timeout: 8_000 })
+    // Project selection navigates to /dashboard. Wait for the route change
+    // and a dashboard-y signal so we're confident the dashboard actually
+    // mounted (not just that the URL flipped).
+    await page.waitForURL(/\/dashboard\b/, { timeout: 10_000 })
+    expect(page.url()).toMatch(/\/dashboard\b/)
+    // Loose dashboard heuristic: the page should render some recognisable
+    // dashboard content. Anything containing "Dashboard" in a heading or
+    // the layout's nav is fine.
+    await expect(
+        page.getByRole('heading', { level: 1 }).or(page.getByText(/dashboard/i).first()),
+    ).toBeVisible({ timeout: 8_000 })
 })
 
-test('TC-PR-004 — Update project name', async ({ page }) => {
+test('TC-PR-004 — Update project name (and revert)', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
-    const tempName = `qa-prj-${ts()}`
+    const original = `qa-prj-${ts()}`
     const renamed = `qa-renamed-${ts()}`
 
-    await uiCreateProject(page, tempName)
-    await uiUpdateProject(page, tempName, renamed)
+    await uiCreateProject(page, original)
 
+    // 1. Rename original → renamed.
+    await uiUpdateProjectName(page, original, renamed)
     await expect(page.locator('[data-sonner-toaster]')).toContainText(/project updated/i, { timeout: 5_000 })
-
     await gotoProjects(page)
-    await expect(page.getByText(renamed, { exact: true })).toBeVisible({ timeout: 6_000 })
-    await expect(page.getByText(tempName, { exact: true })).toBeHidden()
+    await expect(projectCard(page, renamed)).toBeVisible({ timeout: 6_000 })
+    await expect(page.getByText(original, { exact: true })).toBeHidden()
 
-    // Cleanup
-    await uiDeleteProject(page, renamed)
+    // 2. Revert renamed → original. Two purposes: (a) verify bidirectional
+    //    update works, (b) leave the name in a state we can confidently
+    //    delete in cleanup if the rename in step 1 partially succeeded.
+    await uiUpdateProjectName(page, renamed, original)
+    await expect(page.locator('[data-sonner-toaster]')).toContainText(/project updated/i, { timeout: 5_000 })
+    await gotoProjects(page)
+    await expect(projectCard(page, original)).toBeVisible({ timeout: 6_000 })
+    await expect(page.getByText(renamed, { exact: true })).toBeHidden()
+
+    // Cleanup — delete the project we created.
+    await uiDeleteProject(page, original)
 })
 
-test('TC-PR-005 — Delete a project', async ({ page }) => {
+test('TC-PR-005 — Delete a project we just created', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
     const tempName = `qa-del-${ts()}`
 
     await uiCreateProject(page, tempName)
 
-    // Delete is the test — no separate cleanup.
+    // Delete IS the test — uiDeleteProject already asserts the card is gone.
     await uiDeleteProject(page, tempName)
-
-    // Final guard: refresh the list and confirm the card is gone.
-    await gotoProjects(page)
-    await expect(page.getByText(tempName, { exact: true })).toBeHidden({ timeout: 6_000 })
 })
