@@ -23,9 +23,12 @@ cp .env.local.example .env.local
 export XT_USER_EMAIL='your-sandbox-account@xitester.com'
 export XT_USER_PASSWORD='your-password'
 
-# Run Playwright UI against dev:
-XT_ENV=dev pnpm exec playwright test --ui
+# Run Playwright UI against dev — pick whichever line fits your shell:
+pnpm test:ui:dev                              # works on macOS / Linux / Windows (uses cross-env)
+XT_ENV=dev pnpm exec playwright test --ui     # macOS / Linux / Git Bash / WSL
 ```
+
+> **Windows users:** `XT_ENV=dev pnpm …` (the inline-env-var form) is bash/zsh syntax. Windows `cmd.exe` and PowerShell don't recognise it — they show *"XT_ENV is not recognised as an internal or external command"*. Use **`pnpm test:ui:dev`** instead (it routes through `cross-env` internally), or set `XT_ENV` in `.env.local` and just run `pnpm test:ui`.
 
 **Where to run those `export` commands?** In the same terminal window where you'll run `pnpm exec playwright test`. They only last until you close that terminal — every new terminal needs them set again. That's why Option A (`.env.local`) is usually nicer: set once, every future run picks them up automatically. The file is gitignored, so it never reaches the repo.
 
@@ -35,12 +38,15 @@ Playwright's UI mode opens a window. From there you can:
 - Use the **time-travel slider** to scrub back through any step
 - Filter by test ID, file, or status
 
-To switch envs: close the UI, change `XT_ENV`, re-run the command:
+To switch envs: close the UI window and start a different one. The `pnpm test:ui:*` scripts are portable; the inline form is bash/zsh only.
 
 ```bash
+pnpm test:ui:stage      # cross-platform
+pnpm test:ui:qa
+pnpm test:ui:prod
+
+# Or, on bash/zsh / Git Bash / WSL:
 XT_ENV=stage pnpm exec playwright test --ui
-XT_ENV=qa    pnpm exec playwright test --ui
-XT_ENV=prod  pnpm exec playwright test --ui
 ```
 
 **You don't need** a GitHub PAT, the dashboard, or any of the GitHub Actions plumbing — that's only for the team-shared CI runs. UI mode runs everything on your laptop.

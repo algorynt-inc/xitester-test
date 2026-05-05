@@ -6,13 +6,18 @@
     "description": "Playwright suite for XiTester manual test cases under test-cases/. Mirrors test-cases/login.md.",
     "scripts": {
         "test": "playwright test",
-        "test:local": "XT_ENV=local playwright test",
-        "test:dev": "XT_ENV=dev playwright test",
-        "test:stage": "XT_ENV=stage playwright test",
-        "test:qa": "XT_ENV=qa playwright test",
-        "test:prod": "XT_ENV=prod playwright test",
+        "test:local": "cross-env XT_ENV=local playwright test",
+        "test:dev": "cross-env XT_ENV=dev playwright test",
+        "test:stage": "cross-env XT_ENV=stage playwright test",
+        "test:qa": "cross-env XT_ENV=qa playwright test",
+        "test:prod": "cross-env XT_ENV=prod playwright test",
         "test:headed": "playwright test --headed",
         "test:ui": "playwright test --ui",
+        "test:ui:local": "cross-env XT_ENV=local playwright test --ui",
+        "test:ui:dev": "cross-env XT_ENV=dev playwright test --ui",
+        "test:ui:stage": "cross-env XT_ENV=stage playwright test --ui",
+        "test:ui:qa": "cross-env XT_ENV=qa playwright test --ui",
+        "test:ui:prod": "cross-env XT_ENV=prod playwright test --ui",
         "test:login": "playwright test tests/login.spec.ts",
         "report": "playwright show-report",
         "install-browsers": "playwright install chromium"
@@ -23,6 +28,7 @@
     "devDependencies": {
         "@playwright/test": "^1.50.0",
         "@types/node": "^22.0.0",
+        "cross-env": "^7.0.3",
         "typescript": "^5.5.0"
     }
 }
