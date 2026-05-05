@@ -1,0 +1,172 @@
+{
+  "runId": "25370018492",
+  "actionsRunId": "25370018492",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25370018492",
+  "commit": "9b5d8eab10e3a5e2bdf33943a6d18dcdc97f8e3b",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "projects",
+  "startedAt": "2026-05-05T10:04:16.132Z",
+  "finishedAt": "2026-05-05T10:04:55.435Z",
+  "durationMs": 39303,
+  "stats": {
+    "total": 6,
+    "passed": 5,
+    "failed": 1,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 4436,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25370018492/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25370018492/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PR-001",
+      "title": "TC-PR-001 — View project list",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5374,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25370018492/TC-PR-001-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25370018492/TC-PR-001-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PR-002",
+      "title": "TC-PR-002 — Create a new project",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 11466,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25370018492/TC-PR-002-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25370018492/TC-PR-002-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PR-003",
+      "title": "TC-PR-003 — Open Default Project and land on the dashboard",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 7831,
+      "retries": 1,
+      "error": {
+        "message": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('heading', { level: 1 }).or(getByText(/dashboard/i).first())\nExpected: visible\nError: strict mode violation: getByRole('heading', { level: 1 }).or(getByText(/dashboard/i).first()) resolved to 2 elements:\n    1) <span class=\"min-w-0 flex-1 truncate text-sm font-medium\">Dashboard</span> aka getByRole('banner').getByText('Dashboard')\n    2) <h1 class=\"text-2xl font-bold\">Dashboard</h1> aka getByRole('heading', { name: 'Dashboard' })\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 8000ms\n  - waiting for getByRole('heading', { level: 1 }).or(getByText(/dashboard/i).first())\n    5 × locator resolved to <span class=\"min-w-0 flex-1 truncate text-sm font-medium\">Dashboard</span>\n      - unexpected value \"hidden\"\n",
+        "snippet": "  156 |     await expect(\n  157 |         page.getByRole('heading', { level: 1 }).or(page.getByText(/dashboard/i).first()),\n> 158 |     ).toBeVisible({ timeout: 8_000 })\n      |       ^\n  159 | })\n  160 |\n  161 | test('TC-PR-004 — Update project name (and revert)', async ({ page }) => {"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25370018492/TC-PR-003-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25370018492/TC-PR-003-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25370018492/TC-PR-003-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25370018492/TC-PR-003-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PR-004",
+      "title": "TC-PR-004 — Update project name (and revert)",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 19891,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25370018492/TC-PR-004-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25370018492/TC-PR-004-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PR-005",
+      "title": "TC-PR-005 — Delete a project we just created",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 9825,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25370018492/TC-PR-005-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25370018492/TC-PR-005-1-trace.zip"
+        }
+      ]
+    }
+  ]
+}
