@@ -1,0 +1,90 @@
+{
+  "runId": "25378380740",
+  "actionsRunId": "25378380740",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25378380740",
+  "commit": "1eb52c554f8fbcdfa029aa324c2985343a3597d0",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "logout",
+  "startedAt": "2026-05-05T13:14:42.694Z",
+  "finishedAt": "2026-05-05T13:14:54.805Z",
+  "durationMs": 12111,
+  "stats": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 3742,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25378380740/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25378380740/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LO-001",
+      "title": "TC-LO-001 — Logout via user menu redirects to /login",
+      "file": "playwright/tests/logout.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5449,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25378380740/TC-LO-001-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25378380740/TC-LO-001-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LO-002",
+      "title": "TC-LO-002 — Protected routes redirect to /login after logout",
+      "file": "playwright/tests/logout.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5917,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25378380740/TC-LO-002-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25378380740/TC-LO-002-1-trace.zip"
+        }
+      ]
+    }
+  ]
+}
