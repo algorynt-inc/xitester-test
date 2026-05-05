@@ -1,3 +1,9 @@
+import { config as loadEnv } from 'dotenv'
+// Load .env.local from the playwright/ project root if it exists. Existing
+// process.env values (e.g. CI's GitHub-Environment secrets, or shell exports)
+// take precedence — `override: false` ensures we never replace them.
+loadEnv({ path: '.env.local', override: false })
+
 import local from './local'
 import dev from './dev'
 import stage from './stage'

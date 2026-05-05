@@ -14,11 +14,20 @@ cd xitester-test/playwright
 pnpm install
 pnpm exec playwright install chromium      # one-time, ~150 MB
 
+# Set credentials. Pick ONE of the two options below.
+# Option A — .env.local file (set once, never type creds again):
+cp .env.local.example .env.local
+# Edit .env.local and fill in XT_USER_EMAIL + XT_USER_PASSWORD.
+
+# Option B — shell exports (lasts only for the current terminal):
 export XT_USER_EMAIL='your-sandbox-account@xitester.com'
 export XT_USER_PASSWORD='your-password'
 
+# Run Playwright UI against dev:
 XT_ENV=dev pnpm exec playwright test --ui
 ```
+
+**Where to run those `export` commands?** In the same terminal window where you'll run `pnpm exec playwright test`. They only last until you close that terminal — every new terminal needs them set again. That's why Option A (`.env.local`) is usually nicer: set once, every future run picks them up automatically. The file is gitignored, so it never reaches the repo.
 
 Playwright's UI mode opens a window. From there you can:
 - Click ▶ on any test or whole suite
@@ -88,14 +97,29 @@ The defaults in `.env.example` (`VITE_REPO_OWNER=algorynt-inc`, `VITE_REPO_NAME=
 
 Tests that need to log in read `XT_USER_EMAIL` / `XT_USER_PASSWORD` from your shell.
 
-**Local development**:
+**Local development** — use whichever feels less annoying:
+
+| Approach | When |
+|---|---|
+| `.env.local` file (recommended) | Set creds once, every shell picks them up |
+| Shell `export` | One-off run, throwaway shell |
+
+For `.env.local`:
+```bash
+cd playwright
+cp .env.local.example .env.local
+# Edit .env.local: fill in XT_USER_EMAIL, XT_USER_PASSWORD, optionally XT_ENV.
+```
+Variables defined in shell `export` always win over `.env.local` (override: false), so CI's GitHub-Environment secrets are never trampled.
+
+For shell exports (run in the same terminal as the test command):
 ```bash
 export XT_USER_EMAIL='your-sandbox-account@xitester.com'
 export XT_USER_PASSWORD='your-password'
 export XT_ENV=dev    # one of: local / dev / stage / qa / prod
 ```
 
-If you skip this step, tests that need auth **skip cleanly** (they don't fail). Only the 4 unauthed login tests run.
+If you skip both, tests that need auth **skip cleanly** (they don't fail). Only the 4 unauthed login tests run.
 
 **Don't commit credentials.** The repo's `.gitignore` already excludes `.env*` and `playwright/.auth/`.
 
