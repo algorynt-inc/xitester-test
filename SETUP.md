@@ -2,6 +2,44 @@
 
 After cloning `algorynt-inc/xitester-test`, run through this once. ~5 minutes for the install steps; everything after that is `pnpm test` / `pnpm dev` style.
 
+---
+
+## TL;DR — just want to run tests against dev/stage/qa/prod via Playwright UI
+
+You **don't need** to run the SUT locally, and you **don't need** the dashboard. The tests hit the deployed environments directly. From a fresh clone:
+
+```bash
+cd xitester-test/playwright
+
+pnpm install
+pnpm exec playwright install chromium      # one-time, ~150 MB
+
+export XT_USER_EMAIL='your-sandbox-account@xitester.com'
+export XT_USER_PASSWORD='your-password'
+
+XT_ENV=dev pnpm exec playwright test --ui
+```
+
+Playwright's UI mode opens a window. From there you can:
+- Click ▶ on any test or whole suite
+- See the live browser, action timeline, network requests, console
+- Use the **time-travel slider** to scrub back through any step
+- Filter by test ID, file, or status
+
+To switch envs: close the UI, change `XT_ENV`, re-run the command:
+
+```bash
+XT_ENV=stage pnpm exec playwright test --ui
+XT_ENV=qa    pnpm exec playwright test --ui
+XT_ENV=prod  pnpm exec playwright test --ui
+```
+
+**You don't need** a GitHub PAT, the dashboard, or any of the GitHub Actions plumbing — that's only for the team-shared CI runs. UI mode runs everything on your laptop.
+
+> ⚠️ `XT_ENV=local` requires the xitester-ai-app SUT to be running on localhost. Skip it if you don't have the SUT cloned.
+
+---
+
 ## 0. Prerequisites
 
 | Tool | Version | Install |
