@@ -24,7 +24,9 @@ import { ENV } from '../env'
  * in so they start from a fresh, unauthenticated state.
  */
 
-export const AUTH_FILE = 'playwright/.auth/user.json'
+// Path is relative to the Playwright project's cwd (the `playwright/` dir),
+// so the file lands at `playwright/.auth/user.json` from the repo root.
+export const AUTH_FILE = '.auth/user.json'
 const EMPTY_STATE = JSON.stringify({ cookies: [], origins: [] }, null, 2)
 
 setup('authenticate once per run', async ({ page }) => {

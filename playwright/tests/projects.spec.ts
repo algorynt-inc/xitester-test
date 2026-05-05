@@ -2,7 +2,7 @@ import { test, expect, type Locator, type Page } from '@playwright/test'
 import { ENV } from '../env'
 
 // Authenticated via auth.setup.
-test.use({ storageState: 'playwright/.auth/user.json' })
+test.use({ storageState: '.auth/user.json' })
 
 const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD secret bundle.`
 const ts = () => new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14)

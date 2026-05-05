@@ -6,6 +6,8 @@ playwright/test-results/
 playwright/playwright-report/
 playwright/.results/
 playwright/.auth/
+**/.auth/
+**/.auth/**
 playwright/blob-report/
 
 # Build output
