@@ -146,15 +146,14 @@ test('TC-PR-003 — Open Default Project and land on the dashboard', async ({ pa
     await card.click()
 
     // Project selection navigates to /dashboard. Wait for the route change
-    // and a dashboard-y signal so we're confident the dashboard actually
-    // mounted (not just that the URL flipped).
+    // and the page's H1 specifically so we're confident the dashboard
+    // actually mounted (not just that the URL flipped). Targeting the H1
+    // by name avoids the sidebar's "Dashboard" link, which would otherwise
+    // collide under strict mode.
     await page.waitForURL(/\/dashboard\b/, { timeout: 10_000 })
     expect(page.url()).toMatch(/\/dashboard\b/)
-    // Loose dashboard heuristic: the page should render some recognisable
-    // dashboard content. Anything containing "Dashboard" in a heading or
-    // the layout's nav is fine.
     await expect(
-        page.getByRole('heading', { level: 1 }).or(page.getByText(/dashboard/i).first()),
+        page.getByRole('heading', { level: 1, name: 'Dashboard' }),
     ).toBeVisible({ timeout: 8_000 })
 })
 
