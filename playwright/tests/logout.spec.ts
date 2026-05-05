@@ -7,13 +7,19 @@ test.use({ storageState: '.auth/user.json' })
 const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD secret bundle.`
 
 /**
- * Open the user-menu dropdown in the top bar. The trigger is a Radix
- * shadcn DropdownMenuTrigger that exposes aria-haspopup="menu". The
- * topbar may have multiple haspopup buttons (org switcher etc.); the
- * user menu is the last one on the right.
+ * Open the user-menu dropdown in the top bar.
+ *
+ * The SUT renders <UserMenu /> twice — once for the desktop layout
+ * (`hidden sm:flex`) and once for the mobile layout (`flex sm:hidden`).
+ * Both produce a button with aria-haspopup="menu", but only one is
+ * actually rendered visibly at any given viewport. Filtering with
+ * `:visible` picks the right copy regardless of viewport size.
+ *
+ * The user menu is the LAST visible aria-haspopup button in the header
+ * (the org switcher and other menus appear earlier).
  */
 async function openUserMenu(page: Page): Promise<void> {
-    const trigger = page.locator('header button[aria-haspopup="menu"]').last()
+    const trigger = page.locator('header button[aria-haspopup="menu"]:visible').last()
     await expect(trigger).toBeVisible({ timeout: 10_000 })
     await trigger.click()
 }
