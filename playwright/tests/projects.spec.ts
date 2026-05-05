@@ -193,3 +193,28 @@ test('TC-PR-005 — Delete a project we just created', async ({ page }) => {
     // Delete IS the test — uiDeleteProject already asserts the card is gone.
     await uiDeleteProject(page, tempName)
 })
+
+test('TC-041 — Project name shown in header after selecting Default Project', async ({ page }) => {
+    test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
+
+    await gotoProjects(page)
+    const card = projectCard(page, DEFAULT_PROJECT_NAME)
+    await expect(card).toBeVisible({ timeout: 10_000 })
+    await card.click()
+
+    // URL changes to /dashboard.
+    await page.waitForURL(/\/dashboard\b/, { timeout: 10_000 })
+    expect(page.url()).toMatch(/\/dashboard\b/)
+
+    // The project name should appear in the topbar (project switcher button
+    // text). The breadcrumb / project switcher shows the current project's
+    // name on the left side of the header.
+    const projectInHeader = page
+        .locator('header')
+        .getByText(DEFAULT_PROJECT_NAME, { exact: true })
+        .first()
+    await expect(
+        projectInHeader,
+        `"${DEFAULT_PROJECT_NAME}" should be visible in the header after selection`,
+    ).toBeVisible({ timeout: 8_000 })
+})
