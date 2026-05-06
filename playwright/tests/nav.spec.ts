@@ -5,33 +5,72 @@ test.use({ storageState: '.auth/user.json' })
 
 const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD secret bundle.`
 
-/** The org switcher trigger has a "Find organization..." search inside its menu. */
-async function openOrgSwitcher(page: Page): Promise<void> {
-    // The breadcrumb shows the current org name; the haspopup button next to
-    // it is the trigger. Pick the one that opens the menu containing
-    // "Find organization...".
-    const triggers = page.locator('header button[aria-haspopup="menu"]:visible')
-    const count = await triggers.count()
-    for (let i = 0; i < count; i++) {
-        await triggers.nth(i).click()
-        const search = page.locator('input[placeholder="Find organization..."]')
-        if (await search.isVisible().catch(() => false)) return
-        // Close and try next.
+type SwitcherKind = 'organization' | 'project'
+
+/**
+ * Open one of the topbar switcher dropdowns by iterating every visible
+ * haspopup-style trigger on the page, clicking each, and checking
+ * whether the resulting popup contains the expected search input.
+ *
+ * - Doesn't scope to <header>: in this SUT the switchers live inside a
+ *   wider banner/topbar that may not be a literal <header>.
+ * - Loosened placeholder match: case-insensitive substring on
+ *   "organization" / "project" so wording differences ("Find a
+ *   project") don't break it.
+ * - Diagnostics: when no trigger matches, the thrown error includes
+ *   a list of every haspopup button text found, so failure is debuggable
+ *   from the trace.
+ */
+async function openSwitcher(page: Page, kind: SwitcherKind): Promise<void> {
+    const triggers = page
+        .locator('button[aria-haspopup="menu"]:visible, button[aria-haspopup="true"]:visible')
+    const total = await triggers.count()
+
+    const placeholderRegex = kind === 'organization' ? /organization/i : /project/i
+    const seen: string[] = []
+
+    for (let i = 0; i < total; i++) {
+        const trigger = triggers.nth(i)
+        const label = (await trigger.textContent().catch(() => '')) || '(no text)'
+        seen.push(`#${i}: "${label.trim().slice(0, 40)}"`)
+
+        try {
+            await trigger.click()
+        } catch {
+            continue
+        }
+        // Radix renders the dropdown content asynchronously; give it a beat.
+        await page.waitForTimeout(250)
+
+        const search = page
+            .locator('input:visible')
+            .filter({ has: page.locator('xpath=self::input') })
+            .filter({ hasText: '' }) // any input
+        // Match by placeholder containing the kind keyword.
+        const match = page
+            .locator(`input[placeholder*="${kind}" i]:visible`)
+            .first()
+        if (await match.isVisible({ timeout: 1_500 }).catch(() => false)) {
+            void search // keep typed
+            return
+        }
+        // Close so the next iteration's click reaches a fresh trigger.
         await page.keyboard.press('Escape')
+        await page.waitForTimeout(150)
     }
-    throw new Error('Could not locate the org switcher dropdown trigger')
+
+    throw new Error(
+        `Could not open the ${kind} switcher. Tried ${total} haspopup triggers: ${seen.join(' | ') || '(none)'}.\n` +
+            `Look at the most recent trace.zip for this test in the dashboard / Actions.`,
+    )
+}
+
+async function openOrgSwitcher(page: Page): Promise<void> {
+    return openSwitcher(page, 'organization')
 }
 
 async function openProjectSwitcher(page: Page): Promise<void> {
-    const triggers = page.locator('header button[aria-haspopup="menu"]:visible')
-    const count = await triggers.count()
-    for (let i = 0; i < count; i++) {
-        await triggers.nth(i).click()
-        const search = page.locator('input[placeholder="Find project..."]')
-        if (await search.isVisible().catch(() => false)) return
-        await page.keyboard.press('Escape')
-    }
-    throw new Error('Could not locate the project switcher dropdown trigger')
+    return openSwitcher(page, 'project')
 }
 
 // ============================================================
