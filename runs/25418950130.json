@@ -1,0 +1,296 @@
+{
+  "runId": "25418950130",
+  "actionsRunId": "25418950130",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25418950130",
+  "commit": "8c3bb670d93c16317e3b37a2bcdf768b8e4e39d2",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "nav",
+  "startedAt": "2026-05-06T05:55:42.105Z",
+  "finishedAt": "2026-05-06T05:56:17.615Z",
+  "durationMs": 35510,
+  "stats": {
+    "total": 8,
+    "passed": 1,
+    "failed": 7,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 4157,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25418950130/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25418950130/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-056 — Verify Organiza",
+      "title": "TC-056 — Verify Organization Switch dropdown shows orgs",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 2884,
+      "retries": 1,
+      "error": {
+        "message": "Error: Could not open the organization switcher. Tried 0 haspopup triggers: (none).\nLook at the most recent trace.zip for this test in the dashboard / Actions.",
+        "snippet": "  60 |     }\n  61 |\n> 62 |     throw new Error(\n     |           ^\n  63 |         `Could not open the ${kind} switcher. Tried ${total} haspopup triggers: ${seen.join(' | ') || '(none)'}.\\n` +\n  64 |             `Look at the most recent trace.zip for this test in the dashboard / Actions.`,\n  65 |     )"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25418950130/TC-056___Verify_Organiza-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25418950130/TC-056___Verify_Organiza-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25418950130/TC-056___Verify_Organiza-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25418950130/TC-056___Verify_Organiza-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-057 — Verify Organiza",
+      "title": "TC-057 — Verify Organization search inside dropdown",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 2884,
+      "retries": 1,
+      "error": {
+        "message": "Error: Could not open the organization switcher. Tried 0 haspopup triggers: (none).\nLook at the most recent trace.zip for this test in the dashboard / Actions.",
+        "snippet": "  60 |     }\n  61 |\n> 62 |     throw new Error(\n     |           ^\n  63 |         `Could not open the ${kind} switcher. Tried ${total} haspopup triggers: ${seen.join(' | ') || '(none)'}.\\n` +\n  64 |             `Look at the most recent trace.zip for this test in the dashboard / Actions.`,\n  65 |     )"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25418950130/TC-057___Verify_Organiza-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25418950130/TC-057___Verify_Organiza-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25418950130/TC-057___Verify_Organiza-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25418950130/TC-057___Verify_Organiza-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-058 — Verify \"All Org",
+      "title": "TC-058 — Verify \"All Organizations\" navigates to /organizations",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 3284,
+      "retries": 1,
+      "error": {
+        "message": "Error: Could not open the organization switcher. Tried 0 haspopup triggers: (none).\nLook at the most recent trace.zip for this test in the dashboard / Actions.",
+        "snippet": "  60 |     }\n  61 |\n> 62 |     throw new Error(\n     |           ^\n  63 |         `Could not open the ${kind} switcher. Tried ${total} haspopup triggers: ${seen.join(' | ') || '(none)'}.\\n` +\n  64 |             `Look at the most recent trace.zip for this test in the dashboard / Actions.`,\n  65 |     )"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25418950130/TC-058___Verify__All_Org-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25418950130/TC-058___Verify__All_Org-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25418950130/TC-058___Verify__All_Org-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25418950130/TC-058___Verify__All_Org-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-059 — Verify \"All Pro",
+      "title": "TC-059 — Verify \"All Projects\" + \"New project\" navigation from project dropdown",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 3114,
+      "retries": 1,
+      "error": {
+        "message": "Error: Could not open the project switcher. Tried 0 haspopup triggers: (none).\nLook at the most recent trace.zip for this test in the dashboard / Actions.",
+        "snippet": "  60 |     }\n  61 |\n> 62 |     throw new Error(\n     |           ^\n  63 |         `Could not open the ${kind} switcher. Tried ${total} haspopup triggers: ${seen.join(' | ') || '(none)'}.\\n` +\n  64 |             `Look at the most recent trace.zip for this test in the dashboard / Actions.`,\n  65 |     )"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25418950130/TC-059___Verify__All_Pro-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25418950130/TC-059___Verify__All_Pro-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25418950130/TC-059___Verify__All_Pro-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25418950130/TC-059___Verify__All_Pro-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-060 — Verify Project ",
+      "title": "TC-060 — Verify Project switch dropdown lists projects",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 3195,
+      "retries": 1,
+      "error": {
+        "message": "Error: Could not open the project switcher. Tried 0 haspopup triggers: (none).\nLook at the most recent trace.zip for this test in the dashboard / Actions.",
+        "snippet": "  60 |     }\n  61 |\n> 62 |     throw new Error(\n     |           ^\n  63 |         `Could not open the ${kind} switcher. Tried ${total} haspopup triggers: ${seen.join(' | ') || '(none)'}.\\n` +\n  64 |             `Look at the most recent trace.zip for this test in the dashboard / Actions.`,\n  65 |     )"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25418950130/TC-060___Verify_Project_-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25418950130/TC-060___Verify_Project_-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25418950130/TC-060___Verify_Project_-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25418950130/TC-060___Verify_Project_-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-061 — Verify Project ",
+      "title": "TC-061 — Verify Project search inside dropdown",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 3062,
+      "retries": 1,
+      "error": {
+        "message": "Error: Could not open the project switcher. Tried 0 haspopup triggers: (none).\nLook at the most recent trace.zip for this test in the dashboard / Actions.",
+        "snippet": "  60 |     }\n  61 |\n> 62 |     throw new Error(\n     |           ^\n  63 |         `Could not open the ${kind} switcher. Tried ${total} haspopup triggers: ${seen.join(' | ') || '(none)'}.\\n` +\n  64 |             `Look at the most recent trace.zip for this test in the dashboard / Actions.`,\n  65 |     )"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25418950130/TC-061___Verify_Project_-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25418950130/TC-061___Verify_Project_-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25418950130/TC-061___Verify_Project_-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25418950130/TC-061___Verify_Project_-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-062 — Verify Project ",
+      "title": "TC-062 — Verify Project search inside dropdown (clear restores list)",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 2550,
+      "retries": 1,
+      "error": {
+        "message": "Error: Could not open the project switcher. Tried 0 haspopup triggers: (none).\nLook at the most recent trace.zip for this test in the dashboard / Actions.",
+        "snippet": "  60 |     }\n  61 |\n> 62 |     throw new Error(\n     |           ^\n  63 |         `Could not open the ${kind} switcher. Tried ${total} haspopup triggers: ${seen.join(' | ') || '(none)'}.\\n` +\n  64 |             `Look at the most recent trace.zip for this test in the dashboard / Actions.`,\n  65 |     )"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25418950130/TC-062___Verify_Project_-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25418950130/TC-062___Verify_Project_-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25418950130/TC-062___Verify_Project_-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25418950130/TC-062___Verify_Project_-3-trace.zip"
+        }
+      ]
+    }
+  ]
+}
