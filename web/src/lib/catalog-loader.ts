@@ -82,13 +82,19 @@ function parseCatalog(raw: PwListOutput): Catalog {
 
         for (const spec of suite.specs ?? []) {
             const specFile = spec.file ?? file ?? ''
+            // Filter out infrastructure tests — auth.setup.ts and friends are
+            // part of the setup project, not a user-facing suite. They
+            // shouldn't show up on the Suites page, in the Trigger dropdown,
+            // or in the env-status grid.
+            if (/\.setup\.[tj]sx?$/.test(specFile)) continue
+
+            const projects = (spec.tests ?? []).map(t => t.projectName ?? '').filter(Boolean)
+            // Also skip if every project for this spec is `setup`.
+            if (projects.length > 0 && projects.every(p => p === 'setup')) continue
+
             const idMatch = spec.title.match(TC_ID_RE)
             const id = idMatch?.[1] ?? spec.title.slice(0, 24)
-            // `category` = closest describe in ancestry. The very top of ancestry
-            // is the file or the project; we only treat entries that look like
-            // describe blocks (no slash, no .spec.).
             const category = pickCategory(ancestry)
-            const projects = (spec.tests ?? []).map(t => t.projectName ?? '').filter(Boolean)
             const dedupe = `${specFile}|${id}|${projects.join(',')}`
             if (seen.has(dedupe)) continue
             seen.add(dedupe)

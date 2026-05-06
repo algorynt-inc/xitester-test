@@ -32,7 +32,24 @@ export async function loadIndex(signal?: AbortSignal): Promise<IndexFile> {
 }
 
 export async function loadRun(runId: string, signal?: AbortSignal): Promise<ResultRun> {
-    return fetchJson<ResultRun>(`runs/${runId}.json`, signal)
+    const raw = await fetchJson<ResultRun>(`runs/${runId}.json`, signal)
+    // Hide infrastructure tests (auth.setup) from the dashboard. The reporter
+    // still records them in the JSON for traceability — we just don't show
+    // them. Stats are recomputed so the dashboard counts only user-facing
+    // tests, not the setup task.
+    const tests = raw.tests.filter(t => {
+        if (t.project === 'setup') return false
+        if (/\.setup\.[tj]sx?$/.test(t.file)) return false
+        return true
+    })
+    const stats = {
+        total: tests.length,
+        passed: tests.filter(t => t.status === 'passed').length,
+        failed: tests.filter(t => t.status === 'failed' || t.status === 'timedOut').length,
+        skipped: tests.filter(t => t.status === 'skipped').length,
+        flaky: tests.filter(t => t.retries > 0 && t.status === 'passed').length,
+    }
+    return { ...raw, tests, stats }
 }
 
 export function filterRuns(
