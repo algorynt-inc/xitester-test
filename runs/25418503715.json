@@ -1,0 +1,90 @@
+{
+  "runId": "25418503715",
+  "actionsRunId": "25418503715",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25418503715",
+  "commit": "f39d52969d7a9d611c820210bf203a79cd33c7b6",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "theme",
+  "startedAt": "2026-05-06T05:40:19.628Z",
+  "finishedAt": "2026-05-06T05:40:39.663Z",
+  "durationMs": 20035,
+  "stats": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 4201,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25418503715/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25418503715/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-042 — Verify theme sw",
+      "title": "TC-042 — Verify theme switch from light to dark",
+      "file": "playwright/tests/theme.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 7301,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25418503715/TC-042___Verify_theme_sw-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25418503715/TC-042___Verify_theme_sw-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-043 — Verify theme sw",
+      "title": "TC-043 — Verify theme switch from dark to light",
+      "file": "playwright/tests/theme.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6523,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25418503715/TC-043___Verify_theme_sw-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25418503715/TC-043___Verify_theme_sw-1-trace.zip"
+        }
+      ]
+    }
+  ]
+}
