@@ -1,76 +1,78 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Locator, type Page } from '@playwright/test'
 import { ENV } from '../env'
 
 test.use({ storageState: '.auth/user.json' })
 
 const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD secret bundle.`
 
-type SwitcherKind = 'organization' | 'project'
-
 /**
- * Open one of the topbar switcher dropdowns by iterating every visible
- * haspopup-style trigger on the page, clicking each, and checking
- * whether the resulting popup contains the expected search input.
+ * Locator notes — verified against the actual SUT DOM.
+ * --------------------------------------------------------------------
+ * OrgBreadcrumb (TopBar.tsx ~line 184) and ProjectSwitcher
+ * (ProjectSwitcher.tsx ~line 60) both render their dropdown as:
  *
- * - Doesn't scope to <header>: in this SUT the switchers live inside a
- *   wider banner/topbar that may not be a literal <header>.
- * - Loosened placeholder match: case-insensitive substring on
- *   "organization" / "project" so wording differences ("Find a
- *   project") don't break it.
- * - Diagnostics: when no trigger matches, the thrown error includes
- *   a list of every haspopup button text found, so failure is debuggable
- *   from the trace.
+ *   <button>{Org|Project name}</button>           ← navigate-only label
+ *   <DropdownMenuTrigger asChild>
+ *     <button> <ChevronsUpDown /> </button>       ← THIS is the trigger
+ *   </DropdownMenuTrigger>
+ *
+ * Both triggers are tiny icon-only buttons whose only child is a
+ * Lucide `ChevronsUpDown` SVG (rendered with class
+ * `lucide-chevrons-up-down`).
+ *
+ * Org breadcrumb is the FIRST chevron in the topbar. Project switcher
+ * is the SECOND, but is only mounted on project-scoped pages
+ * (/dashboard, /api-tester, etc.). On org-level pages
+ * (/organizations, /org/projects, /org/team) ProjectSwitcher is
+ * intentionally omitted.
+ *
+ * Inside each popup, list items are plain <button> elements (NOT
+ * role="menuitem"), so we scope to the popup container and select
+ * by button text.
  */
-async function openSwitcher(page: Page, kind: SwitcherKind): Promise<void> {
-    const triggers = page
-        .locator('button[aria-haspopup="menu"]:visible, button[aria-haspopup="true"]:visible')
-    const total = await triggers.count()
 
-    const placeholderRegex = kind === 'organization' ? /organization/i : /project/i
-    const seen: string[] = []
+const TOPBAR_CHEVRON = 'button:has(svg.lucide-chevrons-up-down):visible'
 
-    for (let i = 0; i < total; i++) {
-        const trigger = triggers.nth(i)
-        const label = (await trigger.textContent().catch(() => '')) || '(no text)'
-        seen.push(`#${i}: "${label.trim().slice(0, 40)}"`)
-
-        try {
-            await trigger.click()
-        } catch {
-            continue
-        }
-        // Radix renders the dropdown content asynchronously; give it a beat.
-        await page.waitForTimeout(250)
-
-        const search = page
-            .locator('input:visible')
-            .filter({ has: page.locator('xpath=self::input') })
-            .filter({ hasText: '' }) // any input
-        // Match by placeholder containing the kind keyword.
-        const match = page
-            .locator(`input[placeholder*="${kind}" i]:visible`)
-            .first()
-        if (await match.isVisible({ timeout: 1_500 }).catch(() => false)) {
-            void search // keep typed
-            return
-        }
-        // Close so the next iteration's click reaches a fresh trigger.
-        await page.keyboard.press('Escape')
-        await page.waitForTimeout(150)
-    }
-
-    throw new Error(
-        `Could not open the ${kind} switcher. Tried ${total} haspopup triggers: ${seen.join(' | ') || '(none)'}.\n` +
-            `Look at the most recent trace.zip for this test in the dashboard / Actions.`,
-    )
+async function waitForTopbar(page: Page): Promise<void> {
+    await page.locator('header').waitFor({ state: 'visible', timeout: 10_000 })
+    // Memoised TopBar can briefly mount without children. Wait for at least
+    // one chevron trigger before iterating.
+    await page.locator(TOPBAR_CHEVRON).first().waitFor({ state: 'visible', timeout: 8_000 })
 }
 
 async function openOrgSwitcher(page: Page): Promise<void> {
-    return openSwitcher(page, 'organization')
+    await waitForTopbar(page)
+    await page.locator(TOPBAR_CHEVRON).first().click()
+    await page
+        .locator('input[placeholder="Find organization..."]')
+        .waitFor({ state: 'visible', timeout: 6_000 })
 }
 
 async function openProjectSwitcher(page: Page): Promise<void> {
-    return openSwitcher(page, 'project')
+    await waitForTopbar(page)
+    const triggers = page.locator(TOPBAR_CHEVRON)
+    const count = await triggers.count()
+    if (count < 2) {
+        throw new Error(
+            `Project switcher chevron not visible. Found ${count} chevron trigger(s) in the topbar. ` +
+                'The page must be a project-scoped route (e.g. /dashboard). On org-level pages ' +
+                '(/organizations, /org/projects, /org/team) ProjectSwitcher is intentionally omitted.',
+        )
+    }
+    await triggers.last().click()
+    await page
+        .locator('input[placeholder="Find project..."]')
+        .waitFor({ state: 'visible', timeout: 6_000 })
+}
+
+/** Open dropdown popup. Walk up from the visible "Find …" input to the
+ *  Radix popover content root, so list-item assertions are scoped to
+ *  the popup and don't accidentally match buttons in the underlying page.
+ */
+function popupContent(page: Page): Locator {
+    return page
+        .locator('input[placeholder^="Find"]')
+        .locator('xpath=ancestor::div[contains(@class, "p-0")][1]')
 }
 
 // ============================================================
@@ -80,45 +82,45 @@ async function openProjectSwitcher(page: Page): Promise<void> {
 test('TC-056 — Verify Organization Switch dropdown shows orgs', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
     await page.goto('/dashboard')
-    await page.waitForLoadState('domcontentloaded')
 
     await openOrgSwitcher(page)
-    // The popup should contain the search input plus at least one org row.
-    await expect(page.locator('input[placeholder="Find organization..."]')).toBeVisible({
+    const popup = popupContent(page)
+
+    await expect(popup.locator('input[placeholder="Find organization..."]')).toBeVisible({
         timeout: 5_000,
     })
-    // At least one org item should be listed (excluding the search input + footer).
-    const items = page.locator('[role="menuitem"]:visible')
-    expect(await items.count()).toBeGreaterThan(0)
+    const items = popup.locator('button').filter({ hasNotText: /^All Organizations$/ })
+    expect(await items.count(), 'at least one org row should be listed').toBeGreaterThan(0)
 })
 
 test('TC-057 — Verify Organization search inside dropdown', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
     await page.goto('/dashboard')
-    await page.waitForLoadState('domcontentloaded')
 
     await openOrgSwitcher(page)
-    const search = page.locator('input[placeholder="Find organization..."]')
+    const popup = popupContent(page)
+    const search = popup.locator('input[placeholder="Find organization..."]')
     await expect(search).toBeVisible({ timeout: 5_000 })
 
-    // Type a partial name that should match the seeded "XiTester" org.
     await search.fill('XiTester')
     await expect(
-        page.getByRole('menuitem', { name: /XiTester/i }).first(),
+        popup.locator('button', { hasText: /XiTester/i }).first(),
+        '"XiTester" should remain visible when filtering by "XiTester"',
     ).toBeVisible({ timeout: 4_000 })
 
-    // Filter to nonsense → no items.
     await search.fill(`xt-nomatch-${Date.now()}`)
-    await expect(page.getByRole('menuitem')).toHaveCount(0, { timeout: 4_000 })
+    // The SUT shows "No organizations found" for an empty filter (TopBar.tsx ~line 215).
+    await expect(popup.getByText(/no organizations found/i)).toBeVisible({ timeout: 4_000 })
 })
 
 test('TC-058 — Verify "All Organizations" navigates to /organizations', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
     await page.goto('/dashboard')
-    await page.waitForLoadState('domcontentloaded')
 
     await openOrgSwitcher(page)
-    await page.getByRole('menuitem', { name: /All Organizations/i }).click()
+    const popup = popupContent(page)
+    await popup.locator('button', { hasText: /^All Organizations$/ }).click()
+
     await page.waitForURL(/\/organizations\b/, { timeout: 8_000 })
     expect(page.url()).toMatch(/\/organizations\b/)
 })
@@ -130,20 +132,19 @@ test('TC-058 — Verify "All Organizations" navigates to /organizations', async 
 test('TC-059 — Verify "All Projects" + "New project" navigation from project dropdown', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
     await page.goto('/dashboard')
-    await page.waitForLoadState('domcontentloaded')
 
-    // "All Projects" → /org/projects.
+    // "All Projects" → /org/projects
     await openProjectSwitcher(page)
-    await page.getByRole('menuitem', { name: /All Projects/i }).click()
+    let popup = popupContent(page)
+    await popup.locator('button', { hasText: /^All Projects$/ }).click()
     await page.waitForURL(/\/org\/projects\b/, { timeout: 8_000 })
     expect(page.url()).toMatch(/\/org\/projects\b/)
 
-    // Navigate back to dashboard, then "New project" → /org/projects (same
-    // page, but with create-modal context). The SUT routes both to the same
-    // page; the assertion is just that the URL still matches /org/projects.
+    // "New project" → /org/projects (the SUT opens its create dialog from there)
     await page.goto('/dashboard')
     await openProjectSwitcher(page)
-    await page.getByRole('menuitem', { name: /New project/i }).click()
+    popup = popupContent(page)
+    await popup.locator('button', { hasText: /^New project$/ }).click()
     await page.waitForURL(/\/org\/projects\b/, { timeout: 8_000 })
     expect(page.url()).toMatch(/\/org\/projects\b/)
 })
@@ -151,67 +152,65 @@ test('TC-059 — Verify "All Projects" + "New project" navigation from project d
 test('TC-060 — Verify Project switch dropdown lists projects', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
     await page.goto('/dashboard')
-    await page.waitForLoadState('domcontentloaded')
 
     await openProjectSwitcher(page)
-    await expect(page.locator('input[placeholder="Find project..."]')).toBeVisible({
+    const popup = popupContent(page)
+
+    await expect(popup.locator('input[placeholder="Find project..."]')).toBeVisible({
         timeout: 5_000,
     })
-
-    const items = page.locator('[role="menuitem"]:visible').filter({
-        hasNotText: /(All Projects|New project)/i,
-    })
-    expect(await items.count()).toBeGreaterThan(0)
+    const items = popup
+        .locator('button')
+        .filter({ hasNotText: /^(All Projects|New project)$/ })
+    expect(await items.count(), 'at least one project row should be listed').toBeGreaterThan(0)
 })
 
 test('TC-061 — Verify Project search inside dropdown', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
     await page.goto('/dashboard')
-    await page.waitForLoadState('domcontentloaded')
 
     await openProjectSwitcher(page)
-    const search = page.locator('input[placeholder="Find project..."]')
+    const popup = popupContent(page)
+    const search = popup.locator('input[placeholder="Find project..."]')
     await expect(search).toBeVisible({ timeout: 5_000 })
 
     await search.fill('Default')
     await expect(
-        page.getByRole('menuitem', { name: /Default Project/i }).first(),
+        popup.locator('button', { hasText: /Default Project/i }).first(),
     ).toBeVisible({ timeout: 4_000 })
 
     await search.fill(`xt-nomatch-${Date.now()}`)
-    await expect(
-        page.locator('[role="menuitem"]:visible').filter({
-            hasNotText: /(All Projects|New project)/i,
-        }),
-    ).toHaveCount(0, { timeout: 4_000 })
+    const items = popup
+        .locator('button')
+        .filter({ hasNotText: /^(All Projects|New project)$/ })
+    await expect(items).toHaveCount(0, { timeout: 4_000 })
 })
 
 test('TC-062 — Verify Project search inside dropdown (clear restores list)', async ({ page }) => {
-    // Per the source data this row is identical to TC-061. Re-asserting from
-    // a different angle — search → clear → all results return — so we get
-    // distinct coverage rather than a literal duplicate.
+    // Per source data this row is identical to TC-061. Re-asserts from a
+    // different angle — search → clear → all rows return.
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
     await page.goto('/dashboard')
-    await page.waitForLoadState('domcontentloaded')
 
     await openProjectSwitcher(page)
-    const search = page.locator('input[placeholder="Find project..."]')
+    const popup = popupContent(page)
+    const search = popup.locator('input[placeholder="Find project..."]')
     await expect(search).toBeVisible({ timeout: 5_000 })
 
-    const items = page.locator('[role="menuitem"]:visible').filter({
-        hasNotText: /(All Projects|New project)/i,
-    })
+    const items = popup
+        .locator('button')
+        .filter({ hasNotText: /^(All Projects|New project)$/ })
     const initialCount = await items.count()
     expect(initialCount).toBeGreaterThan(0)
 
     await search.fill('Default')
     await expect(
-        page.getByRole('menuitem', { name: /Default Project/i }).first(),
+        popup.locator('button', { hasText: /Default Project/i }).first(),
     ).toBeVisible({ timeout: 4_000 })
 
     await search.fill('')
-    await expect(items.first()).toBeVisible({ timeout: 4_000 })
-    expect(await items.count(), 'clearing search should restore the full list').toBeGreaterThanOrEqual(
-        initialCount,
-    )
+    expect(
+        await items.count(),
+        'clearing the search should restore the full list',
+    ).toBeGreaterThanOrEqual(initialCount)
 })
