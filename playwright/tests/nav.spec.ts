@@ -40,12 +40,27 @@ async function waitForTopbar(page: Page): Promise<void> {
     await page.locator(TOPBAR_CHEVRON).first().waitFor({ state: 'visible', timeout: 8_000 })
 }
 
+/** Wait for the open Radix popup to finish loading its list (spinner gone). */
+async function waitForPopupReady(page: Page): Promise<void> {
+    const popup = popupContent(page)
+    await popup.waitFor({ state: 'visible', timeout: 6_000 })
+
+    // Org / project lists are fetched async; the SUT shows a Loader2 spinner
+    // (svg.lucide-loader-2) inside the popup while loading. Wait for it to
+    // disappear before downstream assertions count buttons.
+    const loader = popup.locator('svg.lucide-loader-2')
+    if (await loader.first().isVisible({ timeout: 250 }).catch(() => false)) {
+        await loader.first().waitFor({ state: 'hidden', timeout: 8_000 }).catch(() => undefined)
+    }
+}
+
 async function openOrgSwitcher(page: Page): Promise<void> {
     await waitForTopbar(page)
     await page.locator(TOPBAR_CHEVRON).first().click()
     await page
         .locator('input[placeholder="Find organization..."]')
         .waitFor({ state: 'visible', timeout: 6_000 })
+    await waitForPopupReady(page)
 }
 
 async function openProjectSwitcher(page: Page): Promise<void> {
@@ -63,16 +78,17 @@ async function openProjectSwitcher(page: Page): Promise<void> {
     await page
         .locator('input[placeholder="Find project..."]')
         .waitFor({ state: 'visible', timeout: 6_000 })
+    await waitForPopupReady(page)
 }
 
-/** Open dropdown popup. Walk up from the visible "Find …" input to the
- *  Radix popover content root, so list-item assertions are scoped to
- *  the popup and don't accidentally match buttons in the underlying page.
+/**
+ * Locate the open Radix DropdownMenu content root. Radix renders it as
+ * a portal'd `<div role="menu" data-state="open">…</div>`, which is the
+ * stable handle for everything inside the popup (search input, list,
+ * footer items). Avoids brittle xpath ancestor-class lookups.
  */
 function popupContent(page: Page): Locator {
-    return page
-        .locator('input[placeholder^="Find"]')
-        .locator('xpath=ancestor::div[contains(@class, "p-0")][1]')
+    return page.locator('[role="menu"][data-state="open"]:visible').first()
 }
 
 // ============================================================
@@ -89,8 +105,17 @@ test('TC-056 — Verify Organization Switch dropdown shows orgs', async ({ page 
     await expect(popup.locator('input[placeholder="Find organization..."]')).toBeVisible({
         timeout: 5_000,
     })
+
+    // The org list loads async, and Radix may still be settling layout
+    // even after waitForPopupReady. Use poll-style assertion so the test
+    // waits up to 8s for at least one org row to appear before failing.
     const items = popup.locator('button').filter({ hasNotText: /^All Organizations$/ })
-    expect(await items.count(), 'at least one org row should be listed').toBeGreaterThan(0)
+    await expect
+        .poll(() => items.count(), {
+            message: 'at least one org row should be listed in the popup',
+            timeout: 8_000,
+        })
+        .toBeGreaterThan(0)
 })
 
 test('TC-057 — Verify Organization search inside dropdown', async ({ page }) => {
@@ -159,10 +184,16 @@ test('TC-060 — Verify Project switch dropdown lists projects', async ({ page }
     await expect(popup.locator('input[placeholder="Find project..."]')).toBeVisible({
         timeout: 5_000,
     })
+
     const items = popup
         .locator('button')
         .filter({ hasNotText: /^(All Projects|New project)$/ })
-    expect(await items.count(), 'at least one project row should be listed').toBeGreaterThan(0)
+    await expect
+        .poll(() => items.count(), {
+            message: 'at least one project row should be listed in the popup',
+            timeout: 8_000,
+        })
+        .toBeGreaterThan(0)
 })
 
 test('TC-061 — Verify Project search inside dropdown', async ({ page }) => {
