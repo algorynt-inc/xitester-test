@@ -1,0 +1,67 @@
+{
+  "runId": "25428277833",
+  "actionsRunId": "25428277833",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25428277833",
+  "commit": "7067ab5f7965d74f74136c83d81461d53a8929c7",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "nav",
+  "startedAt": "2026-05-06T09:51:49.322Z",
+  "finishedAt": "2026-05-06T09:52:01.188Z",
+  "durationMs": 11866,
+  "stats": {
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 4363,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25428277833/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25428277833/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-056 — Verify Organiza",
+      "title": "TC-056 — Verify Organization Switch dropdown shows orgs",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5568,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25428277833/TC-056___Verify_Organiza-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25428277833/TC-056___Verify_Organiza-1-trace.zip"
+        }
+      ]
+    }
+  ]
+}
