@@ -1,0 +1,67 @@
+{
+  "runId": "25489162402",
+  "actionsRunId": "25489162402",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25489162402",
+  "commit": "7f201a36ca71a5c64750ecb88fba34707011f815",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "projects",
+  "startedAt": "2026-05-07T10:02:33.144Z",
+  "finishedAt": "2026-05-07T10:02:44.440Z",
+  "durationMs": 11296,
+  "stats": {
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 4126,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25489162402/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25489162402/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PR-003",
+      "title": "TC-PR-003 — Open Default Project and land on the dashboard",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5449,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25489162402/TC-PR-003-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25489162402/TC-PR-003-1-trace.zip"
+        }
+      ]
+    }
+  ]
+}
