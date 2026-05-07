@@ -1,0 +1,80 @@
+{
+  "runId": "25508528092",
+  "actionsRunId": "25508528092",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25508528092",
+  "commit": "7f201a36ca71a5c64750ecb88fba34707011f815",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "profile",
+  "startedAt": "2026-05-07T16:27:40.163Z",
+  "finishedAt": "2026-05-07T16:27:59.795Z",
+  "durationMs": 19632,
+  "stats": {
+    "total": 2,
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 4071,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25508528092/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25508528092/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-007",
+      "title": "TC-PF-007 — Wrong current password is rejected",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 6485,
+      "retries": 1,
+      "error": {
+        "message": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByText(/(current password.*incorrect|invalid current|wrong.*password)/i).first().or(locator('[data-sonner-toaster]').getByText(/(current password|incorrect|invalid|failed to update)/i).first())\nExpected: visible\nError: strict mode violation: getByText(/(current password.*incorrect|invalid current|wrong.*password)/i).first().or(locator('[data-sonner-toaster]').getByText(/(current password|incorrect|invalid|failed to update)/i).first()) resolved to 2 elements:\n    1) <div class=\"\" data-title=\"\">Incorrect current password</div> aka getByLabel('Notifications alt+T').getByText('Incorrect current password')\n    2) <div>…</div> aka getByText('Current passwordIncorrect')\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 8000ms\n  - waiting for getByText(/(current password.*incorrect|invalid current|wrong.*password)/i).first().or(locator('[data-sonner-toaster]').getByText(/(current password|incorrect|invalid|failed to update)/i).first())\n",
+        "snippet": "  243 |         /(current password|incorrect|invalid|failed to update)/i,\n  244 |     ).first()\n> 245 |     await expect(fieldErr.or(toast)).toBeVisible({ timeout: 8_000 })\n      |                                      ^\n  246 | })\n  247 |\n  248 | test('TC-PF-008 — Mismatched new + confirm disables Save', async ({ page }) => {"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25508528092/TC-PF-007-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25508528092/TC-PF-007-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25508528092/TC-PF-007-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25508528092/TC-PF-007-3-trace.zip"
+        }
+      ]
+    }
+  ]
+}
