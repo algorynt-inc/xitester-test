@@ -9,7 +9,9 @@ export default function EnvSelector() {
     return (
         <div className="inline-flex rounded-tremor-full border border-tremor-border dark:border-dark-tremor-border bg-tremor-background-muted dark:bg-dark-tremor-background-muted p-0.5">
             {ENVS.map(e => {
-                const isProd = e === 'prod'
+                // Treat any non-disabled production-like env as the destructive accent.
+                // Currently no env triggers this — keep the styling slot for when prod returns.
+                const isProd = false
                 const active = env === e
                 return (
                     <button

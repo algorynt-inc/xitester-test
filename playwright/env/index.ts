@@ -5,10 +5,12 @@ import { config as loadEnv } from 'dotenv'
 loadEnv({ path: '.env.local', override: false })
 
 import local from './local'
+import preDev from './pre-dev'
 import dev from './dev'
 import stage from './stage'
 import qa from './qa'
-import prod from './prod'
+// Production temporarily disabled — see env/prod.ts for restore steps.
+// import prod from './prod'
 
 export interface EnvUser {
     email: string
@@ -16,7 +18,7 @@ export interface EnvUser {
 }
 
 export interface EnvConfig {
-    name: 'local' | 'dev' | 'stage' | 'qa' | 'prod'
+    name: 'local' | 'pre-dev' | 'dev' | 'stage' | 'qa' /* | 'prod' */
     baseURL: string
     apiBase: string
     user: EnvUser
@@ -28,7 +30,14 @@ export interface EnvConfig {
     allowedRedirectUrl: string | null
 }
 
-const ENVS: Record<string, EnvConfig> = { local, dev, stage, qa, prod }
+const ENVS: Record<string, EnvConfig> = {
+    local,
+    'pre-dev': preDev,
+    dev,
+    stage,
+    qa,
+    // prod, // disabled — restore by uncommenting the import above and this entry
+}
 
 const requested = (process.env.XT_ENV ?? 'local').toLowerCase()
 const config = ENVS[requested]

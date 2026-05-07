@@ -22,7 +22,9 @@ export default function Trigger() {
     const [availableSuites, setAvailableSuites] = useState<SuiteName[]>(['all'])
 
     const parentRunId = params.get('parent') ?? ''
-    const isProd = env === 'prod'
+    // `prod` is currently disabled; placeholder kept so the destructive-confirm
+    // gate slots back in trivially when prod is restored.
+    const isProd = false as boolean
 
     // Derive the Suite dropdown from the static test catalog produced by
     // `playwright test --list`. Any new spec file appears here automatically

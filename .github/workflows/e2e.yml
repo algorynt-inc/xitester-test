@@ -7,7 +7,9 @@ on:
         description: Target environment
         required: true
         type: choice
-        options: [dev, stage, qa, prod]
+        # `prod` temporarily disabled. Restore by uncommenting the entry below
+        # and the corresponding env file (env/prod.ts) + index.ts plumbing.
+        options: [pre-dev, dev, stage, qa] # , prod
         default: dev
       suite:
         description: 'Suite to run — "all" or any spec basename without .spec.ts (e.g. login, orgs). Dashboard sources values from test-catalog.json.'

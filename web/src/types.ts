@@ -1,5 +1,7 @@
-export type EnvName = 'dev' | 'stage' | 'qa' | 'prod'
-export const ENVS: EnvName[] = ['dev', 'stage', 'qa', 'prod']
+// `prod` temporarily disabled. Restore by adding 'prod' back to both EnvName
+// and ENVS, and re-enabling it in env files / workflow inputs / config.ts.
+export type EnvName = 'pre-dev' | 'dev' | 'stage' | 'qa' /* | 'prod' */
+export const ENVS: EnvName[] = ['pre-dev', 'dev', 'stage', 'qa']
 
 export type SuiteName = 'all' | 'login' | 'signup' | 'orgs'
 export const SUITES: SuiteName[] = ['all', 'login', 'signup', 'orgs']
