@@ -1,0 +1,242 @@
+{
+  "runId": "25509324712",
+  "actionsRunId": "25509324712",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25509324712",
+  "commit": "7f201a36ca71a5c64750ecb88fba34707011f815",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "profile",
+  "startedAt": "2026-05-07T16:42:38.015Z",
+  "finishedAt": "2026-05-07T16:44:08.606Z",
+  "durationMs": 90591,
+  "stats": {
+    "total": 10,
+    "passed": 6,
+    "failed": 1,
+    "skipped": 3,
+    "flaky": 5
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 4362,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25509324712/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25509324712/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-001",
+      "title": "TC-PF-001 — Upload a valid profile photo",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 7674,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25509324712/TC-PF-001-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25509324712/TC-PF-001-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-002",
+      "title": "TC-PF-002 — Reject non-image file on profile photo upload",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 4956,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25509324712/TC-PF-002-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25509324712/TC-PF-002-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-003",
+      "title": "TC-PF-003 — Reject profile photo larger than 5 MB",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5513,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25509324712/TC-PF-003-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25509324712/TC-PF-003-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-004",
+      "title": "TC-PF-004 — Remove profile photo",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 7746,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25509324712/TC-PF-004-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25509324712/TC-PF-004-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-005",
+      "title": "TC-PF-005 — Update display name and revert",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 7128,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25509324712/TC-PF-005-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25509324712/TC-PF-005-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-006",
+      "title": "TC-PF-006 — Update password and revert (destructive)",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 382,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25509324712/TC-PF-006-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25509324712/TC-PF-006-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-007",
+      "title": "TC-PF-007 — Wrong current password is rejected",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 6464,
+      "retries": 1,
+      "error": {
+        "message": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByText(/(current password.*incorrect|invalid current|wrong.*password)/i).first().or(locator('[data-sonner-toaster]').getByText(/(current password|incorrect|invalid|failed to update)/i).first())\nExpected: visible\nError: strict mode violation: getByText(/(current password.*incorrect|invalid current|wrong.*password)/i).first().or(locator('[data-sonner-toaster]').getByText(/(current password|incorrect|invalid|failed to update)/i).first()) resolved to 2 elements:\n    1) <div class=\"\" data-title=\"\">Incorrect current password</div> aka getByLabel('Notifications alt+T').getByText('Incorrect current password')\n    2) <div>…</div> aka getByText('Current passwordIncorrect')\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 8000ms\n  - waiting for getByText(/(current password.*incorrect|invalid current|wrong.*password)/i).first().or(locator('[data-sonner-toaster]').getByText(/(current password|incorrect|invalid|failed to update)/i).first())\n",
+        "snippet": "  243 |         /(current password|incorrect|invalid|failed to update)/i,\n  244 |     ).first()\n> 245 |     await expect(fieldErr.or(toast)).toBeVisible({ timeout: 8_000 })\n      |                                      ^\n  246 | })\n  247 |\n  248 | test('TC-PF-008 — Mismatched new + confirm disables Save', async ({ page }) => {"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25509324712/TC-PF-007-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25509324712/TC-PF-007-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25509324712/TC-PF-007-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25509324712/TC-PF-007-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-008",
+      "title": "TC-PF-008 — Mismatched new + confirm disables Save",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-PF-009",
+      "title": "TC-PF-009 — Weak (short) password disables Save",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    }
+  ]
+}
