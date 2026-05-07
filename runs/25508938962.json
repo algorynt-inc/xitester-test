@@ -1,0 +1,270 @@
+{
+  "runId": "25508938962",
+  "actionsRunId": "25508938962",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25508938962",
+  "commit": "7f201a36ca71a5c64750ecb88fba34707011f815",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "orgs",
+  "startedAt": "2026-05-07T16:35:11.262Z",
+  "finishedAt": "2026-05-07T16:36:49.687Z",
+  "durationMs": 98425,
+  "stats": {
+    "total": 8,
+    "passed": 3,
+    "failed": 5,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 4265,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25508938962/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25508938962/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-001",
+      "title": "TC-ORG-001 — View organization list",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5711,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25508938962/TC-ORG-001-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25508938962/TC-ORG-001-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-002",
+      "title": "TC-ORG-002 — Search filters the org list",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 9826,
+      "retries": 1,
+      "error": {
+        "message": "Error: expect(locator).toHaveCount(expected) failed\n\nLocator:  locator('h1').filter({ hasText: 'Your Organizations' }).locator('xpath=ancestor::div[1]').locator('button').filter({ hasNotText: /^(New organization|Search|Active|Inactive|Name|Date created)$/i })\nExpected: 0\nReceived: 3\nTimeout:  4000ms\n\nCall log:\n  - Expect \"toHaveCount\" with timeout 4000ms\n  - waiting for locator('h1').filter({ hasText: 'Your Organizations' }).locator('xpath=ancestor::div[1]').locator('button').filter({ hasNotText: /^(New organization|Search|Active|Inactive|Name|Date created)$/i })\n    8 × locator resolved to 3 elements\n      - unexpected value \"3\"\n",
+        "snippet": "  151 |     // Negative: a string that matches no org hides every card.\n  152 |     await search.fill(`xt-nomatch-${ts()}`)\n> 153 |     await expect(orgButtons).toHaveCount(0, { timeout: 4_000 })\n      |                              ^\n  154 |\n  155 |     // Clearing restores the full list.\n  156 |     await search.fill('')"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25508938962/TC-ORG-002-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25508938962/TC-ORG-002-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25508938962/TC-ORG-002-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25508938962/TC-ORG-002-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-003",
+      "title": "TC-ORG-003 — View organization settings",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6637,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25508938962/TC-ORG-003-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25508938962/TC-ORG-003-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-004",
+      "title": "TC-ORG-004 — Create a new organization",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 18907,
+      "retries": 1,
+      "error": {
+        "message": "Error: expect(locator).toBeVisible() failed\n\nLocator: locator('div[role=\"dialog\"] input').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 5000ms\n  - waiting for locator('div[role=\"dialog\"] input').first()\n",
+        "snippet": "  94 |\n  95 |     const confirmInput = page.locator('div[role=\"dialog\"] input').first()\n> 96 |     await expect(confirmInput).toBeVisible({ timeout: 5_000 })\n     |                                ^\n  97 |     await confirmInput.fill(name)\n  98 |\n  99 |     await Promise.all(["
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25508938962/TC-ORG-004-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25508938962/TC-ORG-004-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25508938962/TC-ORG-004-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25508938962/TC-ORG-004-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-005",
+      "title": "TC-ORG-005 — Update organization name",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 20442,
+      "retries": 1,
+      "error": {
+        "message": "Error: expect(locator).toBeVisible() failed\n\nLocator: locator('div[role=\"dialog\"] input').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 5000ms\n  - waiting for locator('div[role=\"dialog\"] input').first()\n",
+        "snippet": "  94 |\n  95 |     const confirmInput = page.locator('div[role=\"dialog\"] input').first()\n> 96 |     await expect(confirmInput).toBeVisible({ timeout: 5_000 })\n     |                                ^\n  97 |     await confirmInput.fill(name)\n  98 |\n  99 |     await Promise.all(["
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25508938962/TC-ORG-005-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25508938962/TC-ORG-005-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25508938962/TC-ORG-005-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25508938962/TC-ORG-005-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-006",
+      "title": "TC-ORG-006 — Delete an organization via danger zone",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 16637,
+      "retries": 1,
+      "error": {
+        "message": "Error: expect(locator).toBeVisible() failed\n\nLocator: locator('div[role=\"dialog\"] input').first()\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 5000ms\n  - waiting for locator('div[role=\"dialog\"] input').first()\n",
+        "snippet": "  264 |\n  265 |     const confirmInput = page.locator('div[role=\"dialog\"] input').first()\n> 266 |     await expect(confirmInput).toBeVisible({ timeout: 5_000 })\n      |                                ^\n  267 |     await confirmInput.fill(tempName)\n  268 |\n  269 |     const [response] = await Promise.all(["
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25508938962/TC-ORG-006-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25508938962/TC-ORG-006-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25508938962/TC-ORG-006-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25508938962/TC-ORG-006-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-007",
+      "title": "TC-ORG-007 — Create rejects duplicate name",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 6051,
+      "retries": 1,
+      "error": {
+        "message": "Error: PLAN_BLOCKED:UI:409:{\"detail\":\"You can belong to at most 10 organizations.\"}",
+        "snippet": "  68 |     if (response.status() === 409 || response.status() === 402 || response.status() === 403) {\n  69 |         const body = await response.text().catch(() => '')\n> 70 |         throw new Error(`${PLAN_BLOCKED}:${response.status()}:${body.slice(0, 200)}`)\n     |               ^\n  71 |     }\n  72 |     if (!response.ok()) {\n  73 |         throw new Error(`uiCreateOrg ${response.status()}: ${await response.text().catch(() => '')}`)"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25508938962/TC-ORG-007-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25508938962/TC-ORG-007-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25508938962/TC-ORG-007-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25508938962/TC-ORG-007-3-trace.zip"
+        }
+      ]
+    }
+  ]
+}
