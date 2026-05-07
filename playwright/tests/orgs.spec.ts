@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Locator, type Page } from '@playwright/test'
 import { ENV } from '../env'
 
 // Every test in this file starts already authenticated, courtesy of the
@@ -22,6 +22,25 @@ const PLAN_BLOCKED = 'PLAN_BLOCKED:UI'
  * org becomes the user's current context (the SPA switches automatically
  * after a successful create).
  */
+/**
+ * Scope to the SelectOrganization page's content wrapper. The page has no
+ * <main> element; the heading "Your Organizations" + the search input live
+ * inside `<div class="mx-auto max-w-6xl p-8">`. Anchoring on the heading
+ * is the most stable handle.
+ */
+function orgListScope(page: Page): Locator {
+    return page.locator('h1', { hasText: 'Your Organizations' }).locator('xpath=ancestor::div[1]')
+}
+
+/** All org-card buttons on the org-picker page (excludes toolbar buttons). */
+function orgCards(page: Page): Locator {
+    return orgListScope(page)
+        .locator('button')
+        .filter({
+            hasNotText: /^(New organization|Search|Active|Inactive|Name|Date created)$/i,
+        })
+}
+
 async function uiCreateOrg(page: Page, name: string, description?: string): Promise<void> {
     await page.goto('/organizations')
     const newBtn = page.locator('button', { hasText: 'New organization' }).first()
@@ -38,10 +57,22 @@ async function uiCreateOrg(page: Page, name: string, description?: string): Prom
         await page.locator('#orgDesc').fill(description)
     }
 
-    await Promise.all([
+    const [response] = await Promise.all([
         page.waitForResponse(r => /\/api\/v1\/organizations\b/.test(r.url()) && r.request().method() === 'POST'),
         page.locator('button[type="submit"]', { hasText: /^Create/ }).first().click(),
     ])
+
+    // The SUT enforces an "at most 10 organizations" cap (HTTP 409). Surface
+    // that as PLAN_BLOCKED so calling tests skip cleanly with a clear hint
+    // about cleanup.
+    if (response.status() === 409 || response.status() === 402 || response.status() === 403) {
+        const body = await response.text().catch(() => '')
+        throw new Error(`${PLAN_BLOCKED}:${response.status()}:${body.slice(0, 200)}`)
+    }
+    if (!response.ok()) {
+        throw new Error(`uiCreateOrg ${response.status()}: ${await response.text().catch(() => '')}`)
+    }
+
     // Modal closes on success.
     await expect(nameInput).toBeHidden({ timeout: 5_000 })
 }
@@ -49,7 +80,10 @@ async function uiCreateOrg(page: Page, name: string, description?: string): Prom
 /** Click an org card on /organizations to switch context to it. */
 async function uiSwitchToOrg(page: Page, name: string): Promise<void> {
     await page.goto('/organizations')
-    await page.locator('main button', { hasText: name }).first().click()
+    await orgListScope(page)
+        .locator('button', { hasText: name })
+        .first()
+        .click()
     await page.waitForLoadState('domcontentloaded')
 }
 
@@ -81,9 +115,7 @@ test('TC-ORG-001 — View organization list', async ({ page }) => {
         page.locator('input[placeholder="Search for an organization"]'),
     ).toBeVisible({ timeout: 10_000 })
 
-    const orgButtons = page
-        .locator('main button')
-        .filter({ hasNotText: 'New organization' })
+    const orgButtons = orgCards(page)
     await expect(orgButtons.first()).toBeVisible({ timeout: 10_000 })
 })
 
@@ -94,20 +126,25 @@ test('TC-ORG-002 — Search filters the org list', async ({ page }) => {
     const search = page.locator('input[placeholder="Search for an organization"]')
     await expect(search).toBeVisible({ timeout: 10_000 })
 
-    const orgButtons = page.locator('main button').filter({ hasNotText: 'New organization' })
-    expect(await orgButtons.count()).toBeGreaterThan(0)
+    const orgButtons = orgCards(page)
+    await expect
+        .poll(() => orgButtons.count(), {
+            message: 'expected at least one org card on /organizations',
+            timeout: 8_000,
+        })
+        .toBeGreaterThan(0)
 
     // Positive: searching for "XiTester" keeps the XiTester card visible.
     await search.fill('XiTester')
     await expect(
-        page.locator('main button').filter({ hasText: /XiTester/i }).first(),
+        orgListScope(page).locator('button').filter({ hasText: /XiTester/i }).first(),
         '"XiTester" card should remain visible when filtering by "XiTester"',
     ).toBeVisible({ timeout: 4_000 })
 
     // Positive: searching for "API" keeps the API-Tester card visible.
     await search.fill('API')
     await expect(
-        page.locator('main button').filter({ hasText: /API-?Tester/i }).first(),
+        orgListScope(page).locator('button').filter({ hasText: /API-?Tester/i }).first(),
         '"API-Tester" card should remain visible when filtering by "API"',
     ).toBeVisible({ timeout: 4_000 })
 
@@ -124,7 +161,7 @@ test('TC-ORG-003 — View organization settings', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
 
     await page.goto('/organizations')
-    await page.locator('main button').filter({ hasNotText: 'New organization' }).first().click()
+    await orgCards(page).first().click()
 
     await page.goto('/org/settings/general')
 
@@ -148,8 +185,12 @@ test('TC-ORG-004 — Create a new organization', async ({ page }) => {
     try {
         await uiCreateOrg(page, tempName, 'Created by Playwright TC-ORG-004')
     } catch (err) {
-        if ((err as Error).message === PLAN_BLOCKED) {
-            test.skip(true, 'Create button is disabled — likely a plan-tier restriction.')
+        if ((err as Error).message.startsWith(PLAN_BLOCKED)) {
+            test.skip(
+                true,
+                `Org creation blocked (${(err as Error).message}). The dev env may have hit ` +
+                    'the 10-org cap — manually delete leftover qa-tmp-* / qa-del-* / qa-dup-* orgs in the SUT, then retry.',
+            )
             return
         }
         throw err
@@ -157,7 +198,9 @@ test('TC-ORG-004 — Create a new organization', async ({ page }) => {
 
     // The new org should be visible somewhere on the page (org list or top bar).
     await page.goto('/organizations')
-    await expect(page.locator('main button', { hasText: tempName }).first()).toBeVisible({ timeout: 8_000 })
+    await expect(
+        orgListScope(page).locator('button', { hasText: tempName }).first(),
+    ).toBeVisible({ timeout: 8_000 })
 
     // Cleanup via UI — switch to the org and delete it.
     await uiSwitchToOrg(page, tempName)
