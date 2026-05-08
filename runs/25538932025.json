@@ -1,0 +1,159 @@
+{
+  "runId": "25538932025",
+  "actionsRunId": "25538932025",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25538932025",
+  "commit": "d5f440abbe6c1fb9326d04145aa9acae5361fb99",
+  "branch": "main",
+  "environment": "qa",
+  "suite": "login",
+  "startedAt": "2026-05-08T05:37:49.661Z",
+  "finishedAt": "2026-05-08T05:38:07.882Z",
+  "durationMs": 18221,
+  "stats": {
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 4415,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25538932025/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25538932025/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-001",
+      "title": "TC-LI-001 — Successful login with valid credentials",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 4818,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25538932025/TC-LI-001-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25538932025/TC-LI-001-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-002",
+      "title": "TC-LI-002 — Wrong password shows error",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6074,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25538932025/TC-LI-002-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25538932025/TC-LI-002-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-003",
+      "title": "TC-LI-003 — Password visibility toggle",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 3343,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25538932025/TC-LI-003-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25538932025/TC-LI-003-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-004",
+      "title": "TC-LI-004 — Forgot password link navigates correctly",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 3210,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25538932025/TC-LI-004-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25538932025/TC-LI-004-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-005",
+      "title": "TC-LI-005 — Create account link navigates correctly",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 3021,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25538932025/TC-LI-005-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25538932025/TC-LI-005-1-trace.zip"
+        }
+      ]
+    }
+  ]
+}
