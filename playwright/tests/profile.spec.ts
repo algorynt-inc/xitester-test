@@ -236,13 +236,13 @@ test('TC-PF-007 — Wrong current password is rejected', async ({ page }) => {
         page.locator('button', { hasText: /^Update password$/ }).click(),
     ])
 
-    // The SUT maps wrong-current to a per-field error or a generic
-    // toast. Match either, including the SUT's known fallback strings.
-    const fieldErr = page.getByText(/(current password.*incorrect|invalid current|wrong.*password)/i).first()
-    const toast = page.locator('[data-sonner-toaster]').getByText(
-        /(current password|incorrect|invalid|failed to update)/i,
-    ).first()
-    await expect(fieldErr.or(toast)).toBeVisible({ timeout: 8_000 })
+    // SUT shows both an inline field error AND a toast for wrong-current.
+    // Asserting against `or()` of both fails strict-mode when both render,
+    // so just assert the toast — it's the user-visible feedback.
+    await expect(page.locator('[data-sonner-toaster]')).toContainText(
+        /(incorrect current password|wrong.*password|invalid current|failed to update)/i,
+        { timeout: 8_000 },
+    )
 })
 
 test('TC-PF-008 — Mismatched new + confirm disables Save', async ({ page }) => {
