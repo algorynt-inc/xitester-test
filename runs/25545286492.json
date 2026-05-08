@@ -1,0 +1,383 @@
+{
+  "runId": "25545286492",
+  "actionsRunId": "25545286492",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25545286492",
+  "commit": "2f05f9785aaa84799c378fa1a492bbe11904d1eb",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "test-analysis",
+  "startedAt": "2026-05-08T08:23:52.279Z",
+  "finishedAt": "2026-05-08T08:39:46.443Z",
+  "durationMs": 954164,
+  "stats": {
+    "total": 19,
+    "passed": 10,
+    "failed": 1,
+    "skipped": 8,
+    "flaky": 9
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 4424,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25545286492/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25545286492/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-077 — AI test case en",
+      "title": "TC-077 — AI test case end-to-end: create, plan, approve, execute",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 40686,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25545286492/TC-077___AI_test_case_en-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25545286492/TC-077___AI_test_case_en-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-078 — Status transiti",
+      "title": "TC-078 — Status transitions: idle → generating plan → completed",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 102269,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25545286492/TC-078___Status_transiti-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25545286492/TC-078___Status_transiti-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-079 — Plan mode promp",
+      "title": "TC-079 — Plan mode prompt generates a plan with steps",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 17882,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25545286492/TC-079___Plan_mode_promp-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25545286492/TC-079___Plan_mode_promp-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-080 — Edit Plan opens",
+      "title": "TC-080 — Edit Plan opens the plan editor",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 18847,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25545286492/TC-080___Edit_Plan_opens-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25545286492/TC-080___Edit_Plan_opens-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-081 — Update Plan rev",
+      "title": "TC-081 — Update Plan reveals a revise-prompt input",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 17549,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25545286492/TC-081___Update_Plan_rev-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25545286492/TC-081___Update_Plan_rev-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-082 — Reject plan dis",
+      "title": "TC-082 — Reject plan dismisses the plan card",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 18724,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25545286492/TC-082___Reject_plan_dis-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25545286492/TC-082___Reject_plan_dis-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-083 — Reset clears th",
+      "title": "TC-083 — Reset clears the session",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 18162,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25545286492/TC-083___Reset_clears_th-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25545286492/TC-083___Reset_clears_th-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-084 — Act mode kicks ",
+      "title": "TC-084 — Act mode kicks off execution immediately (no plan stage)",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 38617,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25545286492/TC-084___Act_mode_kicks_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25545286492/TC-084___Act_mode_kicks_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-085 — Manual Stop tra",
+      "title": "TC-085 — Manual Stop transitions execution out of running",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 14705,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25545286492/TC-085___Manual_Stop_tra-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25545286492/TC-085___Manual_Stop_tra-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-086 — Delete a single",
+      "title": "TC-086 — Delete a single action step from a completed run",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 58878,
+      "retries": 1,
+      "error": {
+        "message": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n  - waiting for locator('[data-action-id]').first().locator('button[aria-label=\"Delete step\"]').first()\n    - locator resolved to <button aria-label=\"Delete step\" class=\"p-1 hover:bg-red-500/10 hover:text-red-500 rounded transition-colors text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring\">…</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n      - waiting 100ms\n    19 × waiting for element to be visible, enabled and stable\n       - element is not visible\n     - retrying click action\n       - waiting 500ms\n",
+        "snippet": "  356 |         const deleteBtn = firstAction.locator('button[aria-label=\"Delete step\"]').first()\n  357 |         await expect(deleteBtn).toBeVisible({ timeout: 5_000 })\n> 358 |         await deleteBtn.click()\n      |                         ^\n  359 |         // DeleteStepDialog / DeleteActionDialog both use role=\"dialog\".\n  360 |         const dialog = page.locator('div[role=\"dialog\"]', { hasText: /Delete (Step|Action)/i })\n  361 |         await dialog.waitFor({ state: 'visible', timeout: 5_000 })"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25545286492/TC-086___Delete_a_single-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25545286492/TC-086___Delete_a_single-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25545286492/TC-086___Delete_a_single-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25545286492/TC-086___Delete_a_single-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-087 — Reorder steps a",
+      "title": "TC-087 — Reorder steps after a completed run",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-088 — Mark a step as ",
+      "title": "TC-088 — Mark a step as Skip (only available during paused-on-failure)",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-089 — Bulk select + d",
+      "title": "TC-089 — Bulk select + delete multiple actions",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-090 — Bulk select + d",
+      "title": "TC-090 — Bulk select + delete (alternate run)",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-091 — Browser profile",
+      "title": "TC-091 — Browser profile dropdown selects an active profile",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-092 — Press Enter sen",
+      "title": "TC-092 — Press Enter sends the prompt",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-093 — Clicking an act",
+      "title": "TC-093 — Clicking an action row selects it (visual ring + step focus)",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-094 — Test data linki",
+      "title": "TC-094 — Test data linking control surfaces after analysis",
+      "file": "playwright/tests/test-analysis.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    }
+  ]
+}
