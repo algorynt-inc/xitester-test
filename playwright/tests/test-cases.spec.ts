@@ -432,7 +432,7 @@ test('TC-074 — Add a tag to a test case', async ({ page }) => {
     // Click the tags cell to switch the row into edit mode. The cell's
     // button is the only `<button title="Click to edit tags">`.
     await row.locator('button[title="Click to edit tags"]').click()
-    const tagInput = row.locator('input[placeholder="Add tags…"]')
+    const tagInput = row.locator('input[role="combobox"]')
     await expect(tagInput).toBeVisible({ timeout: 5_000 })
 
     await tagInput.fill(tagName)
@@ -468,13 +468,36 @@ test('TC-075 — Removing a tag persists after page reload', async ({ page }) =>
 
     // Add a tag first.
     await row.locator('button[title="Click to edit tags"]').click()
-    const tagInput = row.locator('input[placeholder="Add tags…"]')
+    const tagInput = row.locator('input[role="combobox"]')
     await tagInput.fill(tagName)
-    await tagInput.press('Enter')
+    await Promise.all([
+        page.waitForResponse(
+            r => /\/api\/tags\/session\/[^/]+\b/.test(r.url()) && r.request().method() === 'POST',
+            { timeout: 15_000 },
+        ),
+        tagInput.press('Enter'),
+    ])
     await expect(row.getByText(tagName, { exact: true })).toBeVisible({ timeout: 5_000 })
 
-    // Now remove via the chip's × button (aria-label="Remove <name>").
-    // The detach endpoint is DELETE /api/tags/session/<sessionId>.
+    // After the add settles, the row drifts back to read-only TagList mode
+    // (the wrapper's onBlur handler runs after the async POST chain). Click
+    // the search input to force that blur, then wait for the read-only
+    // tags cell to become visible — that's the stable "we know which mode
+    // we're in" handle.
+    await page.locator('input[placeholder="Search test cases…"]').click()
+    const tagsCellBtn = row.locator('button[title="Click to edit tags"]')
+    await expect(tagsCellBtn).toBeVisible({ timeout: 5_000 })
+    await tagsCellBtn.click()
+
+    // Now in edit mode. Press Backspace on the empty input — TagInput
+    // (TagInput.tsx) handles Backspace + empty input by calling
+    // removeTag(lastTag), which keeps focus inside the input throughout
+    // (no blur race). Click the input first to ensure focus is there.
+    const editInput = row.locator('input[role="combobox"]')
+    await expect(editInput).toBeVisible({ timeout: 5_000 })
+    await editInput.click()
+    await editInput.fill('')
+
     await Promise.all([
         page.waitForResponse(
             r =>
@@ -482,7 +505,7 @@ test('TC-075 — Removing a tag persists after page reload', async ({ page }) =>
                 r.request().method() === 'DELETE',
             { timeout: 10_000 },
         ),
-        row.locator(`button[aria-label="Remove ${tagName}"]`).click(),
+        editInput.press('Backspace'),
     ])
     await expect(row.getByText(tagName, { exact: true })).toBeHidden({ timeout: 5_000 })
 
