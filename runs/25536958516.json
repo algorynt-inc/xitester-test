@@ -1,0 +1,212 @@
+{
+  "runId": "25536958516",
+  "actionsRunId": "25536958516",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/25536958516",
+  "commit": "d098d597b69eb5a39f5a4b80faa5e8023bfb5b91",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "test-cases",
+  "startedAt": "2026-05-08T04:35:42.201Z",
+  "finishedAt": "2026-05-08T04:36:11.572Z",
+  "durationMs": 29371,
+  "stats": {
+    "total": 13,
+    "passed": 1,
+    "failed": 1,
+    "skipped": 11,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 4455,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25536958516/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25536958516/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-065 — Create AI test ",
+      "title": "TC-065 — Create AI test case with name and description",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 10507,
+      "retries": 1,
+      "error": {
+        "message": "TimeoutError: locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n  - waiting for locator('div[role=\"dialog\"][data-tour=\"create-tc-modal\"]') to be visible\n",
+        "snippet": "  51 |\n  52 |     const dialog = page.locator('div[role=\"dialog\"][data-tour=\"create-tc-modal\"]')\n> 53 |     await dialog.waitFor({ state: 'visible', timeout: 5_000 })\n     |                  ^\n  54 |\n  55 |     await dialog.locator('#test-case-name').fill(name)\n  56 |     if (description) {"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "25536958516/TC-065___Create_AI_test_-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "25536958516/TC-065___Create_AI_test_-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "25536958516/TC-065___Create_AI_test_-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "25536958516/TC-065___Create_AI_test_-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-066 — Update existing",
+      "title": "TC-066 — Update existing AI test case name and description",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-067 — Delete AI test ",
+      "title": "TC-067 — Delete AI test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-068 — Clone AI test c",
+      "title": "TC-068 — Clone AI test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-069 — Recorded test c",
+      "title": "TC-069 — Recorded test case modal accepts name + URL and routes to recording flow",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-070 — Update an exist",
+      "title": "TC-070 — Update an existing recorded test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-071 — Delete a record",
+      "title": "TC-071 — Delete a recorded test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-072 — Clone a recorde",
+      "title": "TC-072 — Clone a recorded test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-073 — Search filters ",
+      "title": "TC-073 — Search filters the list to matching test cases",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-074 — Add a tag to a ",
+      "title": "TC-074 — Add a tag to a test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-075 — Removing a tag ",
+      "title": "TC-075 — Removing a tag persists after page reload",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    },
+    {
+      "id": "TC-076 — Bulk select and",
+      "title": "TC-076 — Bulk select and bulk delete test cases",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 0,
+      "retries": 1,
+      "error": null,
+      "attachments": []
+    }
+  ]
+}
