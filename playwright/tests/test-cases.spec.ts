@@ -49,7 +49,10 @@ async function uiCreateAITestCase(page: Page, name: string, description?: string
     await openNewTestCaseDropdown(page)
     await page.locator('button[data-tour="ai-test-create"]').click()
 
-    const dialog = page.locator('div[role="dialog"][data-tour="create-tc-modal"]')
+    // The modal renders <div role="dialog">…<div data-tour="create-tc-modal">…</div>…</div>
+    // — `data-tour` is on a CHILD, not on the role=dialog element. Match the
+    // outer dialog by visible heading instead.
+    const dialog = page.locator('div[role="dialog"]', { hasText: 'Create Test Case' })
     await dialog.waitFor({ state: 'visible', timeout: 5_000 })
 
     await dialog.locator('#test-case-name').fill(name)
