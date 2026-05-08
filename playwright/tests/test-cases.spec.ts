@@ -308,7 +308,7 @@ test('TC-069 — Recorded test case modal accepts name + URL and routes to recor
 
     await dialog.locator('#recordTestName').fill(name)
     await dialog.locator('#recordTestDescription').fill('Created by Playwright TC-069')
-    await dialog.locator('#startUrl').fill('https://example.com')
+    await dialog.locator('#startUrl').fill('https://xitester.com')
 
     await dialog.locator('button[type="submit"]', { hasText: /Start Recording/ }).click()
 

@@ -20,8 +20,8 @@ const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD
 const ts = () => new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14)
 
 // Designed to be tiny so plan generation + execution complete quickly.
-const SIMPLE_PROMPT = 'Open https://example.com and verify the page contains the text "Example Domain".'
-const ACT_PROMPT = 'Navigate to https://example.com'
+const SIMPLE_PROMPT = 'Open https://xitester.com and verify the page loads successfully.'
+const ACT_PROMPT = 'Navigate to https://xitester.com'
 
 // ============================================================
 // Helpers — UI-only. Mirror the patterns from test-cases.spec.ts.
