@@ -1,0 +1,320 @@
+{
+  "runId": "28499839141",
+  "actionsRunId": "28499839141",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/28499839141",
+  "commit": "c6dfb1133d8c8a377d1f086decc597005f919501",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "test-cases",
+  "startedAt": "2026-07-01T07:04:55.344Z",
+  "finishedAt": "2026-07-01T07:07:09.906Z",
+  "durationMs": 134562,
+  "stats": {
+    "total": 13,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 3,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 4061,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499839141/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499839141/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-065 — Create AI test ",
+      "title": "TC-065 — Create AI test case with name and description",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 9913,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499839141/TC-065___Create_AI_test_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499839141/TC-065___Create_AI_test_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-066 — Update existing",
+      "title": "TC-066 — Update existing AI test case name and description",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 13406,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499839141/TC-066___Update_existing-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499839141/TC-066___Update_existing-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-067 — Delete AI test ",
+      "title": "TC-067 — Delete AI test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 10042,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499839141/TC-067___Delete_AI_test_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499839141/TC-067___Delete_AI_test_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-068 — Clone AI test c",
+      "title": "TC-068 — Clone AI test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 17609,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499839141/TC-068___Clone_AI_test_c-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499839141/TC-068___Clone_AI_test_c-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-069 — Recorded test c",
+      "title": "TC-069 — Recorded test case modal accepts name + URL and routes to recording flow",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5184,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499839141/TC-069___Recorded_test_c-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499839141/TC-069___Recorded_test_c-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-070 — Update an exist",
+      "title": "TC-070 — Update an existing recorded test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 5349,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499839141/TC-070___Update_an_exist-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499839141/TC-070___Update_an_exist-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-071 — Delete a record",
+      "title": "TC-071 — Delete a recorded test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 5583,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499839141/TC-071___Delete_a_record-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499839141/TC-071___Delete_a_record-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-072 — Clone a recorde",
+      "title": "TC-072 — Clone a recorded test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "skipped",
+      "durationMs": 4735,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499839141/TC-072___Clone_a_recorde-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499839141/TC-072___Clone_a_recorde-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-073 — Search filters ",
+      "title": "TC-073 — Search filters the list to matching test cases",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 10200,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499839141/TC-073___Search_filters_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499839141/TC-073___Search_filters_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-074 — Add a tag to a ",
+      "title": "TC-074 — Add a tag to a test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 10133,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499839141/TC-074___Add_a_tag_to_a_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499839141/TC-074___Add_a_tag_to_a_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-075 — Removing a tag ",
+      "title": "TC-075 — Removing a tag persists after page reload",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 13082,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499839141/TC-075___Removing_a_tag_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499839141/TC-075___Removing_a_tag_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-076 — Bulk select and",
+      "title": "TC-076 — Bulk select and bulk delete test cases",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 18421,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499839141/TC-076___Bulk_select_and-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499839141/TC-076___Bulk_select_and-1-trace.zip"
+        }
+      ]
+    }
+  ]
+}
