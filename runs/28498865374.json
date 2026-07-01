@@ -1,0 +1,20 @@
+{
+  "runId": "28498865374",
+  "actionsRunId": "28498865374",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/28498865374",
+  "commit": "c6dfb1133d8c8a377d1f086decc597005f919501",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "auth.setup.ts",
+  "startedAt": "2026-07-01T06:43:48.685Z",
+  "finishedAt": "2026-07-01T06:43:48.703Z",
+  "durationMs": 18,
+  "stats": {
+    "total": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": []
+}
