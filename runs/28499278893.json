@@ -1,0 +1,320 @@
+{
+  "runId": "28499278893",
+  "actionsRunId": "28499278893",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/28499278893",
+  "commit": "c6dfb1133d8c8a377d1f086decc597005f919501",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "dashboard",
+  "startedAt": "2026-07-01T06:53:13.556Z",
+  "finishedAt": "2026-07-01T06:53:58.479Z",
+  "durationMs": 44923,
+  "stats": {
+    "total": 13,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 4130,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499278893/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499278893/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-044 — Verify Total Te",
+      "title": "TC-044 — Verify Total Test Plan Runs display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5584,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499278893/TC-044___Verify_Total_Te-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499278893/TC-044___Verify_Total_Te-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-045 — Verify Pass Rat",
+      "title": "TC-045 — Verify Pass Rate calculation display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5747,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499278893/TC-045___Verify_Pass_Rat-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499278893/TC-045___Verify_Pass_Rat-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-046 — Verify Active S",
+      "title": "TC-046 — Verify Active Suites count is visible",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5605,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499278893/TC-046___Verify_Active_S-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499278893/TC-046___Verify_Active_S-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-047 — Verify Average ",
+      "title": "TC-047 — Verify Average Duration display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5642,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499278893/TC-047___Verify_Average_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499278893/TC-047___Verify_Average_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-048 — Verify Test Pla",
+      "title": "TC-048 — Verify Test Plan Run Analysis display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5670,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499278893/TC-048___Verify_Test_Pla-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499278893/TC-048___Verify_Test_Pla-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-049 — Verify Top Acti",
+      "title": "TC-049 — Verify Top Active Test Plans (bar chart) display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5666,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499278893/TC-049___Verify_Top_Acti-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499278893/TC-049___Verify_Top_Acti-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-050 — Verify Regressi",
+      "title": "TC-050 — Verify Regression Pass Rate Trend chart",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 7302,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499278893/TC-050___Verify_Regressi-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499278893/TC-050___Verify_Regressi-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-051 — Verify Regressi",
+      "title": "TC-051 — Verify Regression Defects Found chart",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 7185,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499278893/TC-051___Verify_Regressi-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499278893/TC-051___Verify_Regressi-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-052 — Verify Suite Br",
+      "title": "TC-052 — Verify Suite Breakdown chart",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6956,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499278893/TC-052___Verify_Suite_Br-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499278893/TC-052___Verify_Suite_Br-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-053 — Verify Overall ",
+      "title": "TC-053 — Verify Overall System Health display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6122,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499278893/TC-053___Verify_Overall_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499278893/TC-053___Verify_Overall_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-054 — Verify Module Q",
+      "title": "TC-054 — Verify Module Quality Analysis display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6120,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499278893/TC-054___Verify_Module_Q-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499278893/TC-054___Verify_Module_Q-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-055 — Verify System H",
+      "title": "TC-055 — Verify System Hotspots display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6222,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28499278893/TC-055___Verify_System_H-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28499278893/TC-055___Verify_System_H-1-trace.zip"
+        }
+      ]
+    }
+  ]
+}
