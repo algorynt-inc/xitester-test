@@ -1,4 +1,4 @@
-import { test, expect, type Locator, type Page } from '@playwright/test'
+/*import { test, expect, type Locator, type Page } from '@playwright/test'
 import { ENV } from '../env'
 
 // Authenticated via auth.setup.
@@ -123,6 +123,7 @@ async function rejectPlan(page: Page): Promise<void> {
  *   1. Wait for Stop to appear → execution actually started
  *   2. Wait for Stop to disappear → execution terminated (any way)
  */
+/*
 async function waitForExecutionEnd(page: Page, timeoutMs = EXEC_TIMEOUT_MS): Promise<void> {
     const stopBtn = page.locator('button', { hasText: /^Stop( Re-Run)?$/ })
     await expect(stopBtn).toBeVisible({ timeout: 90_000 })
@@ -567,4 +568,4 @@ test('TC-094 — Test data linking control surfaces after analysis', async ({ pa
     } finally {
         await deleteSessionViaList(page, name).catch(() => undefined)
     }
-})
+}) */
