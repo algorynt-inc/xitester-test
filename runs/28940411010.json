@@ -1,14 +1,14 @@
 {
   "runId": "28940411010",
   "actionsRunId": "28940411010",
-  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/28940411010",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/28941796322",
   "commit": "361d0034ad96fa73f6bb99e789d127438a50ab58",
   "branch": "main",
   "environment": "dev",
   "suite": "test-cases",
   "startedAt": "2026-07-08T11:52:11.084Z",
-  "finishedAt": "2026-07-08T11:54:47.952Z",
-  "durationMs": 156868,
+  "finishedAt": "2026-07-08T12:16:56.708Z",
+  "durationMs": 73072,
   "stats": {
     "total": 13,
     "passed": 4,
@@ -24,7 +24,7 @@
       "project": "setup",
       "category": "auth.setup.ts",
       "status": "passed",
-      "durationMs": 6983,
+      "durationMs": 4968,
       "retries": 0,
       "error": null,
       "attachments": [
@@ -116,7 +116,7 @@
       "project": "chromium",
       "category": "chromium",
       "status": "timedOut",
-      "durationMs": 30877,
+      "durationMs": 31670,
       "retries": 1,
       "error": {
         "message": "Test timeout of 30000ms exceeded."
@@ -239,6 +239,14 @@
       "retries": 1,
       "error": null,
       "attachments": []
+    }
+  ],
+  "lineage": [
+    {
+      "actionsRunId": "28941796322",
+      "finishedAt": "2026-07-08T12:16:56.708Z",
+      "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/28941796322",
+      "grep": null
     }
   ]
 }
