@@ -1,14 +1,14 @@
 {
   "runId": "28941453087",
   "actionsRunId": "28941453087",
-  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/28941453087",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/28941709136",
   "commit": "361d0034ad96fa73f6bb99e789d127438a50ab58",
   "branch": "main",
   "environment": "dev",
   "suite": "test-cases",
   "startedAt": "2026-07-08T12:10:41.953Z",
-  "finishedAt": "2026-07-08T12:11:56.097Z",
-  "durationMs": 74144,
+  "finishedAt": "2026-07-08T12:14:14.164Z",
+  "durationMs": 19,
   "stats": {
     "total": 2,
     "passed": 1,
@@ -74,6 +74,14 @@
           "url": "28941453087/TC-068___Clone_AI_test_c-3-trace.zip"
         }
       ]
+    }
+  ],
+  "lineage": [
+    {
+      "actionsRunId": "28941709136",
+      "finishedAt": "2026-07-08T12:14:14.164Z",
+      "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/28941709136",
+      "grep": null
     }
   ]
 }
