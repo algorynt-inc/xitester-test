@@ -1,0 +1,164 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: test-cases.spec.ts >> TC-068 — Clone AI test case
+- Location: tests/test-cases.spec.ts:291:1
+
+# Error details
+
+```
+Test timeout of 30000ms exceeded.
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications alt+T":
+    - list:
+      - listitem [ref=e3]:
+        - button "Close toast" [ref=e4] [cursor=pointer]:
+          - img [ref=e5]
+        - img [ref=e9]
+        - generic [ref=e13]: Test case deleted
+  - generic [ref=e14]:
+    - banner [ref=e15]:
+      - generic [ref=e16]:
+        - img "Xitester" [ref=e18]
+        - generic [ref=e19]:
+          - generic [ref=e20]: /
+          - generic [ref=e21]:
+            - button "XiTester Enterprise" [ref=e22] [cursor=pointer]:
+              - img [ref=e23]
+              - generic [ref=e27]: XiTester
+              - generic [ref=e28]: Enterprise
+            - button [ref=e29] [cursor=pointer]:
+              - img [ref=e30]
+          - generic [ref=e33]: /
+          - 'button "Switch project. Current project: Default Project" [ref=e35] [cursor=pointer]':
+            - img [ref=e36]
+            - generic [ref=e38]: Default Project
+            - img [ref=e39]
+      - generic [ref=e42]:
+        - button "Search... ⌘K" [ref=e43] [cursor=pointer]:
+          - img [ref=e44]
+          - generic [ref=e47]: Search...
+          - generic [ref=e48]: ⌘K
+        - generic [ref=e49]:
+          - button "Help" [ref=e50] [cursor=pointer]:
+            - img [ref=e51]
+          - button "Notifications" [ref=e54] [cursor=pointer]:
+            - img [ref=e55]
+            - generic [ref=e58]: 99+
+        - generic [ref=e60]:
+          - generic [ref=e61]: DEV
+          - generic [ref=e62]: v1.1.4
+          - button "A" [ref=e63] [cursor=pointer]
+    - generic [ref=e64]:
+      - complementary:
+        - navigation [ref=e65]:
+          - button "Dashboard" [ref=e66] [cursor=pointer]:
+            - img [ref=e68]
+            - generic: Dashboard
+          - button "Test Cases" [ref=e73] [cursor=pointer]:
+            - img [ref=e75]
+            - generic: Test Cases
+          - button "Test Plans" [ref=e78] [cursor=pointer]:
+            - img [ref=e80]
+            - generic: Test Plans
+          - button "Discovery" [ref=e84] [cursor=pointer]:
+            - img [ref=e86]
+            - generic: Discovery
+          - button "Test Plan AI" [ref=e93] [cursor=pointer]:
+            - img [ref=e95]
+            - generic: Test Plan AI
+          - button "Test Data" [ref=e107] [cursor=pointer]:
+            - img [ref=e109]
+            - generic: Test Data
+          - button "Quality" [ref=e113] [cursor=pointer]:
+            - img [ref=e115]
+            - generic: Quality
+          - button "Api Tester" [ref=e118] [cursor=pointer]:
+            - img [ref=e120]
+            - generic: Api Tester
+          - button "Reports" [ref=e124] [cursor=pointer]:
+            - img [ref=e126]
+            - generic: Reports
+          - button "Settings" [ref=e130] [cursor=pointer]:
+            - img [ref=e132]
+            - generic: Settings
+        - button "Logout" [ref=e137] [cursor=pointer]:
+          - img [ref=e139]
+          - generic: Logout
+      - main [ref=e143]:
+        - generic [ref=e144]:
+          - generic [ref=e145]:
+            - generic [ref=e146]:
+              - heading "Test Cases" [level=1] [ref=e147]
+              - paragraph [ref=e148]: View and manage your test case analysis sessions
+            - generic [ref=e149]:
+              - button "Import" [ref=e150] [cursor=pointer]:
+                - img [ref=e151]
+                - text: Import
+              - button "Refresh" [ref=e154] [cursor=pointer]:
+                - img [ref=e155]
+                - text: Refresh
+              - button "New Test Case" [ref=e161] [cursor=pointer]:
+                - img [ref=e162]
+                - text: New Test Case
+                - img [ref=e163]
+          - generic [ref=e166]:
+            - generic [ref=e167]:
+              - img [ref=e168]
+              - textbox "Search test cases…" [ref=e171]: qa-src-1783511233276-pqzq
+            - tablist "Session type" [ref=e172]:
+              - tab "Test Cases" [selected] [ref=e173] [cursor=pointer]
+              - tab "Test Modules" [ref=e174] [cursor=pointer]
+            - button "Status" [ref=e175] [cursor=pointer]:
+              - img [ref=e176]
+              - text: Status
+            - button "Last Run" [ref=e178] [cursor=pointer]:
+              - img [ref=e179]
+              - text: Last Run
+            - button "Tags" [ref=e181] [cursor=pointer]:
+              - img [ref=e182]
+              - text: Tags
+            - button "Test Plan" [ref=e184] [cursor=pointer]:
+              - img [ref=e185]
+              - text: Test Plan
+            - button "Source" [ref=e187] [cursor=pointer]:
+              - img [ref=e188]
+              - text: Source
+            - button "Reset" [ref=e190] [cursor=pointer]:
+              - img [ref=e191]
+              - text: Reset
+          - generic [ref=e196]:
+            - img [ref=e198]
+            - heading "No test cases found" [level=3] [ref=e201]
+            - paragraph [ref=e202]: Try adjusting your search or filters to find what you looking for.
+            - button "Clear all filters" [ref=e203] [cursor=pointer]
+          - generic [ref=e206]:
+            - generic [ref=e207]: No test cases
+            - generic [ref=e208]:
+              - generic [ref=e209]:
+                - generic [ref=e210]: Rows per page
+                - combobox [ref=e211] [cursor=pointer]:
+                  - generic: "20"
+                  - img [ref=e212]
+              - generic [ref=e214]:
+                - generic [ref=e215]: Page 1of1
+                - generic [ref=e216]:
+                  - button "First page" [disabled]:
+                    - img
+                  - button "Previous page" [disabled]:
+                    - img
+                  - button "Next page" [disabled]:
+                    - img
+                  - button "Last page" [disabled]:
+                    - img
+```
