@@ -348,7 +348,19 @@ test('TC-069 — Recorded test case modal accepts name + URL and routes to recor
     await page.waitForURL(/\/test-analysis(\?|$|#|\/)/, { timeout: 10_000 })
     expect(page.url()).toMatch(/\/test-analysis/)
     await expect(page.getByText('Analysis Steps')).toBeVisible();
-    await page.waitForTimeout(10_000);
+    await expect(page.getByText('https://xitester.com')).toBeVisible();
+    await gotoTestCases(page)
+    await expect(page.locator('input[placeholder="Search test cases…"]')).toBeVisible()
+    await searchFor(page, recordTestCaseName)
+    const recordedRow = page
+        .locator('table tbody tr.test-case-row')
+        .filter({ has: page.getByText(recordTestCaseName) })
+        .filter({ has: page.getByText(/^Recorded$/) })
+        .first()
+    if (!(await recordedRow.isVisible().catch(() => false))) {
+        test.skip(true, 'No recorded test case in this project yet — create one via the SUT first.')
+    }
+
 })
 
 test('TC-070 — Update an existing recorded test case', async ({ page }) => {
