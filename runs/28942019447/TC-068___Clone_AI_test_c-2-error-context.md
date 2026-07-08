@@ -1,0 +1,210 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: test-cases.spec.ts >> TC-068 — Clone AI test case
+- Location: tests/test-cases.spec.ts:291:1
+
+# Error details
+
+```
+Test timeout of 30000ms exceeded.
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications alt+T":
+    - list:
+      - listitem [ref=e3]:
+        - button "Close toast" [ref=e4] [cursor=pointer]:
+          - img [ref=e5]
+        - img [ref=e9]
+        - generic [ref=e13]: Test case deleted
+  - generic [ref=e14]:
+    - banner [ref=e15]:
+      - generic [ref=e16]:
+        - img "Xitester" [ref=e18]
+        - generic [ref=e19]:
+          - generic [ref=e20]: /
+          - generic [ref=e21]:
+            - button "XiTester Enterprise" [ref=e22] [cursor=pointer]:
+              - img [ref=e23]
+              - generic [ref=e27]: XiTester
+              - generic [ref=e28]: Enterprise
+            - button [ref=e29] [cursor=pointer]:
+              - img [ref=e30]
+          - generic [ref=e33]: /
+          - 'button "Switch project. Current project: Default Project" [ref=e35] [cursor=pointer]':
+            - img [ref=e36]
+            - generic [ref=e38]: Default Project
+            - img [ref=e39]
+      - generic [ref=e42]:
+        - button "Search... ⌘K" [ref=e43] [cursor=pointer]:
+          - img [ref=e44]
+          - generic [ref=e47]: Search...
+          - generic [ref=e48]: ⌘K
+        - generic [ref=e49]:
+          - button "Help" [ref=e50] [cursor=pointer]:
+            - img [ref=e51]
+          - button "Notifications" [ref=e54] [cursor=pointer]:
+            - img [ref=e55]
+            - generic [ref=e58]: 99+
+        - generic [ref=e60]:
+          - generic [ref=e61]: DEV
+          - generic [ref=e62]: v1.1.4
+          - button "A" [ref=e63] [cursor=pointer]
+    - generic [ref=e64]:
+      - complementary:
+        - navigation [ref=e65]:
+          - button "Dashboard" [ref=e66] [cursor=pointer]:
+            - img [ref=e68]
+            - generic: Dashboard
+          - button "Test Cases" [ref=e73] [cursor=pointer]:
+            - img [ref=e75]
+            - generic: Test Cases
+          - button "Test Plans" [ref=e78] [cursor=pointer]:
+            - img [ref=e80]
+            - generic: Test Plans
+          - button "Discovery" [ref=e84] [cursor=pointer]:
+            - img [ref=e86]
+            - generic: Discovery
+          - button "Test Plan AI" [ref=e93] [cursor=pointer]:
+            - img [ref=e95]
+            - generic: Test Plan AI
+          - button "Test Data" [ref=e107] [cursor=pointer]:
+            - img [ref=e109]
+            - generic: Test Data
+          - button "Quality" [ref=e113] [cursor=pointer]:
+            - img [ref=e115]
+            - generic: Quality
+          - button "Api Tester" [ref=e118] [cursor=pointer]:
+            - img [ref=e120]
+            - generic: Api Tester
+          - button "Reports" [ref=e124] [cursor=pointer]:
+            - img [ref=e126]
+            - generic: Reports
+          - button "Settings" [ref=e130] [cursor=pointer]:
+            - img [ref=e132]
+            - generic: Settings
+        - button "Logout" [ref=e137] [cursor=pointer]:
+          - img [ref=e139]
+          - generic: Logout
+      - main [ref=e143]:
+        - generic [ref=e144]:
+          - generic [ref=e145]:
+            - generic [ref=e146]:
+              - heading "Test Cases" [level=1] [ref=e147]
+              - paragraph [ref=e148]: View and manage your test case analysis sessions
+            - generic [ref=e149]:
+              - button "Import" [ref=e150] [cursor=pointer]:
+                - img [ref=e151]
+                - text: Import
+              - button "Refresh" [disabled] [ref=e154]:
+                - img [ref=e155]
+                - text: Refresh
+              - button "New Test Case" [ref=e161] [cursor=pointer]:
+                - img [ref=e162]
+                - text: New Test Case
+                - img [ref=e163]
+          - generic [ref=e166]:
+            - generic [ref=e167]:
+              - img [ref=e168]
+              - textbox "Search test cases…" [ref=e171]: qa-src-1783513218544-amwg
+            - tablist "Session type" [ref=e172]:
+              - tab "Test Cases" [selected] [ref=e173] [cursor=pointer]
+              - tab "Test Modules" [ref=e174] [cursor=pointer]
+            - button "Status" [ref=e175] [cursor=pointer]:
+              - img [ref=e176]
+              - text: Status
+            - button "Last Run" [ref=e178] [cursor=pointer]:
+              - img [ref=e179]
+              - text: Last Run
+            - button "Created By" [ref=e181] [cursor=pointer]:
+              - img [ref=e182]
+              - text: Created By
+            - button "Tags" [ref=e184] [cursor=pointer]:
+              - img [ref=e185]
+              - text: Tags
+            - button "Test Plan" [ref=e187] [cursor=pointer]:
+              - img [ref=e188]
+              - text: Test Plan
+            - button "Source" [ref=e190] [cursor=pointer]:
+              - img [ref=e191]
+              - text: Source
+            - button "Reset" [ref=e193] [cursor=pointer]:
+              - img [ref=e194]
+              - text: Reset
+          - table [ref=e199]:
+            - rowgroup [ref=e200]:
+              - row "# Title / Prompt Tags Analysis Status Last Run Steps Created Actions" [ref=e201]:
+                - columnheader [ref=e202]:
+                  - checkbox [ref=e203] [cursor=pointer]
+                - columnheader "#" [ref=e204]
+                - columnheader "Title / Prompt" [ref=e205]
+                - columnheader "Tags" [ref=e206]
+                - columnheader "Analysis Status" [ref=e207]
+                - columnheader "Last Run" [ref=e208]
+                - columnheader "Steps" [ref=e209]
+                - columnheader "Created" [ref=e210]
+                - columnheader "Actions" [ref=e211]
+            - rowgroup [ref=e212]:
+              - link "1 qa-src-1783513218544-amwg Manual Source for clone Add tags Idle No Runs 0 Jul 8, 2026, 12:20 PM by ashid Clone test case Edit test case Delete test case" [ref=e213] [cursor=pointer]:
+                - cell [ref=e214]:
+                  - checkbox [ref=e215]
+                - cell "1" [ref=e216]
+                - cell "qa-src-1783513218544-amwg Manual Source for clone" [ref=e217]:
+                  - generic [ref=e218]:
+                    - generic [ref=e219]:
+                      - generic [ref=e220]: qa-src-1783513218544-amwg
+                      - generic [ref=e221]:
+                        - img [ref=e222]
+                        - text: Manual
+                    - generic "Source for clone" [ref=e225]
+                - cell "Add tags" [ref=e226]:
+                  - button "Add tags" [ref=e227]:
+                    - generic [ref=e228]:
+                      - img [ref=e229]
+                      - text: Add tags
+                - cell "Idle" [ref=e232]:
+                  - generic [ref=e233]: Idle
+                - cell "No Runs" [ref=e235]:
+                  - generic [ref=e238]: No Runs
+                - cell "0" [ref=e239]
+                - cell "Jul 8, 2026, 12:20 PM by ashid" [ref=e240]:
+                  - generic [ref=e241]:
+                    - generic [ref=e242]: Jul 8, 2026, 12:20 PM
+                    - generic [ref=e243]: by ashid
+                - cell "Clone test case Edit test case Delete test case" [ref=e244]:
+                  - generic [ref=e245]:
+                    - button "Clone test case" [ref=e246]:
+                      - img [ref=e247]
+                    - button "Edit test case" [ref=e250]:
+                      - img [ref=e251]
+                    - button "Delete test case" [ref=e254]:
+                      - img [ref=e255]
+          - generic [ref=e260]:
+            - generic [ref=e261]: 1–1 of 1 test cases
+            - generic [ref=e262]:
+              - generic [ref=e263]:
+                - generic [ref=e264]: Rows per page
+                - combobox [ref=e265] [cursor=pointer]:
+                  - generic: "20"
+                  - img [ref=e266]
+              - generic [ref=e268]:
+                - generic [ref=e269]: Page 1of1
+                - generic [ref=e270]:
+                  - button "First page" [disabled]:
+                    - img
+                  - button "Previous page" [disabled]:
+                    - img
+                  - button "Next page" [disabled]:
+                    - img
+                  - button "Last page" [disabled]:
+                    - img
+```
