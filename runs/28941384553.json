@@ -1,0 +1,67 @@
+{
+  "runId": "28941384553",
+  "actionsRunId": "28941384553",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/28941384553",
+  "commit": "361d0034ad96fa73f6bb99e789d127438a50ab58",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "test-cases",
+  "startedAt": "2026-07-08T12:08:47.286Z",
+  "finishedAt": "2026-07-08T12:09:07.346Z",
+  "durationMs": 20060,
+  "stats": {
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 5708,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28941384553/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28941384553/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-067 — Delete AI test ",
+      "title": "TC-067 — Delete AI test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 10533,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28941384553/TC-067___Delete_AI_test_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28941384553/TC-067___Delete_AI_test_-1-trace.zip"
+        }
+      ]
+    }
+  ]
+}
