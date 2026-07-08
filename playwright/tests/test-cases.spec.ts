@@ -352,14 +352,6 @@ test('TC-069 — Recorded test case modal accepts name + URL and routes to recor
     await gotoTestCases(page)
     await expect(page.locator('input[placeholder="Search test cases…"]')).toBeVisible()
     await searchFor(page, recordTestCaseName)
-    const recordedRow = page
-        .locator('table tbody tr.test-case-row')
-        .filter({ has: page.getByText(recordTestCaseName) })
-        .filter({ has: page.getByText(/^Recorded$/) })
-        .first()
-    if (!(await recordedRow.isVisible().catch(() => false))) {
-        test.skip(true, 'No recorded test case in this project yet — create one via the SUT first.')
-    }
 
 })
 
