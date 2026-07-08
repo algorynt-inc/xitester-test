@@ -215,6 +215,7 @@ async function uiCreateRecordTestCase(page: Page, name: string): Promise<void> {
     await page.waitForURL(/\/test-analysis(\?|$|#|\/)/, { timeout: 10_000 })
     expect(page.url()).toMatch(/\/test-analysis/)
     await expect(page.getByText('Ready to Record')).toBeVisible();
+    await expect(page.getByText('https://xitester.com')).toBeVisible();
 }
 
 // ============================================================
@@ -426,7 +427,7 @@ test('TC-072 — Clone a recorded test case', async ({ page }) => {
     await gotoTestCases(page)
     await uiCreateRecordTestCase(page, name)
     await gotoTestCases(page)
-
+    await expect(page.locator('input[placeholder="Search test cases…"]')).toBeVisible()
     const recordedRow = page
         .locator('table tbody tr.test-case-row')
         .filter({ has: page.getByText(name, { exact: true }) })
