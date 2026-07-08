@@ -2,9 +2,35 @@ import { test, expect, type Page } from '@playwright/test'
 import { ENV } from '../env'
 
 // Both tests start authenticated; logout is the action under test.
-test.use({ storageState: '.auth/user.json' })
+// test.use({ storageState: '.auth/user.json' })
 
 const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD secret bundle.`
+
+/**
+ * Log in through the UI so this test owns a fresh, independent session.
+ *
+ * We deliberately do NOT share the saved storageState (.auth/user.json)
+ * here: logout invalidates its token server-side, so if both logout tests
+ * reused the one shared token, whichever logged out first would break the
+ * other. A per-test login gives each test its own token.
+ */
+async function loginViaUI(page: Page): Promise<void> {
+    await page.goto('/login')
+    await page.locator('#email').waitFor({ state: 'visible', timeout: 30_000 })
+    await page.fill('#email', ENV.user.email)
+    await page.fill('#password', ENV.user.password)
+    await Promise.all([
+        page.waitForURL(url => !url.pathname.startsWith('/login'), { timeout: 20_000 }),
+        page.locator('button[type="submit"]').click(),
+    ])
+}
+
+// Each test gets its OWN session, so one test's logout can't invalidate
+// another test's token.
+test.beforeEach(async ({ page }) => {
+    test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
+    await loginViaUI(page)
+})
 
 /**
  * Open the user-menu dropdown in the top bar.
@@ -20,7 +46,7 @@ const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD
  */
 async function openUserMenu(page: Page): Promise<void> {
     const trigger = page.locator('header button[aria-haspopup="menu"]:visible').last()
-    await expect(trigger).toBeVisible({ timeout: 10_000 })
+    await expect(trigger).toBeVisible({ timeout: 15_000 })
     await trigger.click()
 }
 
@@ -29,7 +55,7 @@ async function openUserMenu(page: Page): Promise<void> {
 // ============================================================
 
 test('TC-LO-001 — Logout via user menu redirects to /login', async ({ page }) => {
-    test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
+    // test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
 
     // Land on any authed page first so the topbar renders.
     await page.goto('/dashboard')
@@ -47,11 +73,14 @@ test('TC-LO-001 — Logout via user menu redirects to /login', async ({ page }) 
 })
 
 test('TC-LO-002 — Protected routes redirect to /login after logout', async ({ page }) => {
-    test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
+    // test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
 
     await page.goto('/dashboard')
     await page.waitForLoadState('domcontentloaded')
 
+    await expect(
+        page.getByRole('heading', { level: 1, name: 'Dashboard' }),
+    ).toBeVisible({ timeout: 8_000 })
     await openUserMenu(page)
     await page.getByRole('menuitem', { name: /^Log out$/i }).click()
     await page.waitForURL(/\/login\b/, { timeout: 10_000 })

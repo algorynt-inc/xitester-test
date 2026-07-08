@@ -27,8 +27,8 @@ test('TC-LI-001 — Successful login with valid credentials', async ({ page }) =
     ])
     expect(response.status(), 'login API should return 200').toBe(200)
 
-    await page.waitForURL((url) => !url.pathname.startsWith('/login'), { timeout: 15_000 })
-    expect(page.url()).not.toMatch(/\/login(\?|$|#)/)
+    await page.waitForURL((url) => !url.pathname.startsWith('/login') && !url.pathname.startsWith('/signup'), { timeout: 15_000 })
+    expect(page.url()).not.toMatch(/\/(login | signup)(\?|$|#)/)
 })
 
 test('TC-LI-002 — Wrong password shows error', async ({ page }) => {

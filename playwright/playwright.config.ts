@@ -3,13 +3,14 @@ import { ENV } from './env'
 
 export default defineConfig({
     testDir: './tests',
-    fullyParallel: true,
+    fullyParallel: false,
     forbidOnly: !!process.env.CI,
     // Lower CI retries (2 → 1) so flaky login-form tests don't retry their
     // wrong-password attempts twice and burn the SUT's
     // LOGIN_RATE_LIMIT_MAX_ATTEMPTS=10/300s budget.
     retries: process.env.CI ? 1 : 0,
-    workers: process.env.CI ? 2 : undefined,
+    // Single worker so all tests run sequentially (one at a time).
+    workers: 1,
     reporter: [
         ['html', { open: 'never', outputFolder: 'playwright-report' }],
         ['list'],

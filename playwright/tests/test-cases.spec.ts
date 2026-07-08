@@ -14,7 +14,8 @@ test.use({ storageState: '.auth/user.json' })
 test.describe.configure({ mode: 'serial' })
 
 const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD secret bundle.`
-const ts = () => new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14)
+// const ts = () => new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14)
+const ts = () => `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
 
 // ============================================================
 // Helpers — UI-only, no API helper calls. Each helper drives the SPA so
@@ -71,13 +72,13 @@ async function uiCreateAITestCase(page: Page, name: string, description?: string
         const body = await response.text().catch(() => '')
         throw new Error(`createSession ${response.status()}: ${body.slice(0, 200)}`)
     }
-
     // SPA navigates to /test-analysis/<sessionId> on success. Pull the id
     // from the URL so callers can return to /test-cases and clean up.
-    await page.waitForURL(/\/test-analysis\/[0-9a-f-]{8,}/i, { timeout: 12_000 })
+    await page.waitForURL(/\/test-analysis\/[0-9a-f-]{8,}/i, { timeout: 10_000 })
     const match = page.url().match(/\/test-analysis\/([0-9a-f-]{8,})/i)
     if (!match) throw new Error(`Could not parse sessionId from ${page.url()}`)
     return match[1]
+
 }
 
 /**
@@ -94,15 +95,19 @@ function testCaseRow(page: Page, name: string): Locator {
 
 async function searchFor(page: Page, query: string): Promise<void> {
     const input = page.locator('input[placeholder="Search test cases…"]')
+    await expect(input).toBeVisible()
     await input.fill(query)
+    await expect(input).toHaveValue(query)
     // The list is server-side filtered after a 300ms debounce.
-    await page.waitForTimeout(500)
+    await expect(
+        page.locator('table tbody tr.test-case-row').filter({ hasText: query })
+    ).toBeVisible({ timeout: 20_000 });
 }
 
 async function clearSearch(page: Page): Promise<void> {
     const input = page.locator('input[placeholder="Search test cases…"]')
     await input.fill('')
-    await page.waitForTimeout(500)
+    await page.waitForTimeout(5000)
 }
 
 /**
@@ -190,6 +195,27 @@ async function uiCloneTestCase(page: Page, row: Locator, newTitle: string): Prom
     await dialog.waitFor({ state: 'hidden', timeout: 8_000 })
 }
 
+async function uiCreateRecordTestCase(page: Page, name: string): Promise<void> {
+    await gotoTestCases(page)
+    await openNewTestCaseDropdown(page)
+    await page.locator('button', { hasText: 'Record Test Case' }).click()
+
+    const dialog = page.locator('div[role="dialog"]', { hasText: 'Record Test Case' })
+    await dialog.waitFor({ state: 'visible', timeout: 5_000 })
+
+    await dialog.locator('#recordTestName').fill(name)
+    await dialog.locator('#recordTestDescription').fill('Created by Playwright TC-069')
+    await dialog.locator('#startUrl').fill('https://xitester.com')
+
+    await dialog.locator('button[type="submit"]', { hasText: /Start Recording/ }).click()
+    await page.waitForTimeout(5000)
+
+    // SPA navigates to /test-analysis with state {mode:'record', startUrl, initialTitle}.
+    await page.waitForURL(/\/test-analysis(\?|$|#|\/)/, { timeout: 10_000 })
+    expect(page.url()).toMatch(/\/test-analysis/)
+    await expect(page.getByText('Ready to Record')).toBeVisible();
+}
+
 // ============================================================
 // Tests — preserve user-supplied numbering TC-065 .. TC-076
 // ============================================================
@@ -202,6 +228,9 @@ test('TC-065 — Create AI test case with name and description', async ({ page }
 
     // Step 7 — verify navigation to test analysis page.
     expect(page.url()).toMatch(new RegExp(`/test-analysis/${sessionId}`))
+    await expect(page.getByText('Start a test')).toBeVisible({
+        timeout: 30_000,
+    });
 
     // Verify it's listed when we go back.
     await gotoTestCases(page)
@@ -291,6 +320,8 @@ test('TC-068 — Clone AI test case', async ({ page }) => {
     await uiDeleteTestCase(page, testCaseRow(page, original))
 })
 
+const recordTestCaseName = `qa-rec-${ts()}`
+
 test('TC-069 — Recorded test case modal accepts name + URL and routes to recording flow', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
     // We don't actually start a recording (it spins up a remote browser
@@ -298,7 +329,7 @@ test('TC-069 — Recorded test case modal accepts name + URL and routes to recor
     // the URL, and routes the user into the /test-analysis recording entry
     // — that's the user-driven boundary on this page.
 
-    const name = `qa-rec-${ts()}`
+    // const name = `qa-rec-${ts()}`
     await gotoTestCases(page)
     await openNewTestCaseDropdown(page)
     await page.locator('button', { hasText: 'Record Test Case' }).click()
@@ -306,7 +337,7 @@ test('TC-069 — Recorded test case modal accepts name + URL and routes to recor
     const dialog = page.locator('div[role="dialog"]', { hasText: 'Record Test Case' })
     await dialog.waitFor({ state: 'visible', timeout: 5_000 })
 
-    await dialog.locator('#recordTestName').fill(name)
+    await dialog.locator('#recordTestName').fill(recordTestCaseName)
     await dialog.locator('#recordTestDescription').fill('Created by Playwright TC-069')
     await dialog.locator('#startUrl').fill('https://xitester.com')
 
@@ -315,6 +346,7 @@ test('TC-069 — Recorded test case modal accepts name + URL and routes to recor
     // SPA navigates to /test-analysis with state {mode:'record', startUrl, initialTitle}.
     await page.waitForURL(/\/test-analysis(\?|$|#|\/)/, { timeout: 10_000 })
     expect(page.url()).toMatch(/\/test-analysis/)
+    await expect(page.getByText('Analysis Steps')).toBeVisible();
 })
 
 test('TC-070 — Update an existing recorded test case', async ({ page }) => {
@@ -325,8 +357,11 @@ test('TC-070 — Update an existing recorded test case', async ({ page }) => {
     // badge. Skip cleanly when the project doesn't have one yet.
 
     await gotoTestCases(page)
+    await expect(page.locator('input[placeholder="Search test cases…"]')).toBeVisible()
+    await searchFor(page, recordTestCaseName)
     const recordedRow = page
         .locator('table tbody tr.test-case-row')
+        .filter({ has: page.getByText(recordTestCaseName) })
         .filter({ has: page.getByText(/^Recorded$/) })
         .first()
     if (!(await recordedRow.isVisible().catch(() => false))) {
@@ -358,9 +393,11 @@ test('TC-071 — Delete a recorded test case', async ({ page }) => {
     // prefix from prior runs (orphans), and delete that. If none, skip.
 
     await gotoTestCases(page)
-    await searchFor(page, 'qa-rec-')
+    await expect(page.locator('input[placeholder="Search test cases…"]')).toBeVisible()
+    await searchFor(page, recordTestCaseName)
     const orphan = page
         .locator('table tbody tr.test-case-row')
+        .filter({ has: page.getByText(recordTestCaseName) })
         .filter({ has: page.getByText(/^Recorded$/) })
         .first()
     if (!(await orphan.isVisible().catch(() => false))) {
@@ -379,14 +416,20 @@ test('TC-072 — Clone a recorded test case', async ({ page }) => {
     // Same constraint as TC-070: the project must already contain at least
     // one recorded test case. Skip if none.
 
+    const name = `qa-rec-${ts()}`
     await gotoTestCases(page)
+    await uiCreateRecordTestCase(page, name)
+    await gotoTestCases(page)
+
     const recordedRow = page
         .locator('table tbody tr.test-case-row')
+        .filter({ has: page.getByText(name, { exact: true }) })
         .filter({ has: page.getByText(/^Recorded$/) })
         .first()
-    if (!(await recordedRow.isVisible().catch(() => false))) {
-        test.skip(true, 'No recorded test case in this project yet — create one via the SUT first.')
-    }
+    await expect(recordedRow).toBeVisible({ timeout: 15000 })
+    // if (!(await recordedRow.isVisible().catch(() => false))) {
+    //     test.skip(true, 'No recorded test case in this project yet — create one via the SUT first.')
+    // }
 
     const cloneName = `qa-rec-clone-${ts()}`
     await uiCloneTestCase(page, recordedRow, cloneName)
@@ -536,7 +579,14 @@ test('TC-076 — Bulk select and bulk delete test cases', async ({ page }) => {
     await uiCreateAITestCase(page, c)
 
     await gotoTestCases(page)
-    await searchFor(page, 'qa-bulk-')
+    // await searchFor(page, 'qa-bulk-')
+    const rowA = testCaseRow(page, a);
+    const rowB = testCaseRow(page, b);
+    const rowC = testCaseRow(page, c);
+
+    await expect(rowA).toBeVisible();
+    await expect(rowB).toBeVisible();
+    await expect(rowC).toBeVisible();
 
     const rows = page.locator('table tbody tr.test-case-row')
     await expect.poll(async () => await rows.count(), { timeout: 10_000 }).toBeGreaterThanOrEqual(3)
@@ -585,7 +635,7 @@ test('TC-076 — Bulk select and bulk delete test cases', async ({ page }) => {
     await page
         .locator('input[placeholder="Search test cases…"]')
         .waitFor({ state: 'visible', timeout: 10_000 })
-    await searchFor(page, 'qa-bulk-')
+    // await searchFor(page, 'qa-bulk-')
     await expect(page.getByText(a, { exact: true })).toBeHidden()
     await expect(page.getByText(b, { exact: true })).toBeHidden()
     await expect(page.getByText(c, { exact: true })).toBeHidden()
