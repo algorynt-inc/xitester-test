@@ -1,0 +1,67 @@
+{
+  "runId": "28957895962",
+  "actionsRunId": "28957895962",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/28957895962",
+  "commit": "96e07aff08c51074434a060843a6bbda3eb46fed",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "profile",
+  "startedAt": "2026-07-08T16:16:09.148Z",
+  "finishedAt": "2026-07-08T16:16:25.184Z",
+  "durationMs": 16036,
+  "stats": {
+    "total": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 4834,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28957895962/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28957895962/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-006",
+      "title": "TC-PF-006 — Update password and revert (destructive)",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 8872,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28957895962/TC-PF-006-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28957895962/TC-PF-006-1-trace.zip"
+        }
+      ]
+    }
+  ]
+}
