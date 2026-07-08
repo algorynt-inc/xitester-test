@@ -1,0 +1,205 @@
+{
+  "runId": "28959181200",
+  "actionsRunId": "28959181200",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/28959181200",
+  "commit": "96e07aff08c51074434a060843a6bbda3eb46fed",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "orgs",
+  "startedAt": "2026-07-08T16:38:16.204Z",
+  "finishedAt": "2026-07-08T16:39:39.383Z",
+  "durationMs": 83179,
+  "stats": {
+    "total": 8,
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 4894,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28959181200/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28959181200/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-001",
+      "title": "TC-ORG-001 — View organization list",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5395,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28959181200/TC-ORG-001-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28959181200/TC-ORG-001-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-002",
+      "title": "TC-ORG-002 — Search filters the org list",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5423,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28959181200/TC-ORG-002-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28959181200/TC-ORG-002-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-003",
+      "title": "TC-ORG-003 — View organization settings",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6735,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28959181200/TC-ORG-003-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28959181200/TC-ORG-003-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-004",
+      "title": "TC-ORG-004 — Create a new organization",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 14943,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28959181200/TC-ORG-004-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28959181200/TC-ORG-004-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-005",
+      "title": "TC-ORG-005 — Update organization name",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 14934,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28959181200/TC-ORG-005-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28959181200/TC-ORG-005-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-006",
+      "title": "TC-ORG-006 — Delete an organization via danger zone",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 11946,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28959181200/TC-ORG-006-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28959181200/TC-ORG-006-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-007",
+      "title": "TC-ORG-007 — Create rejects duplicate name",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 14818,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28959181200/TC-ORG-007-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28959181200/TC-ORG-007-1-trace.zip"
+        }
+      ]
+    }
+  ]
+}
