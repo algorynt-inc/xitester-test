@@ -1,0 +1,57 @@
+{
+  "runId": "28938448035",
+  "actionsRunId": "28938448035",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/28938448035",
+  "commit": "361d0034ad96fa73f6bb99e789d127438a50ab58",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "nav",
+  "startedAt": "2026-07-08T11:17:12.943Z",
+  "finishedAt": "2026-07-08T11:17:38.881Z",
+  "durationMs": 25938,
+  "stats": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "failed",
+      "durationMs": 23247,
+      "retries": 0,
+      "error": {
+        "message": "TimeoutError: page.waitForURL: Timeout 20000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================",
+        "snippet": "  45 |     await page.fill('#password', ENV.user.password)\n  46 |     await Promise.all([\n> 47 |         page.waitForURL(url => !url.pathname.startsWith('/login'), { timeout: 20_000 }),\n     |              ^\n  48 |         page.locator('button[type=\"submit\"]').click(),\n  49 |     ])\n  50 |"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "28938448035/authenticate_once_per_ru-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28938448035/authenticate_once_per_ru-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "28938448035/authenticate_once_per_ru-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28938448035/authenticate_once_per_ru-3-trace.zip"
+        }
+      ]
+    }
+  ]
+}
