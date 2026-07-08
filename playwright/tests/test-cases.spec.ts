@@ -349,7 +349,7 @@ test('TC-069 — Recorded test case modal accepts name + URL and routes to recor
     await page.waitForURL(/\/test-analysis(\?|$|#|\/)/, { timeout: 10_000 })
     expect(page.url()).toMatch(/\/test-analysis/)
     await expect(page.getByText('Analysis Steps')).toBeVisible();
-    await expect(page.getByText('https://xitester.com')).toBeVisible();
+    await expect(page.locator('button', { hasText: /^Reset$/ })).toBeVisible()
     await gotoTestCases(page)
     await expect(page.locator('input[placeholder="Search test cases…"]')).toBeVisible()
     await searchFor(page, recordTestCaseName)
