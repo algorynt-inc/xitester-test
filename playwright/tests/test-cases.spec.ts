@@ -106,8 +106,9 @@ async function searchFor(page: Page, query: string): Promise<void> {
 
 async function clearSearch(page: Page): Promise<void> {
     const input = page.locator('input[placeholder="Search test cases…"]')
+    await expect(input).toBeVisible()
     await input.fill('')
-    await page.waitForTimeout(5000)
+    // await page.waitForTimeout(5000)
 }
 
 /**
