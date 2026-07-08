@@ -348,6 +348,7 @@ test('TC-069 — Recorded test case modal accepts name + URL and routes to recor
     await page.waitForURL(/\/test-analysis(\?|$|#|\/)/, { timeout: 10_000 })
     expect(page.url()).toMatch(/\/test-analysis/)
     await expect(page.getByText('Analysis Steps')).toBeVisible();
+    await page.waitForTimeout(10_000);
 })
 
 test('TC-070 — Update an existing recorded test case', async ({ page }) => {
