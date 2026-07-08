@@ -352,6 +352,7 @@ test('TC-069 — Recorded test case modal accepts name + URL and routes to recor
     await gotoTestCases(page)
     await expect(page.locator('input[placeholder="Search test cases…"]')).toBeVisible()
     await searchFor(page, recordTestCaseName)
+
 })
 
 test('TC-070 — Update an existing recorded test case', async ({ page }) => {
