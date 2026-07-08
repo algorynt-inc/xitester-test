@@ -1,0 +1,79 @@
+{
+  "runId": "28941453087",
+  "actionsRunId": "28941453087",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/28941453087",
+  "commit": "361d0034ad96fa73f6bb99e789d127438a50ab58",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "test-cases",
+  "startedAt": "2026-07-08T12:10:41.953Z",
+  "finishedAt": "2026-07-08T12:11:56.097Z",
+  "durationMs": 74144,
+  "stats": {
+    "total": 2,
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 5623,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28941453087/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28941453087/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-068 — Clone AI test c",
+      "title": "TC-068 — Clone AI test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "timedOut",
+      "durationMs": 31220,
+      "retries": 1,
+      "error": {
+        "message": "Test timeout of 30000ms exceeded."
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "28941453087/TC-068___Clone_AI_test_c-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "28941453087/TC-068___Clone_AI_test_c-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "28941453087/TC-068___Clone_AI_test_c-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "28941453087/TC-068___Clone_AI_test_c-3-trace.zip"
+        }
+      ]
+    }
+  ]
+}
