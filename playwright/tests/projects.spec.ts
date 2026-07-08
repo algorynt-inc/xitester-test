@@ -1,11 +1,13 @@
 import { test, expect, type Locator, type Page } from '@playwright/test'
 import { ENV } from '../env'
 
+test.describe.configure({ mode: 'serial' })
 // Authenticated via auth.setup.
 test.use({ storageState: '.auth/user.json' })
 
 const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD secret bundle.`
-const ts = () => new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14)
+// const ts = () => new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14)
+const ts = () => `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
 
 // "Default Project" is seeded in every XiTester organisation; the View test
 // uses it deterministically rather than picking the first card it sees.

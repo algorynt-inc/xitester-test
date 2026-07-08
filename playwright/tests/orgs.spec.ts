@@ -1,12 +1,15 @@
 import { test, expect, type Locator, type Page } from '@playwright/test'
 import { ENV } from '../env'
 
+test.describe.configure({ mode: 'serial' })
+
 // Every test in this file starts already authenticated, courtesy of the
 // `setup` project (auth.setup.ts). Zero login attempts in this spec.
 test.use({ storageState: '.auth/user.json' })
 
 const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD secret bundle.`
-const ts = () => new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14)
+// const ts = () => new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14)
+const ts = () => `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
 
 // ============================================================
 // Helpers — UI-only, no API calls. Each helper drives the actual SPA
@@ -33,11 +36,22 @@ function orgListScope(page: Page): Locator {
 }
 
 /** All org-card buttons on the org-picker page (excludes toolbar buttons). */
+// function orgCards(page: Page): Locator {
+//     return orgListScope(page)
+//         .locator('button')
+//         .filter({
+//              hasNotText: /(New organization|Search|Sort|Active|Inactive|Name|Date created)/i,
+//         })
+// }
+
 function orgCards(page: Page): Locator {
     return orgListScope(page)
         .locator('button')
         .filter({
-            hasNotText: /^(New organization|Search|Active|Inactive|Name|Date created)$/i,
+            has: page.locator('div.font-medium.truncate'),
+        })
+        .filter({
+            has: page.locator('div.text-sm.text-muted-foreground'),
         })
 }
 
@@ -92,15 +106,16 @@ async function uiDeleteOrg(page: Page, name: string): Promise<void> {
     await page.goto('/org/settings/danger-zone')
     await page.locator('button', { hasText: 'Delete this organization' }).first().click()
 
-    const confirmInput = page.locator('div[role="dialog"] input').first()
+    const confirmInput = page.locator(`input[placeholder='${name}']`).first()
     await expect(confirmInput).toBeVisible({ timeout: 5_000 })
     await confirmInput.fill(name)
 
     await Promise.all([
         page.waitForResponse(r => /\/api\/v1\/organizations\b/.test(r.url()) && r.request().method() === 'DELETE'),
-        page.locator('div[role="dialog"] button', { hasText: /^Delete Organization/ }).first().click(),
+        page.locator(`//div[@class='flex gap-2']//button[text()='Delete Organization']`).first().click(),
     ])
     await page.waitForURL(url => !url.pathname.startsWith('/org/settings'), { timeout: 10_000 })
+    await expect(page).toHaveURL(/\/organizations(\?|$)/)
 }
 
 // ============================================================
@@ -189,7 +204,7 @@ test('TC-ORG-004 — Create a new organization', async ({ page }) => {
             test.skip(
                 true,
                 `Org creation blocked (${(err as Error).message}). The dev env may have hit ` +
-                    'the 10-org cap — manually delete leftover qa-tmp-* / qa-del-* / qa-dup-* orgs in the SUT, then retry.',
+                'the 10-org cap — manually delete leftover qa-tmp-* / qa-del-* / qa-dup-* orgs in the SUT, then retry.',
             )
             return
         }
@@ -262,18 +277,19 @@ test('TC-ORG-006 — Delete an organization via danger zone', async ({ page }) =
     await page.goto('/org/settings/danger-zone')
     await page.locator('button', { hasText: 'Delete this organization' }).first().click()
 
-    const confirmInput = page.locator('div[role="dialog"] input').first()
+    const confirmInput = page.locator(`input[placeholder='${tempName}']`).first()
     await expect(confirmInput).toBeVisible({ timeout: 5_000 })
     await confirmInput.fill(tempName)
 
     const [response] = await Promise.all([
         page.waitForResponse(r => /\/api\/v1\/organizations\b/.test(r.url()) && r.request().method() === 'DELETE'),
-        page.locator('div[role="dialog"] button', { hasText: /^Delete Organization/ }).first().click(),
+        page.locator(`//div[@class='flex gap-2']//button[text()='Delete Organization']`, { hasText: /^Delete Organization/ }).first().click(),
     ])
     expect([200, 204]).toContain(response.status())
 
     await expect(page.locator('[data-sonner-toaster]')).toContainText(/deleted successfully/i, { timeout: 5_000 })
     await page.waitForURL(url => !url.pathname.startsWith('/org/settings'), { timeout: 10_000 })
+    await expect(page).toHaveURL(/\/organizations(\?|$)/)
 })
 
 test('TC-ORG-007 — Create rejects duplicate name', async ({ page }) => {

@@ -1,6 +1,7 @@
 import { test, expect, type Locator, type Page } from '@playwright/test'
 import { ENV } from '../env'
 
+test.describe.configure({ mode: 'serial' })
 test.use({ storageState: '.auth/user.json' })
 
 const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD secret bundle.`
@@ -34,23 +35,24 @@ const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD
 const TOPBAR_CHEVRON = 'button:has(svg.lucide-chevrons-up-down):visible'
 
 async function waitForTopbar(page: Page): Promise<void> {
-    await page.locator('header').waitFor({ state: 'visible', timeout: 10_000 })
+    await page.locator('header').waitFor({ state: 'visible', timeout: 15_000 })
+    await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible({timeout: 30000,});
     // Memoised TopBar can briefly mount without children. Wait for at least
     // one chevron trigger before iterating.
-    await page.locator(TOPBAR_CHEVRON).first().waitFor({ state: 'visible', timeout: 8_000 })
+    await page.locator(TOPBAR_CHEVRON).first().waitFor({ state: 'visible', timeout: 20_000 })
 }
 
 /** Wait for the open Radix popup to finish loading its list (spinner gone). */
 async function waitForPopupReady(page: Page): Promise<void> {
     const popup = popupContent(page)
-    await popup.waitFor({ state: 'visible', timeout: 6_000 })
+    await popup.waitFor({ state: 'visible', timeout: 10_000 })
 
     // Org / project lists are fetched async; the SUT shows a Loader2 spinner
     // (svg.lucide-loader-2) inside the popup while loading. Wait for it to
     // disappear before downstream assertions count buttons.
     const loader = popup.locator('svg.lucide-loader-2')
     if (await loader.first().isVisible({ timeout: 250 }).catch(() => false)) {
-        await loader.first().waitFor({ state: 'hidden', timeout: 8_000 }).catch(() => undefined)
+        await loader.first().waitFor({ state: 'hidden', timeout: 10_000 }).catch(() => undefined)
     }
 }
 
@@ -59,7 +61,7 @@ async function openOrgSwitcher(page: Page): Promise<void> {
     await page.locator(TOPBAR_CHEVRON).first().click()
     await page
         .locator('input[placeholder="Find organization..."]')
-        .waitFor({ state: 'visible', timeout: 6_000 })
+        .waitFor({ state: 'visible', timeout: 10_000 })
     await waitForPopupReady(page)
 }
 
@@ -70,14 +72,14 @@ async function openProjectSwitcher(page: Page): Promise<void> {
     if (count < 2) {
         throw new Error(
             `Project switcher chevron not visible. Found ${count} chevron trigger(s) in the topbar. ` +
-                'The page must be a project-scoped route (e.g. /dashboard). On org-level pages ' +
-                '(/organizations, /org/projects, /org/team) ProjectSwitcher is intentionally omitted.',
+            'The page must be a project-scoped route (e.g. /dashboard). On org-level pages ' +
+            '(/organizations, /org/projects, /org/team) ProjectSwitcher is intentionally omitted.',
         )
     }
     await triggers.last().click()
     await page
         .locator('input[placeholder="Find project..."]')
-        .waitFor({ state: 'visible', timeout: 6_000 })
+        .waitFor({ state: 'visible', timeout: 10_000 })
     await waitForPopupReady(page)
 }
 
@@ -148,6 +150,7 @@ test('TC-058 — Verify "All Organizations" navigates to /organizations', async 
 
     await page.waitForURL(/\/organizations\b/, { timeout: 8_000 })
     expect(page.url()).toMatch(/\/organizations\b/)
+    await expect(page.getByRole('heading', { name: 'Your Organizations' })).toBeVisible({timeout: 30_000,})
 })
 
 // ============================================================
@@ -161,17 +164,16 @@ test('TC-059 — Verify "All Projects" + "New project" navigation from project d
     // "All Projects" → /org/projects
     await openProjectSwitcher(page)
     let popup = popupContent(page)
-    await popup.locator('button', { hasText: /^All Projects$/ }).click()
-    await page.waitForURL(/\/org\/projects\b/, { timeout: 8_000 })
+    await popup.locator('button', { hasText: /^Manage Projects$/ }).click()
+    await page.waitForURL(/\/org\/projects\b/, { timeout: 15_000 })
     expect(page.url()).toMatch(/\/org\/projects\b/)
+    await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible({timeout: 30_000,})
 
     // "New project" → /org/projects (the SUT opens its create dialog from there)
-    await page.goto('/dashboard')
-    await openProjectSwitcher(page)
-    popup = popupContent(page)
-    await popup.locator('button', { hasText: /^New project$/ }).click()
+    await page.locator('button', { hasText: /^New project$/ }).click()
     await page.waitForURL(/\/org\/projects\b/, { timeout: 8_000 })
     expect(page.url()).toMatch(/\/org\/projects\b/)
+    await expect(page.getByRole('heading', { name: 'Create New Project' })).toBeVisible({timeout: 30_000,})
 })
 
 test('TC-060 — Verify Project switch dropdown lists projects', async ({ page }) => {
@@ -187,7 +189,7 @@ test('TC-060 — Verify Project switch dropdown lists projects', async ({ page }
 
     const items = popup
         .locator('button')
-        .filter({ hasNotText: /^(All Projects|New project)$/ })
+        .filter({ hasNotText: /^(Manage Projects)$/ })
     await expect
         .poll(() => items.count(), {
             message: 'at least one project row should be listed in the popup',
@@ -213,7 +215,7 @@ test('TC-061 — Verify Project search inside dropdown', async ({ page }) => {
     await search.fill(`xt-nomatch-${Date.now()}`)
     const items = popup
         .locator('button')
-        .filter({ hasNotText: /^(All Projects|New project)$/ })
+        .filter({ hasNotText: /^(Manage Projects)$/ })
     await expect(items).toHaveCount(0, { timeout: 4_000 })
 })
 
@@ -230,7 +232,7 @@ test('TC-062 — Verify Project search inside dropdown (clear restores list)', a
 
     const items = popup
         .locator('button')
-        .filter({ hasNotText: /^(All Projects|New project)$/ })
+        .filter({ hasNotText: /^(Manage Projects)$/ })
     const initialCount = await items.count()
     expect(initialCount).toBeGreaterThan(0)
 

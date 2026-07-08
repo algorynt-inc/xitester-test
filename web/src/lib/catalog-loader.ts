@@ -5,7 +5,7 @@
  * even before any test has actually run.
  */
 
-import { suiteFromFile } from './results-loader'
+import { isHiddenSpec, suiteFromFile } from './results-loader'
 
 interface PwSpec {
     title: string
@@ -82,11 +82,11 @@ function parseCatalog(raw: PwListOutput): Catalog {
 
         for (const spec of suite.specs ?? []) {
             const specFile = spec.file ?? file ?? ''
-            // Filter out infrastructure tests — auth.setup.ts and friends are
-            // part of the setup project, not a user-facing suite. They
-            // shouldn't show up on the Suites page, in the Trigger dropdown,
-            // or in the env-status grid.
-            if (/\.setup\.[tj]sx?$/.test(specFile)) continue
+            // Filter out specs hidden from the dashboard — auth.setup.ts and
+            // friends (setup project) plus test-analysis. They shouldn't show
+            // up on the Suites page, in the Trigger dropdown, or in the
+            // env-status grid.
+            if (isHiddenSpec(specFile)) continue
 
             const projects = (spec.tests ?? []).map(t => t.projectName ?? '').filter(Boolean)
             // Also skip if every project for this spec is `setup`.

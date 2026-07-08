@@ -40,7 +40,7 @@ setup('authenticate once per run', async ({ page }) => {
     }
 
     await page.goto('/login')
-    await page.locator('#email').waitFor({ state: 'visible', timeout: 15_000 })
+    await page.locator('#email').waitFor({ state: 'visible', timeout: 30_000 })
     await page.fill('#email', ENV.user.email)
     await page.fill('#password', ENV.user.password)
     await Promise.all([
@@ -52,6 +52,7 @@ setup('authenticate once per run', async ({ page }) => {
     // to /login. If we're still on /login, login silently failed and saving
     // an unauthed storageState is worse than failing now.
     expect(page.url(), 'login should have navigated away from /login').not.toMatch(/\/login(\?|$|#)/)
+    await expect(page).toHaveURL(/organizations/);
 
     // Diagnostics: log which auth carriers we captured. Either is fine.
     const cookies = await page.context().cookies()

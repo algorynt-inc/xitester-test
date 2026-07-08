@@ -10,6 +10,16 @@ export function attachmentUrl(att: ResultAttachment): string | null {
     return rawResultsUrl(`runs/${att.url}`)
 }
 
+/**
+ * Specs hidden from the dashboard UI. They still run in CI and are recorded in
+ * run.json / the catalog for traceability — we just don't render them. Matches
+ * infrastructure setup specs and test-analysis (long-running LLM plan/exec).
+ */
+const HIDDEN_SPEC_RE = /(\.setup|test-analysis\.spec)\.[tj]sx?$/
+export function isHiddenSpec(file: string): boolean {
+    return HIDDEN_SPEC_RE.test(file)
+}
+
 const cache = new Map<string, unknown>()
 
 async function fetchJson<T>(path: string, signal?: AbortSignal): Promise<T> {
@@ -39,7 +49,7 @@ export async function loadRun(runId: string, signal?: AbortSignal): Promise<Resu
     // tests, not the setup task.
     const tests = raw.tests.filter(t => {
         if (t.project === 'setup') return false
-        if (/\.setup\.[tj]sx?$/.test(t.file)) return false
+        if (isHiddenSpec(t.file)) return false
         return true
     })
     const stats = {
