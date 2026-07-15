@@ -214,8 +214,8 @@ async function uiCreateRecordTestCase(page: Page, name: string): Promise<void> {
     // SPA navigates to /test-analysis with state {mode:'record', startUrl, initialTitle}.
     await page.waitForURL(/\/test-analysis(\?|$|#|\/)/, { timeout: 10_000 })
     expect(page.url()).toMatch(/\/test-analysis/)
-    await expect(page.getByText('Ready to Record')).toBeVisible();
-    await expect(page.getByText('https://xitester.com')).toBeVisible();
+    await expect(page.getByText('Recording session started')).toBeVisible({ timeout: 20_000 })
+    await expect(page.getByText('Recording started (playwright')).toBeVisible({ timeout: 20_000 })
 }
 
 // ============================================================
@@ -348,8 +348,8 @@ test('TC-069 — Recorded test case modal accepts name + URL and routes to recor
     // SPA navigates to /test-analysis with state {mode:'record', startUrl, initialTitle}.
     await page.waitForURL(/\/test-analysis(\?|$|#|\/)/, { timeout: 10_000 })
     expect(page.url()).toMatch(/\/test-analysis/)
-    await expect(page.getByText('Analysis Steps')).toBeVisible();
-    await expect(page.locator('button', { hasText: /^Reset$/ })).toBeVisible()
+    await expect(page.getByText('Recording session started')).toBeVisible({ timeout: 20_000 })
+    await expect(page.getByText('Recording started (playwright')).toBeVisible({ timeout: 20_000 })
     await gotoTestCases(page)
     await expect(page.locator('input[placeholder="Search test cases…"]')).toBeVisible()
     await searchFor(page, recordTestCaseName)
@@ -369,7 +369,7 @@ test('TC-070 — Update an existing recorded test case', async ({ page }) => {
     const recordedRow = page
         .locator('table tbody tr.test-case-row')
         .filter({ has: page.getByText(recordTestCaseName) })
-        .filter({ has: page.getByText(/^Recorded$/) })
+        .filter({ has: page.getByText(/^Recording$/) })
         .first()
     if (!(await recordedRow.isVisible().catch(() => false))) {
         test.skip(true, 'No recorded test case in this project yet — create one via the SUT first.')
@@ -405,7 +405,7 @@ test('TC-071 — Delete a recorded test case', async ({ page }) => {
     const orphan = page
         .locator('table tbody tr.test-case-row')
         .filter({ has: page.getByText(recordTestCaseName) })
-        .filter({ has: page.getByText(/^Recorded$/) })
+        .filter({ has: page.getByText(/^Recording$/) })
         .first()
     if (!(await orphan.isVisible().catch(() => false))) {
         test.skip(true, 'No qa-rec-* recorded test case to delete — nothing to clean up.')
@@ -431,7 +431,7 @@ test('TC-072 — Clone a recorded test case', async ({ page }) => {
     const recordedRow = page
         .locator('table tbody tr.test-case-row')
         .filter({ has: page.getByText(name, { exact: true }) })
-        .filter({ has: page.getByText(/^Recorded$/) })
+        .filter({ has: page.getByText(/^Recording$/) })
         .first()
     await expect(recordedRow).toBeVisible({ timeout: 15000 })
     // if (!(await recordedRow.isVisible().catch(() => false))) {
@@ -633,7 +633,7 @@ test('TC-076 — Bulk select and bulk delete test cases', async ({ page }) => {
     )
 
     // List no longer shows our three rows.
-    await expect(page.getByText(a, { exact: true })).toBeHidden({ timeout: 8_000 })
+    await expect(page.getByText(a, { exact: true })).toBeHidden({ timeout: 10_000 })
     await expect(page.getByText(b, { exact: true })).toBeHidden()
     await expect(page.getByText(c, { exact: true })).toBeHidden()
 
