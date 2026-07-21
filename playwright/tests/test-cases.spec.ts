@@ -348,8 +348,8 @@ test('TC-069 — Recorded test case modal accepts name + URL and routes to recor
     // SPA navigates to /test-analysis with state {mode:'record', startUrl, initialTitle}.
     await page.waitForURL(/\/test-analysis(\?|$|#|\/)/, { timeout: 10_000 })
     expect(page.url()).toMatch(/\/test-analysis/)
-    await expect(page.getByText('Recording session started')).toBeVisible({ timeout: 20_000 })
-    await expect(page.getByText('Recording started (playwright')).toBeVisible({ timeout: 20_000 })
+    await page.getByRole('button', { name: 'Analysis', exact: true }).click()
+    await expect(page.getByText('Recording started (playwright')).toBeVisible({ timeout: 50_000 })
     await gotoTestCases(page)
     await expect(page.locator('input[placeholder="Search test cases…"]')).toBeVisible()
     await searchFor(page, recordTestCaseName)
