@@ -6,7 +6,7 @@ import { formatDuration, formatRelativeTime, shortSha } from '@/lib/format'
 import { ENV_LABELS } from '@/lib/config'
 import StatusPill from './StatusPill'
 
-export default function RunsList({ runs, title = 'Latest runs' }: { runs: RunSummary[]; title?: string }) {
+export default function RunsList({ runs, title = 'Latest Runs' }: { runs: RunSummary[]; title?: string }) {
     return (
         <Card>
             <Title>{title}</Title>

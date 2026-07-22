@@ -43,22 +43,22 @@ export default function EnvStatusGrid({ runs }: { runs: RunSummary[] }) {
     const visibleSuites = Array.from(suiteSet).sort()
 
     return (
-        <Card>
-            <Title>Latest run · suite × environment</Title>
+        <Card className="h-full">
+            <Title>Latest Run - Suite vs Environment</Title>
             <p className="mt-1 text-xs text-tremor-content dark:text-dark-tremor-content">
                 Pass rate · passed / total · breakdown of the latest run for each cell.
             </p>
-            <div className="mt-4 overflow-x-auto">
+            <div className="mt-4 max-h-64 overflow-auto">
                 <table className="w-full text-sm border-separate border-spacing-2">
                     <thead>
                         <tr>
-                            <th className="text-left text-xs font-medium text-tremor-content dark:text-dark-tremor-content pb-1">
+                            <th className="sticky top-0 z-10 bg-tremor-background dark:bg-dark-tremor-background text-left text-xs font-medium text-tremor-content dark:text-dark-tremor-content pb-1">
                                 Suite
                             </th>
                             {ENVS.map(e => (
                                 <th
                                     key={e}
-                                    className="text-left text-xs font-medium text-tremor-content dark:text-dark-tremor-content pb-1"
+                                    className="sticky top-0 z-10 bg-tremor-background dark:bg-dark-tremor-background text-left text-xs font-medium text-tremor-content dark:text-dark-tremor-content pb-1"
                                 >
                                     {ENV_LABELS[e]}
                                 </th>
@@ -117,7 +117,7 @@ function Cell({ run }: { run: RunSummary | undefined }) {
                 )}
             >
                 <div className="flex items-baseline gap-2">
-                    <span className={clsx('text-lg font-semibold tabular-nums', rateText(rate))}>
+                    <span className={clsx('text-sm font-semibold tabular-nums', rateText(rate))}>
                         {rate}%
                     </span>
                     <span className="text-xs text-tremor-content dark:text-dark-tremor-content tabular-nums">

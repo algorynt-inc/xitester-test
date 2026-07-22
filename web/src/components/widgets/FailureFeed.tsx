@@ -54,14 +54,16 @@ export default function FailureFeed({ runs }: { runs: RunSummary[] }) {
     }
 
     return (
-        <Card>
-            <Title>Recent failures</Title>
-            {failedItems.length === 0 && (
-                <p className="mt-4 text-tremor-content dark:text-dark-tremor-content text-sm">
-                    {Object.keys(details).length === 0 ? 'Loading…' : 'No failures in recent runs 🎉'}
-                </p>
-            )}
-            <ul className="mt-3 space-y-3">
+        <Card className="h-full flex flex-col">
+            <Title>Recent Failures</Title>
+            <div className="relative mt-3 flex-1 min-h-0">
+                <div className="absolute inset-0 overflow-y-auto pr-1">
+                {failedItems.length === 0 && (
+                    <p className="text-tremor-content dark:text-dark-tremor-content text-sm">
+                        {Object.keys(details).length === 0 ? 'Loading…' : 'No failures in recent runs 🎉'}
+                    </p>
+                )}
+                <ul className="space-y-3">
                 {failedItems.map((f, i) => (
                     <li key={`${f.runId}-${f.testId}-${i}`} className="text-sm">
                         <div className="flex items-baseline gap-2">
@@ -73,7 +75,9 @@ export default function FailureFeed({ runs }: { runs: RunSummary[] }) {
                         <Link to={`/runs/${f.runId}`} className="text-xs text-tremor-brand hover:underline">Open run →</Link>
                     </li>
                 ))}
-            </ul>
+                </ul>
+                </div>
+            </div>
         </Card>
     )
 }

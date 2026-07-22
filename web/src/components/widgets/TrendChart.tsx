@@ -56,9 +56,9 @@ export default function TrendChart({ runs }: { runs: RunSummary[] }) {
     }, [contentWidth, data.length])
 
     return (
-        <Card>
+        <Card className="h-full flex flex-col">
             <div className="flex items-center justify-between">
-                <Title>Passed vs failed · last 30 days</Title>
+                <Title>Passed vs Failed - Last 30 days</Title>
                 <div className="flex items-center gap-4 text-sm text-tremor-content dark:text-dark-tremor-content">
                     <span className="flex items-center gap-1.5">
                         <span className="h-2 w-2 rounded-full bg-emerald-500" />
@@ -71,10 +71,10 @@ export default function TrendChart({ runs }: { runs: RunSummary[] }) {
                 </div>
             </div>
 
-            <div className="mt-4 flex">
+            <div className="mt-4 flex flex-1 min-h-0">
                 {/* Fixed Y-axis — a bar-less chart sharing the same forced domain */}
                 <BarChart
-                    className="h-64 w-[48px] shrink-0"
+                    className="h-full w-[48px] shrink-0"
                     data={data}
                     index="runId"
                     categories={[]}
@@ -90,10 +90,10 @@ export default function TrendChart({ runs }: { runs: RunSummary[] }) {
                 />
 
                 {/* Scrollable bars */}
-                <div ref={scrollRef} className="min-w-0 flex-1 overflow-x-auto">
-                    <div style={{ width: contentWidth || '100%' }}>
+                <div ref={scrollRef} className="min-w-0 flex-1 overflow-x-auto h-full">
+                    <div className="h-full" style={{ width: contentWidth || '100%' }}>
                         <BarChart
-                            className="h-64"
+                            className="h-full"
                             data={data}
                             index="runId"
                             categories={['Passed', 'Failed']}
