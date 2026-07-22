@@ -7,8 +7,10 @@ export const SCHEDULE_CONFIG_PATH = 'schedule-config.json'
 export interface EnvSchedule {
     enabled: boolean
     /**
-     * Daily fire time as UTC "HH:MM", snapped to :00 / :30 — the dispatcher
-     * workflow (scheduled-e2e.yml) polls in 30-minute slots.
+     * Daily fire time as UTC "HH:MM", snapped to 10-minute marks. The
+     * dispatcher (scheduled-e2e.yml) ticks on a best-effort 10-minute cron
+     * and catches up on anything due since its previous tick, so a delayed
+     * tick fires the run late rather than skipping it.
      */
     utcTime: string
     suite: SuiteName
@@ -75,10 +77,9 @@ export function localToUtcHHMM(local: string): string {
     return `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`
 }
 
-/** Snap "HH:MM" to the nearest :00 / :30 slot the dispatcher can hit. */
-export function snapToHalfHour(hhmm: string): string {
+/** Snap "HH:MM" to the nearest 10-minute mark (the picker granularity). */
+export function snapToTenMinutes(hhmm: string): string {
     const [h, m] = hhmm.split(':').map(Number)
-    if (m < 15) return `${String(h).padStart(2, '0')}:00`
-    if (m < 45) return `${String(h).padStart(2, '0')}:30`
-    return `${String((h + 1) % 24).padStart(2, '0')}:00`
+    const total = (h * 60 + Math.round(m / 10) * 10) % 1440
+    return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
 }

@@ -8,7 +8,7 @@ import {
     loadScheduleConfig,
     localToUtcHHMM,
     saveScheduleConfig,
-    snapToHalfHour,
+    snapToTenMinutes,
     utcToLocalHHMM,
 } from '@/lib/schedule-config'
 import type { EnvSchedule, ScheduleConfig } from '@/lib/schedule-config'
@@ -86,9 +86,10 @@ export default function Schedules() {
                             Daily automated runs per environment
                         </Text>
                         <Text className="text-xs mt-1">
-                            A dispatcher workflow checks <code className="font-mono">schedule-config.json</code> every
-                            30 minutes and triggers the E2E workflow for each enabled environment at its set time.
-                            Times snap to 30-minute slots. Saving commits the config to{' '}
+                            A dispatcher workflow checks <code className="font-mono">schedule-config.json</code> on a
+                            ~10-minute cron and triggers the E2E workflow for each enabled environment at its set
+                            time. GitHub may delay ticks — a late tick fires the run late rather than skipping it.
+                            Times snap to 10-minute marks. Saving commits the config to{' '}
                             <code className="font-mono">main</code>.
                         </Text>
                     </div>
@@ -119,11 +120,11 @@ export default function Schedules() {
                                     <Text>Time (your local time)</Text>
                                     <input
                                         type="time"
-                                        step={1800}
+                                        step={600}
                                         value={utcToLocalHHMM(s.utcTime)}
                                         onChange={e => {
                                             if (!e.target.value) return
-                                            patch(env, { utcTime: snapToHalfHour(localToUtcHHMM(e.target.value)) })
+                                            patch(env, { utcTime: snapToTenMinutes(localToUtcHHMM(e.target.value)) })
                                         }}
                                         disabled={!s.enabled}
                                         className="mt-1 w-full rounded-tremor-default border border-tremor-border dark:border-dark-tremor-border bg-tremor-background dark:bg-dark-tremor-background px-3 py-2 text-sm text-tremor-content-strong dark:text-dark-tremor-content-strong disabled:opacity-50"
@@ -170,7 +171,7 @@ export default function Schedules() {
             )}
             {saved && !dirty && (
                 <div className="rounded-tremor-default bg-emerald-500/10 text-emerald-400 px-3 py-2 text-sm">
-                    Saved — the dispatcher picks this up on its next 30-minute tick.
+                    Saved — the dispatcher picks this up on its next tick.
                 </div>
             )}
 
