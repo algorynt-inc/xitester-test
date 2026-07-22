@@ -1,0 +1,1493 @@
+{
+  "runId": "29957637197",
+  "actionsRunId": "29957637197",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/29957637197",
+  "commit": "2fb482580bd7c240b3471e724d015e902fe5f7bd",
+  "branch": "main",
+  "environment": "dev",
+  "suite": "all",
+  "startedAt": "2026-07-22T21:03:15.431Z",
+  "finishedAt": "2026-07-22T21:11:58.134Z",
+  "durationMs": 522703,
+  "stats": {
+    "total": 64,
+    "passed": 64,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 4981,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-044 — Verify Total Te",
+      "title": "TC-044 — Verify Total Test Plan Runs display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5456,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-044___Verify_Total_Te-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-044___Verify_Total_Te-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-045 — Verify Pass Rat",
+      "title": "TC-045 — Verify Pass Rate calculation display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5524,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-045___Verify_Pass_Rat-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-045___Verify_Pass_Rat-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-046 — Verify Active S",
+      "title": "TC-046 — Verify Active Suites count is visible",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5514,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-046___Verify_Active_S-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-046___Verify_Active_S-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-047 — Verify Average ",
+      "title": "TC-047 — Verify Average Duration display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5421,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-047___Verify_Average_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-047___Verify_Average_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-048 — Verify Test Pla",
+      "title": "TC-048 — Verify Test Plan Run Analysis display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5523,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-048___Verify_Test_Pla-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-048___Verify_Test_Pla-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-049 — Verify Top Acti",
+      "title": "TC-049 — Verify Top Active Test Plans (bar chart) display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5439,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-049___Verify_Top_Acti-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-049___Verify_Top_Acti-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-050 — Verify Regressi",
+      "title": "TC-050 — Verify Regression Pass Rate Trend chart",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5736,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-050___Verify_Regressi-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-050___Verify_Regressi-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-051 — Verify Regressi",
+      "title": "TC-051 — Verify Regression Defects Found chart",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6377,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-051___Verify_Regressi-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-051___Verify_Regressi-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-052 — Verify Suite Br",
+      "title": "TC-052 — Verify Suite Breakdown chart",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6170,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-052___Verify_Suite_Br-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-052___Verify_Suite_Br-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-053 — Verify Overall ",
+      "title": "TC-053 — Verify Overall System Health display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5535,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-053___Verify_Overall_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-053___Verify_Overall_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-054 — Verify Module Q",
+      "title": "TC-054 — Verify Module Quality Analysis display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5431,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-054___Verify_Module_Q-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-054___Verify_Module_Q-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-055 — Verify System H",
+      "title": "TC-055 — Verify System Hotspots display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5619,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-055___Verify_System_H-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-055___Verify_System_H-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-001",
+      "title": "TC-LI-001 — Successful login with valid credentials",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 3814,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-LI-001-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-LI-001-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-002",
+      "title": "TC-LI-002 — Wrong password shows error",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 3968,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-LI-002-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-LI-002-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-003",
+      "title": "TC-LI-003 — Password visibility toggle",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 2623,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-LI-003-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-LI-003-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-004",
+      "title": "TC-LI-004 — Forgot password link navigates correctly",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 2441,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-LI-004-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-LI-004-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-005",
+      "title": "TC-LI-005 — Create account link navigates correctly",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 2253,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-LI-005-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-LI-005-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LO-001",
+      "title": "TC-LO-001 — Logout via user menu redirects to /login",
+      "file": "playwright/tests/logout.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6032,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-LO-001-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-LO-001-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LO-002",
+      "title": "TC-LO-002 — Protected routes redirect to /login after logout",
+      "file": "playwright/tests/logout.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 7582,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-LO-002-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-LO-002-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-056 — Verify Organiza",
+      "title": "TC-056 — Verify Organization Switch dropdown shows orgs",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 4714,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-056___Verify_Organiza-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-056___Verify_Organiza-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-057 — Verify Organiza",
+      "title": "TC-057 — Verify Organization search inside dropdown",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5138,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-057___Verify_Organiza-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-057___Verify_Organiza-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-058 — Verify \"All Org",
+      "title": "TC-058 — Verify \"All Organizations\" navigates to /organizations",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 4847,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-058___Verify__All_Org-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-058___Verify__All_Org-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-059 — Verify \"All Pro",
+      "title": "TC-059 — Verify \"All Projects\" + \"New project\" navigation from project dropdown",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5052,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-059___Verify__All_Pro-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-059___Verify__All_Pro-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-060 — Verify Project ",
+      "title": "TC-060 — Verify Project switch dropdown lists projects",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 4532,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-060___Verify_Project_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-060___Verify_Project_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-061 — Verify Project ",
+      "title": "TC-061 — Verify Project search inside dropdown",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 4549,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-061___Verify_Project_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-061___Verify_Project_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-062 — Verify Project ",
+      "title": "TC-062 — Verify Project search inside dropdown (clear restores list)",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 4581,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-062___Verify_Project_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-062___Verify_Project_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-001",
+      "title": "TC-ORG-001 — View organization list",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 4279,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-ORG-001-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-ORG-001-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-002",
+      "title": "TC-ORG-002 — Search filters the org list",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 4295,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-ORG-002-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-ORG-002-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-003",
+      "title": "TC-ORG-003 — View organization settings",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5710,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-ORG-003-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-ORG-003-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-004",
+      "title": "TC-ORG-004 — Create a new organization",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 11106,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-ORG-004-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-ORG-004-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-005",
+      "title": "TC-ORG-005 — Update organization name",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 11935,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-ORG-005-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-ORG-005-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-006",
+      "title": "TC-ORG-006 — Delete an organization via danger zone",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 9586,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-ORG-006-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-ORG-006-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-007",
+      "title": "TC-ORG-007 — Create rejects duplicate name",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 11411,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-ORG-007-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-ORG-007-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-001",
+      "title": "TC-PF-001 — Upload a valid profile photo",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 8880,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-PF-001-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-PF-001-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-002",
+      "title": "TC-PF-002 — Reject non-image file on profile photo upload",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 4762,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-PF-002-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-PF-002-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-003",
+      "title": "TC-PF-003 — Reject profile photo larger than 5 MB",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5295,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-PF-003-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-PF-003-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-004",
+      "title": "TC-PF-004 — Remove profile photo",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 8074,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-PF-004-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-PF-004-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-005",
+      "title": "TC-PF-005 — Update display name and revert",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6173,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-PF-005-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-PF-005-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-006",
+      "title": "TC-PF-006 — Update password and revert (destructive)",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 8988,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-PF-006-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-PF-006-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-007",
+      "title": "TC-PF-007 — Wrong current password is rejected",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5552,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-PF-007-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-PF-007-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-008",
+      "title": "TC-PF-008 — Mismatched new + confirm disables Save",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 4931,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-PF-008-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-PF-008-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-009",
+      "title": "TC-PF-009 — Weak (short) password disables Save",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 4770,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-PF-009-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-PF-009-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PR-001",
+      "title": "TC-PR-001 — View project list",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 4734,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-PR-001-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-PR-001-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PR-002",
+      "title": "TC-PR-002 — Create a new project",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 10108,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-PR-002-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-PR-002-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PR-003",
+      "title": "TC-PR-003 — Open Default Project and land on the dashboard",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5223,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-PR-003-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-PR-003-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PR-004",
+      "title": "TC-PR-004 — Update project name (and revert)",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 17465,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-PR-004-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-PR-004-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PR-005",
+      "title": "TC-PR-005 — Delete a project we just created",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 8714,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-PR-005-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-PR-005-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-041 — Project name sh",
+      "title": "TC-041 — Project name shown in header after selecting Default Project",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 4927,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-041___Project_name_sh-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-041___Project_name_sh-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-040 — Verify cancel i",
+      "title": "TC-040 — Verify cancel invitation",
+      "file": "playwright/tests/team.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 14013,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-040___Verify_cancel_i-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-040___Verify_cancel_i-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-065 — Create AI test ",
+      "title": "TC-065 — Create AI test case with name and description",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 11991,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-065___Create_AI_test_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-065___Create_AI_test_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-066 — Update existing",
+      "title": "TC-066 — Update existing AI test case name and description",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 11536,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-066___Update_existing-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-066___Update_existing-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-067 — Delete AI test ",
+      "title": "TC-067 — Delete AI test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 9114,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-067___Delete_AI_test_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-067___Delete_AI_test_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-068 — Clone AI test c",
+      "title": "TC-068 — Clone AI test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 17132,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-068___Clone_AI_test_c-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-068___Clone_AI_test_c-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-069 — Recorded test c",
+      "title": "TC-069 — Recorded test case modal accepts name + URL and routes to recording flow",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 19607,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-069___Recorded_test_c-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-069___Recorded_test_c-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-070 — Update an exist",
+      "title": "TC-070 — Update an existing recorded test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 18773,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-070___Update_an_exist-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-070___Update_an_exist-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-071 — Delete a record",
+      "title": "TC-071 — Delete a recorded test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 18301,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-071___Delete_a_record-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-071___Delete_a_record-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-072 — Clone a recorde",
+      "title": "TC-072 — Clone a recorded test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 23057,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-072___Clone_a_recorde-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-072___Clone_a_recorde-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-073 — Search filters ",
+      "title": "TC-073 — Search filters the list to matching test cases",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 9124,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-073___Search_filters_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-073___Search_filters_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-074 — Add a tag to a ",
+      "title": "TC-074 — Add a tag to a test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 10780,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-074___Add_a_tag_to_a_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-074___Add_a_tag_to_a_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-075 — Removing a tag ",
+      "title": "TC-075 — Removing a tag persists after page reload",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 13325,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-075___Removing_a_tag_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-075___Removing_a_tag_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-076 — Bulk select and",
+      "title": "TC-076 — Bulk select and bulk delete test cases",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 16819,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-076___Bulk_select_and-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-076___Bulk_select_and-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-042 — Verify theme sw",
+      "title": "TC-042 — Verify theme switch from light to dark",
+      "file": "playwright/tests/theme.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6763,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-042___Verify_theme_sw-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-042___Verify_theme_sw-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-043 — Verify theme sw",
+      "title": "TC-043 — Verify theme switch from dark to light",
+      "file": "playwright/tests/theme.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6272,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29957637197/TC-043___Verify_theme_sw-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29957637197/TC-043___Verify_theme_sw-1-trace.zip"
+        }
+      ]
+    }
+  ]
+}
