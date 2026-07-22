@@ -1,5 +1,5 @@
 {
-    "$comment": "Per-environment daily E2E schedules. Read every 30 minutes by .github/workflows/scheduled-e2e.yml, edited from the dashboard Schedules page. utcTime must be HH:MM UTC snapped to :00 or :30 (20:30 UTC = 02:00 IST).",
+    "$comment": "Per-environment daily E2E schedules. Read by .github/workflows/scheduled-e2e.yml on a best-effort 10-minute cron (late ticks catch up from the previous successful tick rather than skip), edited from the dashboard Schedules page. utcTime is HH:MM UTC, any minute (20:30 UTC = 02:00 IST).",
     "schedules": {
         "pre-dev": {
             "enabled": false,

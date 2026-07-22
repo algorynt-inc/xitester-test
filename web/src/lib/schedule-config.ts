@@ -7,8 +7,12 @@ export const SCHEDULE_CONFIG_PATH = 'schedule-config.json'
 export interface EnvSchedule {
     enabled: boolean
     /**
-     * Daily fire time as UTC "HH:MM", snapped to :00 / :30 — the dispatcher
-     * workflow (scheduled-e2e.yml) polls in 30-minute slots.
+     * Daily fire time as UTC "HH:MM" (any minute — the picker snaps to
+     * 10-minute marks in the user's LOCAL time, so the stored UTC value may
+     * be off-grid in :30/:45-offset timezones). The dispatcher
+     * (scheduled-e2e.yml) ticks on a best-effort 10-minute cron and catches
+     * up on anything due since its previous successful tick, so a delayed
+     * tick fires the run late rather than skipping it.
      */
     utcTime: string
     suite: SuiteName
@@ -38,8 +42,19 @@ export async function loadScheduleConfig(token: string): Promise<LoadedScheduleC
     if (Array.isArray(data) || data.type !== 'file' || !('content' in data)) {
         throw new Error(`${SCHEDULE_CONFIG_PATH} is not a file on main`)
     }
-    const config = JSON.parse(atob(data.content.replace(/\n/g, ''))) as ScheduleConfig
+    const config = JSON.parse(b64DecodeUtf8(data.content.replace(/\n/g, ''))) as ScheduleConfig
     return { config, sha: data.sha }
+}
+
+/** atob/btoa are Latin-1 only; route through TextEncoder/Decoder so non-ASCII content round-trips. */
+function b64EncodeUtf8(s: string): string {
+    let bin = ''
+    for (const byte of new TextEncoder().encode(s)) bin += String.fromCharCode(byte)
+    return btoa(bin)
+}
+
+function b64DecodeUtf8(b64: string): string {
+    return new TextDecoder().decode(Uint8Array.from(atob(b64), c => c.charCodeAt(0)))
 }
 
 export async function saveScheduleConfig(
@@ -54,7 +69,7 @@ export async function saveScheduleConfig(
         path: SCHEDULE_CONFIG_PATH,
         branch: 'main',
         message: 'chore: update E2E schedule config from dashboard',
-        content: btoa(body),
+        content: b64EncodeUtf8(body),
         sha,
     })
 }
@@ -75,10 +90,9 @@ export function localToUtcHHMM(local: string): string {
     return `${String(d.getUTCHours()).padStart(2, '0')}:${String(d.getUTCMinutes()).padStart(2, '0')}`
 }
 
-/** Snap "HH:MM" to the nearest :00 / :30 slot the dispatcher can hit. */
-export function snapToHalfHour(hhmm: string): string {
+/** Snap "HH:MM" to the nearest 10-minute mark (the picker granularity). */
+export function snapToTenMinutes(hhmm: string): string {
     const [h, m] = hhmm.split(':').map(Number)
-    if (m < 15) return `${String(h).padStart(2, '0')}:00`
-    if (m < 45) return `${String(h).padStart(2, '0')}:30`
-    return `${String((h + 1) % 24).padStart(2, '0')}:00`
+    const total = (h * 60 + Math.round(m / 10) * 10) % 1440
+    return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
 }
