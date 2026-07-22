@@ -191,14 +191,25 @@ jobs:
             echo '{"runs": []}' > index.json
           fi
 
-      - name: Append run.json + attachments + update index.json
+      - name: Append results + commit + push (retries on concurrent-push races)
         if: always()
         working-directory: ${{ github.workspace }}/results-branch
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
           ACTIONS_RUN_ID: ${{ github.run_id }}
           PARENT_RUN_ID: ${{ inputs.parent_run_id }}
+          GREP_INPUT: ${{ inputs.grep }}
         run: |
           set -e
+          git config user.name  "xitester-test bot"
+          git config user.email "actions@github.com"
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
+
+          # Re-runnable: re-applied on a fresh remote tip when a concurrent
+          # run (e.g. a second env dispatched in the same scheduler tick)
+          # pushes to the results branch first.
+          apply_results() {
           mkdir -p runs
 
           # The reporter has already written a JSON whose runId is either
@@ -310,47 +321,44 @@ jobs:
             ' index.json > index.json.tmp && mv index.json.tmp index.json
             echo "index.json now has $(jq '.runs | length' index.json) entries"
           fi
+          }
 
-      - name: Commit + push to results branch
-        if: always()
-        working-directory: ${{ github.workspace }}/results-branch
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO: ${{ github.repository }}
-          ACTIONS_RUN_ID: ${{ github.run_id }}
-          PARENT_RUN_ID: ${{ inputs.parent_run_id }}
-        run: |
-          set -e
-          git config user.name  "xitester-test bot"
-          git config user.email "actions@github.com"
+          for ATTEMPT in 1 2 3 4 5; do
+            apply_results
 
-          # Stage everything relevant: JSONs, attachment dirs, and the index.
-          git add index.json
-          git add runs/ 2>/dev/null || true
+            # Stage everything relevant: JSONs, attachment dirs, and the index.
+            git add index.json
+            git add runs/ 2>/dev/null || true
+            if git diff --cached --quiet; then
+              echo "Nothing to commit"
+              exit 0
+            fi
 
-          echo "==== git status before commit ===="
-          git status --short
-          echo "==== files staged ===="
-          git diff --cached --name-only
-          if git diff --cached --quiet; then
-            echo "Nothing to commit"
-            exit 0
-          fi
+            if [ -n "$PARENT_RUN_ID" ]; then
+              MSG="results: re-run ${{ inputs.environment }} ${{ inputs.suite }} into parent ${PARENT_RUN_ID} (actions ${ACTIONS_RUN_ID})"
+            else
+              MSG="results: ${{ inputs.environment }} ${{ inputs.suite }} run ${ACTIONS_RUN_ID}"
+            fi
+            git commit -m "$MSG"
 
-          if [ -n "$PARENT_RUN_ID" ]; then
-            MSG="results: re-run ${{ inputs.environment }} ${{ inputs.suite }} into parent ${PARENT_RUN_ID} (actions ${ACTIONS_RUN_ID})"
-          else
-            MSG="results: ${{ inputs.environment }} ${{ inputs.suite }} run ${ACTIONS_RUN_ID}"
-          fi
-          git commit -m "$MSG"
-          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
-          git push origin HEAD:results
-          echo "==== Pushed. Verifying ===="
-          TARGET="${PARENT_RUN_ID:-$ACTIONS_RUN_ID}"
-          if [ -d "runs/${TARGET}" ]; then
-            echo "Files under runs/${TARGET}:"
-            ls -la "runs/${TARGET}/"
-          fi
+            if git push origin HEAD:results; then
+              echo "==== Pushed on attempt ${ATTEMPT}. Verifying ===="
+              TARGET="${PARENT_RUN_ID:-$ACTIONS_RUN_ID}"
+              if [ -d "runs/${TARGET}" ]; then
+                echo "Files under runs/${TARGET}:"
+                ls -la "runs/${TARGET}/"
+              fi
+              exit 0
+            fi
+
+            # Another run pushed to the results branch first — refresh to the
+            # remote tip and re-apply our results on top of it.
+            echo "::warning::push rejected (concurrent results write) — retrying (attempt ${ATTEMPT}/5)"
+            git fetch origin results
+            git reset --hard FETCH_HEAD
+          done
+          echo "::error::could not push results after 5 attempts"
+          exit 1
 
       - name: Propagate test failure
         if: steps.run-tests.outcome == 'failure'

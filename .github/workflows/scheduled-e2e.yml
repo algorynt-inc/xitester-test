@@ -2,12 +2,13 @@ name: Scheduled E2E
 
 # Config-driven scheduler. GitHub fires this on a best-effort 10-minute cron —
 # in practice ticks on quiet repos are throttled and can arrive an hour or
-# more apart. Each tick therefore computes the window since the PREVIOUS tick
-# and dispatches e2e.yml for every enabled environment whose daily utcTime
-# fell inside that window: a late tick fires the run late instead of skipping
-# it. Toggling an env on/off or changing its time only requires editing
-# schedule-config.json (the dashboard Schedules page does this) — never this
-# file.
+# more apart. Each tick therefore computes the window since the previous
+# SUCCESSFUL tick and dispatches e2e.yml for every enabled environment whose
+# daily utcTime fell inside that window: a late tick fires the run late
+# instead of skipping it, and a failed tick does not consume its window (the
+# next successful tick re-covers it). Toggling an env on/off or changing its
+# time only requires editing schedule-config.json (the dashboard Schedules
+# page does this) — never this file.
 
 on:
   schedule:
@@ -28,7 +29,7 @@ env:
 jobs:
   dispatch:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
 
     steps:
       - name: Checkout schedule config
@@ -38,36 +39,69 @@ jobs:
             schedule-config.json
           sparse-checkout-cone-mode: false
 
-      - name: Dispatch e2e.yml for schedules due since the previous tick
+      - name: Dispatch e2e.yml for schedules due since the previous successful tick
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
           RUN_ID: ${{ github.run_id }}
         run: |
           set -e
-          # Window end = this run's own created_at (not "now"): consecutive
-          # ticks then form non-overlapping (prev.created_at, this.created_at]
-          # windows even when their executions are delayed or queued out of
-          # order by the concurrency group.
+          # Validate the config BEFORE anything else. A broken config must
+          # produce a RED tick — which does not advance the window (see PREV
+          # filter below) — never a green no-op that silently swallows every
+          # schedule in its window.
+          jq -e '
+            (.schedules | type == "object") and
+            ([.schedules[] | select(.enabled == true) | .utcTime // "" | test("^([01][0-9]|2[0-3]):[0-5][0-9]$")] | all)
+          ' schedule-config.json > /dev/null || {
+            echo "::error::schedule-config.json is missing, malformed, or an enabled env has an invalid utcTime"
+            exit 1
+          }
+
           CUR=$(gh api "repos/$REPO/actions/runs/$RUN_ID" --jq .created_at)
-          PREV=$(gh api "repos/$REPO/actions/workflows/scheduled-e2e.yml/runs?per_page=50" \
-            --jq '[.workflow_runs[] | select((.id | tostring) != env.RUN_ID) | .created_at | select(. < "'"$CUR"'")] | max // empty')
+          export CUR_TS="$CUR"
+
+          # Window start = created_at of the most recent SUCCESSFUL tick on
+          # main. Success-only means failed/cancelled ticks never consume a
+          # window; branch=main keeps feature-branch test dispatches out of
+          # the chain; the run-id tiebreak gives two same-second ticks a
+          # strict order instead of a shared (double-firing) window. The runs
+          # API returns newest-first, so page 1 always contains the max.
+          PREV=$(gh api "repos/$REPO/actions/workflows/scheduled-e2e.yml/runs?branch=main&status=success&per_page=50" \
+            --jq '[.workflow_runs[]
+                   | select((.created_at < env.CUR_TS) or (.created_at == env.CUR_TS and .id < (env.RUN_ID | tonumber)))
+                   | .created_at] | max // empty')
 
           CUR_S=$(date -u -d "$CUR" +%s)
           if [ -n "$PREV" ]; then
             PREV_S=$(date -u -d "$PREV" +%s)
           else
-            # First tick ever — look back 30 minutes.
+            # First successful tick ever — look back 30 minutes.
             PREV_S=$(( CUR_S - 1800 ))
           fi
           # Cap catch-up at 24h so a long outage fires at most one day's run.
           if [ $(( CUR_S - PREV_S )) -gt 86400 ]; then
             PREV_S=$(( CUR_S - 86400 ))
           fi
+          if [ "$PREV_S" -ge "$CUR_S" ]; then
+            echo "Empty window — a same-second sibling tick already covers it."
+            exit 0
+          fi
           echo "Window: ($(date -u -d "@$PREV_S" +%FT%TZ), $(date -u -d "@$CUR_S" +%FT%TZ)]"
 
+          # Command substitution (NOT process substitution): if jq fails here,
+          # the assignment fails and set -e turns the tick red.
+          DUE=$(jq -r '
+            .schedules | to_entries[]
+            | select(.value.enabled == true)
+            | [.key, .value.utcTime, (.value.suite // "all"), (.value.browser // "chromium")]
+            | @tsv
+          ' schedule-config.json)
+
           DISPATCHED=0
+          FAILED=0
           while IFS=$'\t' read -r env time suite browser; do
+            [ -n "$env" ] || continue
             # Most recent daily occurrence of $time at-or-before the window
             # end: today's, or yesterday's if today's is still ahead.
             T=$(date -u -d "$(date -u -d "@$CUR_S" +%F) $time" +%s)
@@ -75,21 +109,34 @@ jobs:
 
             if [ "$T" -gt "$PREV_S" ]; then
               echo "→ $env: $time UTC fell inside the window — dispatching (suite=$suite browser=$browser)"
-              gh workflow run e2e.yml --ref main \
-                -f environment="$env" \
-                -f suite="$suite" \
-                -f browser="$browser" \
-                -f grep= \
-                -f parent_run_id=
-              DISPATCHED=$(( DISPATCHED + 1 ))
+              OK=0
+              for ATTEMPT in 1 2 3; do
+                if gh workflow run e2e.yml --ref main \
+                     -f environment="$env" \
+                     -f suite="$suite" \
+                     -f browser="$browser" \
+                     -f grep= \
+                     -f parent_run_id=; then
+                  OK=1
+                  break
+                fi
+                echo "::warning::dispatch attempt $ATTEMPT for $env failed — retrying in 15s"
+                sleep 15
+              done
+              if [ "$OK" -eq 1 ]; then
+                DISPATCHED=$(( DISPATCHED + 1 ))
+              else
+                echo "::error::could not dispatch $env after 3 attempts"
+                FAILED=1
+              fi
             else
               echo "  $env: $time UTC not in window — skipping"
             fi
-          done < <(jq -r '
-            .schedules | to_entries[]
-            | select(.value.enabled == true)
-            | [.key, .value.utcTime, (.value.suite // "all"), (.value.browser // "chromium")]
-            | @tsv
-          ' schedule-config.json)
+          done <<< "$DUE"
 
           echo "Dispatched $DISPATCHED run(s)."
+          # A red tick does not advance the window, so the next successful
+          # tick retries everything still due. (Envs that DID dispatch before
+          # the failure may then fire twice — an accepted rare duplicate,
+          # preferred over silently losing a scheduled run.)
+          [ "$FAILED" -eq 0 ] || exit 1

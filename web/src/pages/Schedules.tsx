@@ -66,7 +66,16 @@ export default function Schedules() {
             setSaved(true)
             await reload()
         } catch (err) {
-            setError((err as Error).message)
+            if ((err as { status?: number }).status === 409) {
+                // Someone else saved since we loaded — our sha is stale.
+                // Reload the latest so the next save can succeed.
+                await reload()
+                setError(
+                    'The config was changed elsewhere while you were editing — reloaded the latest version. Please re-apply your edits and save again.',
+                )
+            } else {
+                setError((err as Error).message)
+            }
         } finally {
             setBusy(false)
         }
@@ -123,8 +132,16 @@ export default function Schedules() {
                                         step={600}
                                         value={utcToLocalHHMM(s.utcTime)}
                                         onChange={e => {
+                                            // No snapping mid-typing — rewriting the controlled value
+                                            // while the user edits mangles keyboard entry.
                                             if (!e.target.value) return
-                                            patch(env, { utcTime: snapToTenMinutes(localToUtcHHMM(e.target.value)) })
+                                            patch(env, { utcTime: localToUtcHHMM(e.target.value) })
+                                        }}
+                                        onBlur={e => {
+                                            // Snap in LOCAL time (matches the picker's 10-min steps
+                                            // even in :30/:45-offset timezones), then store as UTC.
+                                            if (!e.target.value) return
+                                            patch(env, { utcTime: localToUtcHHMM(snapToTenMinutes(e.target.value)) })
                                         }}
                                         disabled={!s.enabled}
                                         className="mt-1 w-full rounded-tremor-default border border-tremor-border dark:border-dark-tremor-border bg-tremor-background dark:bg-dark-tremor-background px-3 py-2 text-sm text-tremor-content-strong dark:text-dark-tremor-content-strong disabled:opacity-50"
