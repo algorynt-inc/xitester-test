@@ -50,6 +50,8 @@ test('TC-PF-001 — Upload a valid profile photo', async ({ page }) => {
         buffer: TINY_PNG,
     })
 
+    await page.getByRole('button', { name: 'Save photo' }).click();
+
     await expect(page.locator('[data-sonner-toaster]')).toContainText(
         /profile photo updated/i,
         { timeout: 10_000 },
@@ -117,6 +119,7 @@ test('TC-PF-004 — Remove profile photo', async ({ page }) => {
         mimeType: 'image/png',
         buffer: TINY_PNG,
     })
+    await page.getByRole('button', { name: 'Save photo' }).click();
     await expect(page.locator('[data-sonner-toaster]')).toContainText(
         /profile photo updated/i,
         { timeout: 10_000 },

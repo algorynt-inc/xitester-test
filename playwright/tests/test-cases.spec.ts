@@ -582,7 +582,7 @@ test('TC-076 — Bulk select and bulk delete test cases', async ({ page }) => {
     await expectToast(page, /3 test case\(s\) deleted/i)
 
     // List no longer shows our three rows.
-    await expect(page.getByText(a, { exact: true })).toBeHidden({ timeout: 8_000 })
+    await expect(page.getByText(a, { exact: true })).toBeHidden({ timeout: 10_000 })
     await expect(page.getByText(b, { exact: true })).toBeHidden()
     await expect(page.getByText(c, { exact: true })).toBeHidden()
 

@@ -109,6 +109,7 @@ jobs:
           # When parent_run_id is set, the reporter uses this as runId so
           # attachments and JSON land under the parent's namespace.
           XT_RESULT_RUN_ID: ${{ inputs.parent_run_id }}
+          XT_RUN_DESTRUCTIVE: ${{ inputs.grep == 'TC-PF-006' && '1' || '0' }}
         run: |
           GREP_FLAG=""
           if [ -n "$GREP_INPUT" ]; then

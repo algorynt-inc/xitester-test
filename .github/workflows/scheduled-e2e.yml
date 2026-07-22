@@ -1,0 +1,69 @@
+name: Scheduled E2E
+
+# Config-driven scheduler: fires every 30 minutes, reads schedule-config.json
+# from main, and dispatches e2e.yml for every environment whose schedule is
+# enabled and whose utcTime matches the current 30-minute slot. Toggling an
+# env on/off or changing its time only requires editing schedule-config.json
+# (the dashboard Schedules page does this) — never this file.
+
+on:
+  schedule:
+    - cron: '0,30 * * * *'
+  workflow_dispatch: # manual run to test the dispatcher against the current slot
+
+permissions:
+  contents: read
+  actions: write # needed to create workflow_dispatch events on e2e.yml
+
+concurrency:
+  group: scheduled-e2e
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout schedule config
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            schedule-config.json
+          sparse-checkout-cone-mode: false
+
+      - name: Dispatch e2e.yml for matching schedules
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          # Snap "now" down to the current 30-min slot so GitHub's cron jitter
+          # (runs can start many minutes after the tick) still matches the
+          # intended utcTime.
+          SLOT="$(date -u +%H):$(printf '%02d' $(( 10#$(date -u +%M) / 30 * 30 )))"
+          echo "Current UTC slot: $SLOT"
+
+          MATCHES=$(jq -r --arg slot "$SLOT" '
+            .schedules | to_entries[]
+            | select(.value.enabled == true and .value.utcTime == $slot)
+            | [.key, (.value.suite // "all"), (.value.browser // "chromium")]
+            | @tsv
+          ' schedule-config.json)
+
+          if [ -z "$MATCHES" ]; then
+            echo "No enabled schedule matches slot $SLOT — nothing to dispatch."
+            exit 0
+          fi
+
+          while IFS=$'\t' read -r env suite browser; do
+            echo "Dispatching e2e.yml → environment=$env suite=$suite browser=$browser"
+            gh workflow run e2e.yml --ref main \
+              -f environment="$env" \
+              -f suite="$suite" \
+              -f browser="$browser" \
+              -f grep= \
+              -f parent_run_id=
+          done <<< "$MATCHES"
