@@ -2,7 +2,10 @@ import { test, expect, type Page } from '@playwright/test'
 import { ENV } from '../env'
 
 test.use({ storageState: '.auth/user.json' })
-test.describe.configure({ mode: 'serial' })
+// Tests run one-at-a-time (config: `workers: 1`, `fullyParallel: false`), so they
+// don't fight over the shared account. `default` mode (not `serial`) keeps tests
+// independent: one failing test won't skip the rest.
+test.describe.configure({ mode: 'default' })
 
 const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD secret bundle.`
 

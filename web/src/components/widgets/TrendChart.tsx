@@ -3,7 +3,6 @@ import { Card, Title, BarChart } from '@tremor/react'
 import type { CustomTooltipProps } from '@tremor/react'
 import { formatDateTimeIST } from '@/lib/format'
 import type { RunSummary } from '@/types'
-import { passRate } from '@/lib/results-loader'
 
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000
 const VISIBLE_BARS = 15

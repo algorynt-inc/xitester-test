@@ -14,6 +14,7 @@ const TABS = [
     { to: '/suites', label: 'Suites' },
     { to: '/runs', label: 'Runs' },
     { to: '/trigger', label: 'Trigger' },
+    { to: '/schedules', label: 'Schedules' },
 ] as const
 
 function Tab({ to, label }: { to: string; label: string }) {

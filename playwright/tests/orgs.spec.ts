@@ -1,7 +1,10 @@
 import { test, expect, type Locator, type Page } from '@playwright/test'
 import { ENV } from '../env'
 
-test.describe.configure({ mode: 'serial' })
+// Tests run one-at-a-time (config: `workers: 1`, `fullyParallel: false`), so they
+// don't fight over the shared account. `default` mode (not `serial`) keeps tests
+// independent: one failing test won't skip the rest.
+test.describe.configure({ mode: 'default' })
 
 // Every test in this file starts already authenticated, courtesy of the
 // `setup` project (auth.setup.ts). Zero login attempts in this spec.

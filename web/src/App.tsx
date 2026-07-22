@@ -6,6 +6,7 @@ import Overview from './pages/Overview'
 import Runs from './pages/Runs'
 import RunDetail from './pages/RunDetail'
 import Trigger from './pages/Trigger'
+import Schedules from './pages/Schedules'
 import InFlight from './pages/InFlight'
 import TestHistory from './pages/TestHistory'
 import Suites from './pages/Suites'
@@ -28,6 +29,7 @@ export default function App() {
                 <Route path="runs" element={<Runs />} />
                 <Route path="runs/:runId" element={<RunDetail />} />
                 <Route path="trigger" element={<Trigger />} />
+                <Route path="schedules" element={<Schedules />} />
                 <Route path="in-flight/:runId" element={<InFlight />} />
                 <Route path="tests/:tcId" element={<TestHistory />} />
             </Route>

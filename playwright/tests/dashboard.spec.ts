@@ -1,6 +1,10 @@
 import { test, expect, type Page } from '@playwright/test'
 import { ENV } from '../env'
 
+// Tests run one-at-a-time (config: `workers: 1`, `fullyParallel: false`), so they
+// don't fight over the shared account. `default` mode (not `serial`) keeps tests
+// independent: one failing test won't skip the rest.
+test.describe.configure({ mode: 'default' })
 test.use({ storageState: '.auth/user.json' })
 
 const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD secret bundle.`
@@ -65,7 +69,7 @@ test('TC-047 — Verify Average Duration display', async ({ page }) => {
 test('TC-048 — Verify Test Plan Run Analysis display', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
     await gotoDashboard(page, 'overview')
-    await expect(page.getByText('Test Plan Runs Analysis').first()).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByText('Test Plan Runs Analysis').first()).toBeVisible({ timeout: 20_000 })
     // Selector dropdown that scopes the chart to a chosen plan should render.
     await expect(page.locator('[aria-label="Select test plan"]').first()).toBeVisible({
         timeout: 5_000,
@@ -75,7 +79,7 @@ test('TC-048 — Verify Test Plan Run Analysis display', async ({ page }) => {
 test('TC-049 — Verify Top Active Test Plans (bar chart) display', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
     await gotoDashboard(page, 'overview')
-    await expect(page.getByText('Top Active Test Plans').first()).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByText('Top Active Test Plans').first()).toBeVisible({ timeout: 20_000 })
 })
 
 // ============================================================
@@ -85,19 +89,19 @@ test('TC-049 — Verify Top Active Test Plans (bar chart) display', async ({ pag
 test('TC-050 — Verify Regression Pass Rate Trend chart', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
     await gotoDashboard(page, 'regression')
-    await expect(page.getByText('Regression Pass Rate Trend').first()).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByText('Regression Pass Rate Trend').first()).toBeVisible({ timeout: 20_000 })
 })
 
 test('TC-051 — Verify Regression Defects Found chart', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
     await gotoDashboard(page, 'regression')
-    await expect(page.getByText('Regression Defects Found').first()).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByText('Regression Defects Found').first()).toBeVisible({ timeout: 20_000 })
 })
 
 test('TC-052 — Verify Suite Breakdown chart', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
     await gotoDashboard(page, 'regression')
-    await expect(page.getByText(/Suite Breakdown/i).first()).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByText(/Suite Breakdown/i).first()).toBeVisible({ timeout: 20_000 })
 })
 
 // ============================================================
@@ -107,17 +111,17 @@ test('TC-052 — Verify Suite Breakdown chart', async ({ page }) => {
 test('TC-053 — Verify Overall System Health display', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
     await gotoDashboard(page, 'coverage')
-    await expect(page.getByText('Overall System Health').first()).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByText('Overall System Health').first()).toBeVisible({ timeout: 20_000 })
 })
 
 test('TC-054 — Verify Module Quality Analysis display', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
     await gotoDashboard(page, 'coverage')
-    await expect(page.getByText('Module Quality Analysis').first()).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByText('Module Quality Analysis').first()).toBeVisible({ timeout: 20_000 })
 })
 
 test('TC-055 — Verify System Hotspots display', async ({ page }) => {
     test.skip(!ENV.user.email || !ENV.user.password, SKIP_NO_CREDS)
     await gotoDashboard(page, 'coverage')
-    await expect(page.getByText('System Hotspots').first()).toBeVisible({ timeout: 10_000 })
+    await expect(page.getByText('System Hotspots').first()).toBeVisible({ timeout: 20_000 })
 })

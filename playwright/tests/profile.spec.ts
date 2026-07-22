@@ -3,9 +3,11 @@ import { ENV } from '../env'
 
 test.use({ storageState: '.auth/user.json' })
 
-// All profile tests mutate the same user account. Run serially within this
-// spec so two tests don't fight over name / photo / password concurrently.
-test.describe.configure({ mode: 'serial' })
+// All profile tests mutate the same user account, so they must not run
+// concurrently over name / photo / password. Sequencing is already enforced by
+// the config (`workers: 1`, `fullyParallel: false`); `default` mode (not `serial`)
+// keeps each test independent so one failure won't skip the rest.
+test.describe.configure({ mode: 'default' })
 
 const SKIP_NO_CREDS = `${ENV.name} env has no TEST_USER_EMAIL/TEST_USER_PASSWORD secret bundle.`
 const ts = () => new Date().toISOString().replace(/[^0-9]/g, '').slice(0, 14)
@@ -47,6 +49,8 @@ test('TC-PF-001 — Upload a valid profile photo', async ({ page }) => {
         mimeType: 'image/png',
         buffer: TINY_PNG,
     })
+
+    await page.getByRole('button', { name: 'Save photo' }).click();
 
     await expect(page.locator('[data-sonner-toaster]')).toContainText(
         /profile photo updated/i,
@@ -115,6 +119,7 @@ test('TC-PF-004 — Remove profile photo', async ({ page }) => {
         mimeType: 'image/png',
         buffer: TINY_PNG,
     })
+    await page.getByRole('button', { name: 'Save photo' }).click();
     await expect(page.locator('[data-sonner-toaster]')).toContainText(
         /profile photo updated/i,
         { timeout: 10_000 },
