@@ -9,7 +9,7 @@
         },
         "dev": {
             "enabled": true,
-            "utcTime": "12:00",
+            "utcTime": "21:00",
             "suite": "all",
             "browser": "chromium"
         },
