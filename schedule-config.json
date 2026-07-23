@@ -9,19 +9,19 @@
         },
         "dev": {
             "enabled": true,
-            "utcTime": "21:00",
+            "utcTime": "20:30",
             "suite": "all",
             "browser": "chromium"
         },
         "stage": {
-            "enabled": false,
-            "utcTime": "20:30",
+            "enabled": true,
+            "utcTime": "21:00",
             "suite": "all",
             "browser": "chromium"
         },
         "qa": {
-            "enabled": false,
-            "utcTime": "20:30",
+            "enabled": true,
+            "utcTime": "21:30",
             "suite": "all",
             "browser": "chromium"
         }
