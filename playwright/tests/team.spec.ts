@@ -38,7 +38,6 @@ test('TC-040 — Verify cancel invitation', async ({ page }) => {
 
     // The Cancel link inside the row.
     await pendingRow.locator('button', { hasText: /^ Cancel$/ }).first().click()
-
     // Confirmation dialog → "Cancel invitation".
     // const dialog = page.getByRole('alertdialog', { hasText: /Cancel invitation/i })
     const dialog = page.getByRole('alertdialog')
