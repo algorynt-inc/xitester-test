@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import { Card, Title } from '@tremor/react'
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
-import type { EnvName, RunSummary } from '@/types'
+import type { EnvName, ResultRun, RunStats, RunSummary } from '@/types'
 import { ENVS } from '@/types'
 import { ENV_LABELS } from '@/lib/config'
-import { passRate } from '@/lib/results-loader'
+import { passRate, isHiddenSuite, loadRun, suiteStats } from '@/lib/results-loader'
 import { loadCatalog } from '@/lib/catalog-loader'
 
 function rateColor(rate: number | null): string {
@@ -22,8 +22,15 @@ function rateText(rate: number | null): string {
     return 'text-rose-600 dark:text-rose-400'
 }
 
+/** A cell's resolved content: the run it reflects + suite-scoped stats. */
+interface CellData {
+    run: RunSummary
+    stats: RunStats
+}
+
 export default function EnvStatusGrid({ runs }: { runs: RunSummary[] }) {
     const [catalogSuites, setCatalogSuites] = useState<string[]>([])
+    const [allDetails, setAllDetails] = useState<Record<string, ResultRun>>({})
 
     useEffect(() => {
         loadCatalog().then(c => setCatalogSuites(c.suites)).catch(() => undefined)
@@ -37,9 +44,53 @@ export default function EnvStatusGrid({ runs }: { runs: RunSummary[] }) {
         if (!prev || new Date(r.finishedAt) > new Date(prev.finishedAt)) grid.set(key, r)
     }
 
-    // Suites = catalog ∪ run-history, minus the meta "all" pseudo-suite.
-    const suiteSet = new Set<string>(catalogSuites)
-    for (const r of runs) if (r.suite !== 'all') suiteSet.add(r.suite)
+    // Latest "all" run per environment. Its JSON is fetched (cached) so each
+    // cell can show suite-scoped stats when the "all" run is the freshest data.
+    const latestAllByEnv = new Map<EnvName, RunSummary>()
+    for (const r of runs) {
+        if (r.suite !== 'all') continue
+        const prev = latestAllByEnv.get(r.environment)
+        if (!prev || r.finishedAt.localeCompare(prev.finishedAt) > 0) latestAllByEnv.set(r.environment, r)
+    }
+
+    useEffect(() => {
+        let stop = false
+        const latest = new Map<EnvName, RunSummary>()
+        for (const r of runs) {
+            if (r.suite !== 'all') continue
+            const prev = latest.get(r.environment)
+            if (!prev || r.finishedAt.localeCompare(prev.finishedAt) > 0) latest.set(r.environment, r)
+        }
+        for (const r of latest.values()) {
+            loadRun(r.runId)
+                .then(full => {
+                    if (!stop) setAllDetails(d => ({ ...d, [full.runId]: full }))
+                })
+                .catch(() => undefined)
+        }
+        return () => {
+            stop = true
+        }
+    }, [runs])
+
+    // A dedicated suite run wins unless a newer "all" run exercised the suite.
+    const cellFor = (env: EnvName, suite: string): CellData | undefined => {
+        const exact = grid.get(`${env}|${suite}`)
+        const all = latestAllByEnv.get(env)
+        if (all && (!exact || all.finishedAt.localeCompare(exact.finishedAt) > 0)) {
+            const full = allDetails[all.runId]
+            if (full) {
+                const stats = suiteStats(full, suite)
+                if (stats.total > 0) return { run: all, stats }
+            }
+        }
+        return exact ? { run: exact, stats: exact.stats } : undefined
+    }
+
+    // Suites = catalog ∪ run-history, minus the meta "all" pseudo-suite and
+    // hidden suites (test-analysis, setup) whose cells never refresh from full runs.
+    const suiteSet = new Set<string>(catalogSuites.filter(s => !isHiddenSuite(s)))
+    for (const r of runs) if (r.suite !== 'all' && !isHiddenSuite(r.suite)) suiteSet.add(r.suite)
     const visibleSuites = Array.from(suiteSet).sort()
 
     return (
@@ -79,7 +130,7 @@ export default function EnvStatusGrid({ runs }: { runs: RunSummary[] }) {
                                     {suite}
                                 </td>
                                 {ENVS.map((env: EnvName) => (
-                                    <Cell key={env} run={grid.get(`${env}|${suite}`)} />
+                                    <Cell key={env} data={cellFor(env, suite)} />
                                 ))}
                             </tr>
                         ))}
@@ -90,8 +141,8 @@ export default function EnvStatusGrid({ runs }: { runs: RunSummary[] }) {
     )
 }
 
-function Cell({ run }: { run: RunSummary | undefined }) {
-    if (!run) {
+function Cell({ data }: { data: CellData | undefined }) {
+    if (!data) {
         return (
             <td>
                 <div
@@ -105,12 +156,12 @@ function Cell({ run }: { run: RunSummary | undefined }) {
             </td>
         )
     }
-    const rate = passRate(run.stats)
-    const { passed, failed, skipped, total } = run.stats
+    const rate = passRate(data.stats)
+    const { passed, failed, skipped, total } = data.stats
     return (
         <td>
             <Link
-                to={`/runs/${run.runId}`}
+                to={`/runs/${data.run.runId}`}
                 className={clsx(
                     'block rounded-tremor-default border px-3 py-2 transition-colors',
                     rateColor(rate),

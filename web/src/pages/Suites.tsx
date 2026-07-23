@@ -6,11 +6,11 @@ import { ChevronRight, FolderTree } from 'lucide-react'
 import { useEnv } from '@/components/EnvContext'
 import LiveRunsBar from '@/components/widgets/LiveRunsBar'
 import StatusPill from '@/components/widgets/StatusPill'
-import { latestRunForSuite, loadIndex, passRate } from '@/lib/results-loader'
+import { isHiddenSuite, latestRelevantRunForSuite, latestRunForSuite, loadIndex, loadRun, passRate, suiteStats } from '@/lib/results-loader'
 import { loadCatalog, type Catalog } from '@/lib/catalog-loader'
 import { ENV_LABELS } from '@/lib/config'
 import { formatRelativeTime } from '@/lib/format'
-import type { EnvName, RunSummary } from '@/types'
+import type { EnvName, RunStats, RunSummary } from '@/types'
 
 export default function Suites() {
     const { env } = useEnv()
@@ -36,8 +36,8 @@ export default function Suites() {
     // for "what tests exist"; runs add status/timing.
     const suites = useMemo(() => {
         const set = new Set<string>()
-        if (catalog) for (const s of catalog.suites) set.add(s)
-        for (const r of allRuns) if (r.suite !== 'all') set.add(r.suite)
+        if (catalog) for (const s of catalog.suites) if (!isHiddenSuite(s)) set.add(s)
+        for (const r of allRuns) if (r.suite !== 'all' && !isHiddenSuite(r.suite)) set.add(r.suite)
         return Array.from(set).sort()
     }, [catalog, allRuns])
 
@@ -97,6 +97,16 @@ export default function Suites() {
     )
 }
 
+/**
+ * Suite-scoped stats plus the run they came from. `undefined` = still
+ * resolving (an "all" run's JSON is being fetched), `null` = no run has ever
+ * exercised this suite.
+ */
+interface SuiteDisplay {
+    stats: RunStats
+    run: RunSummary
+}
+
 function SuiteCard({
     suite,
     runs,
@@ -108,14 +118,47 @@ function SuiteCard({
     env: EnvName
     catalog: Catalog | null
 }) {
-    const latest = latestRunForSuite(runs, suite, env)
-    const rate = latest ? passRate(latest.stats) : null
+    const latest = useMemo(() => latestRelevantRunForSuite(runs, suite, env), [runs, suite, env])
+    const exact = useMemo(() => latestRunForSuite(runs, suite, env), [runs, suite, env])
+    const [display, setDisplay] = useState<SuiteDisplay | null | undefined>(undefined)
+
+    // A dedicated suite run carries suite-only stats already. An "all" run's
+    // summary spans every suite, so fetch its JSON (cached, shared across
+    // cards) and re-scope to this suite. If the "all" run didn't actually
+    // execute this suite (e.g. grep-filtered), fall back to the latest
+    // dedicated run.
+    useEffect(() => {
+        if (!latest) {
+            setDisplay(null)
+            return
+        }
+        if (latest.suite !== 'all') {
+            setDisplay({ stats: latest.stats, run: latest })
+            return
+        }
+        let cancelled = false
+        const fallback = () => (exact ? { stats: exact.stats, run: exact } : null)
+        loadRun(latest.runId)
+            .then(full => {
+                if (cancelled) return
+                const stats = suiteStats(full, suite)
+                setDisplay(stats.total > 0 ? { stats, run: latest } : fallback())
+            })
+            .catch(() => {
+                if (!cancelled) setDisplay(fallback())
+            })
+        return () => {
+            cancelled = true
+        }
+    }, [latest, exact, suite])
+
+    const rate = display ? passRate(display.stats) : null
     const status =
-        !latest
+        !display
             ? 'skipped'
-            : latest.stats.failed > 0
+            : display.stats.failed > 0
             ? 'failed'
-            : latest.stats.total === 0
+            : display.stats.total === 0
             ? 'skipped'
             : 'passed'
 
@@ -134,11 +177,11 @@ function SuiteCard({
                 <div className="flex-1 min-w-0">
                     <div className="flex items-baseline gap-2 flex-wrap">
                         <Title className="capitalize">{suite}</Title>
-                        {latest ? (
+                        {display ? (
                             <StatusPill status={status} />
-                        ) : (
-                            <span className="status-pill status-pill-skipped">never run</span>
-                        )}
+                        ) : display === null ? (
+                            <span className="status-pill status-pill-skipped">No runs yet</span>
+                        ) : null}
                     </div>
                     {catalogTotal !== null && (
                         <Text className="mt-1 text-xs">
@@ -146,24 +189,26 @@ function SuiteCard({
                             {catalogCategories !== null && ` · ${catalogCategories} categor${catalogCategories === 1 ? 'y' : 'ies'}`}
                         </Text>
                     )}
-                    {latest ? (
+                    {display ? (
                         <Text className="mt-2">
-                            {latest.stats.passed}/{latest.stats.total} passed
-                            {rate !== null ? ` · ${rate}%` : ''} · last run {formatRelativeTime(latest.finishedAt)} on {ENV_LABELS[latest.environment]}
+                            {display.stats.passed}/{display.stats.total} passed
+                            {rate !== null ? ` · ${rate}%` : ''} · last run {formatRelativeTime(display.run.finishedAt)} on {ENV_LABELS[display.run.environment]}
+                        </Text>
+                    ) : display === null ? (
+                        <Text className="mt-2 text-tremor-content dark:text-dark-tremor-content">
+                            No runs yet in {ENV_LABELS[env]}. Click to view the catalog and trigger one.
                         </Text>
                     ) : (
-                        <Text className="mt-2 text-tremor-content dark:text-dark-tremor-content">
-                            No runs in {ENV_LABELS[env]} yet. Click to view the catalog and trigger one.
-                        </Text>
+                        <Text className="mt-2 text-tremor-content dark:text-dark-tremor-content">Loading latest results…</Text>
                     )}
-                    {latest && (latest.stats.failed > 0 || latest.stats.skipped > 0) && (
+                    {display && (display.stats.failed > 0 || display.stats.skipped > 0) && (
                         <div className="mt-2 flex items-center gap-3 text-xs">
-                            <span className="text-emerald-600 dark:text-emerald-400">{latest.stats.passed} passed</span>
-                            {latest.stats.failed > 0 && (
-                                <span className="text-rose-500 dark:text-rose-400">{latest.stats.failed} failed</span>
+                            <span className="text-emerald-600 dark:text-emerald-400">{display.stats.passed} passed</span>
+                            {display.stats.failed > 0 && (
+                                <span className="text-rose-500 dark:text-rose-400">{display.stats.failed} failed</span>
                             )}
-                            {latest.stats.skipped > 0 && (
-                                <span className="text-tremor-content dark:text-dark-tremor-content">{latest.stats.skipped} skipped</span>
+                            {display.stats.skipped > 0 && (
+                                <span className="text-tremor-content dark:text-dark-tremor-content">{display.stats.skipped} skipped</span>
                             )}
                         </div>
                     )}

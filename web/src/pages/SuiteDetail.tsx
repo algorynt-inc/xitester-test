@@ -6,7 +6,7 @@ import { Play, RefreshCw } from 'lucide-react'
 import { useEnv } from '@/components/EnvContext'
 import LiveRunsBar from '@/components/widgets/LiveRunsBar'
 import StatusPill from '@/components/widgets/StatusPill'
-import { latestRunForSuite, loadIndex, loadRun, passRate, suiteFromFile } from '@/lib/results-loader'
+import { latestRelevantRunForSuite, loadIndex, loadRun, passRate, suiteFromFile } from '@/lib/results-loader'
 import { loadCatalog, type Catalog, type CatalogTest } from '@/lib/catalog-loader'
 import { ENV_LABELS } from '@/lib/config'
 import { formatDuration, formatRelativeTime, shortSha } from '@/lib/format'
@@ -51,7 +51,7 @@ export default function SuiteDetail() {
         return () => ctrl.abort()
     }, [])
 
-    const latest = useMemo(() => (suite ? latestRunForSuite(runs, suite, env) : undefined), [runs, suite, env])
+    const latest = useMemo(() => (suite ? latestRelevantRunForSuite(runs, suite, env) : undefined), [runs, suite, env])
 
     useEffect(() => {
         if (!latest) {
