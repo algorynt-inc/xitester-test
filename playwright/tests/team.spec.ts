@@ -25,7 +25,8 @@ test('TC-040 — Verify cancel invitation', async ({ page }) => {
     // Locate any pending-invitation row. The SUT marks pending rows with the
     // text "Pending invitation" (OrganizationSettings.tsx:782).
     const pendingRow = page
-        .locator('tr', { hasText: /Pending invitation/i })
+        .locator('tr', { hasText: /marco@gmail\.com/i, })
+        .filter({ hasText: /Pending invitation/i, })
         .first()
     if (!(await pendingRow.isVisible().catch(() => false))) {
         test.skip(
