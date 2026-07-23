@@ -5,6 +5,7 @@
     "type": "module",
     "description": "Static SPA dashboard for the XiTester Playwright suite. Hosted on GitHub Pages, talks directly to the GitHub API.",
     "scripts": {
+        "predev": "node scripts/gen-catalog.mjs",
         "dev": "vite",
         "build": "tsc -b && vite build",
         "preview": "vite preview",
