@@ -6,7 +6,7 @@ import { ChevronRight, FolderTree } from 'lucide-react'
 import { useEnv } from '@/components/EnvContext'
 import LiveRunsBar from '@/components/widgets/LiveRunsBar'
 import StatusPill from '@/components/widgets/StatusPill'
-import { latestRunForSuite, loadIndex, passRate } from '@/lib/results-loader'
+import { isHiddenSuite, latestRunForSuite, loadIndex, passRate } from '@/lib/results-loader'
 import { loadCatalog, type Catalog } from '@/lib/catalog-loader'
 import { ENV_LABELS } from '@/lib/config'
 import { formatRelativeTime } from '@/lib/format'
@@ -36,8 +36,8 @@ export default function Suites() {
     // for "what tests exist"; runs add status/timing.
     const suites = useMemo(() => {
         const set = new Set<string>()
-        if (catalog) for (const s of catalog.suites) set.add(s)
-        for (const r of allRuns) if (r.suite !== 'all') set.add(r.suite)
+        if (catalog) for (const s of catalog.suites) if (!isHiddenSuite(s)) set.add(s)
+        for (const r of allRuns) if (r.suite !== 'all' && !isHiddenSuite(r.suite)) set.add(r.suite)
         return Array.from(set).sort()
     }, [catalog, allRuns])
 
