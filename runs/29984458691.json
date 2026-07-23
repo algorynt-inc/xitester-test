@@ -1,18 +1,18 @@
 {
   "runId": "29984458691",
   "actionsRunId": "29984458691",
-  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/29984458691",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/29985471323",
   "commit": "4fabcee6a7773c1e74f1479bbc6638bf54da3761",
   "branch": "main",
   "environment": "dev",
   "suite": "all",
   "startedAt": "2026-07-23T06:15:35.363Z",
-  "finishedAt": "2026-07-23T06:25:26.560Z",
-  "durationMs": 591197,
+  "finishedAt": "2026-07-23T06:43:36.875Z",
+  "durationMs": 27409,
   "stats": {
     "total": 64,
-    "passed": 63,
-    "failed": 1,
+    "passed": 64,
+    "failed": 0,
     "skipped": 0,
     "flaky": 1
   },
@@ -24,7 +24,7 @@
       "project": "setup",
       "category": "auth.setup.ts",
       "status": "passed",
-      "durationMs": 5040,
+      "durationMs": 5192,
       "retries": 0,
       "error": null,
       "attachments": [
@@ -1311,33 +1311,20 @@
       "file": "playwright/tests/test-cases.spec.ts",
       "project": "chromium",
       "category": "chromium",
-      "status": "failed",
-      "durationMs": 17690,
-      "retries": 1,
-      "error": {
-        "message": "TimeoutError: locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n  - waiting for locator('input[placeholder=\"Search test cases…\"]') to be visible\n",
-        "snippet": "  90 | async function gotoTestCases(page: Page): Promise<void> {\n  91 |     await page.goto('/test-cases')\n> 92 |     await searchInput(page).waitFor({ state: 'visible', timeout: 15_000 })\n     |                             ^\n  93 |     // Wait for either rows or the empty-state to settle so the list is\n  94 |     // stable before the test interacts with it.\n  95 |     await page"
-      },
+      "status": "passed",
+      "durationMs": 19319,
+      "retries": 0,
+      "error": null,
       "attachments": [
-        {
-          "name": "screenshot",
-          "contentType": "image/png",
-          "url": "29984458691/TC-071___Delete_a_record-0-screenshot.png"
-        },
         {
           "name": "video",
           "contentType": "video/webm",
-          "url": "29984458691/TC-071___Delete_a_record-1-video.webm"
-        },
-        {
-          "name": "error-context",
-          "contentType": "text/markdown",
-          "url": "29984458691/TC-071___Delete_a_record-2-error-context.md"
+          "url": "29984458691/TC-071___Delete_a_record-0-video.webm"
         },
         {
           "name": "trace",
           "contentType": "application/zip",
-          "url": "29984458691/TC-071___Delete_a_record-3-trace.zip"
+          "url": "29984458691/TC-071___Delete_a_record-1-trace.zip"
         }
       ]
     },
@@ -1501,6 +1488,14 @@
           "url": "29984458691/TC-043___Verify_theme_sw-1-trace.zip"
         }
       ]
+    }
+  ],
+  "lineage": [
+    {
+      "actionsRunId": "29985471323",
+      "finishedAt": "2026-07-23T06:43:36.875Z",
+      "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/29985471323",
+      "grep": "TC-071 — Delete a record"
     }
   ]
 }
