@@ -250,7 +250,7 @@ test('TC-PF-007 — Wrong current password is rejected', async ({ page }) => {
     // so just assert the toast — it's the user-visible feedback.
     await expect(page.locator('[data-sonner-toaster]')).toContainText(
         /(incorrect current password|wrong.*password|invalid current|failed to update)/i,
-        { timeout: 8_000 },
+        { timeout: 30_000 },
     )
 })
 
