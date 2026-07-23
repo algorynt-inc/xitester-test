@@ -134,8 +134,8 @@ test('TC-057 — Verify Organization search inside dropdown', async ({ page }) =
 
     await search.fill('XiTester')
     await expect(
-        popup.locator('button', { hasText: /XiTester/i }).first(),
-        '"XiTester" should remain visible when filtering by "XiTester"',
+        popup.locator('button', { hasText: /XiTester Automation/i }).first(),
+        '"XiTester Automation" should remain visible when filtering by "XiTester"',
     ).toBeVisible({ timeout: 4_000 })
 
     await search.fill(`xt-nomatch-${Date.now()}`)
