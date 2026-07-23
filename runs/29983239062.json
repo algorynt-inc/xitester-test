@@ -1,0 +1,57 @@
+{
+  "runId": "29983239062",
+  "actionsRunId": "29983239062",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/29983239062",
+  "commit": "2fb482580bd7c240b3471e724d015e902fe5f7bd",
+  "branch": "main",
+  "environment": "qa",
+  "suite": "all",
+  "startedAt": "2026-07-23T05:51:01.786Z",
+  "finishedAt": "2026-07-23T05:51:13.204Z",
+  "durationMs": 11418,
+  "stats": {
+    "total": 1,
+    "passed": 0,
+    "failed": 1,
+    "skipped": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "failed",
+      "durationMs": 9425,
+      "retries": 0,
+      "error": {
+        "message": "Error: expect(page).toHaveURL(expected) failed\n\nExpected pattern: /organizations/\nReceived string:  \"https://app-qa.ai.xitester.com/dashboard\"\nTimeout: 5000ms\n\nCall log:\n  - Expect \"toHaveURL\" with timeout 5000ms\n    9 × unexpected value \"https://app-qa.ai.xitester.com/dashboard\"\n",
+        "snippet": "  53 |     // an unauthed storageState is worse than failing now.\n  54 |     expect(page.url(), 'login should have navigated away from /login').not.toMatch(/\\/login(\\?|$|#)/)\n> 55 |     await expect(page).toHaveURL(/organizations/);\n     |                        ^\n  56 |\n  57 |     // Diagnostics: log which auth carriers we captured. Either is fine.\n  58 |     const cookies = await page.context().cookies()"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "29983239062/authenticate_once_per_ru-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "29983239062/authenticate_once_per_ru-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "29983239062/authenticate_once_per_ru-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "29983239062/authenticate_once_per_ru-3-trace.zip"
+        }
+      ]
+    }
+  ]
+}
