@@ -5,7 +5,7 @@ import clsx from 'clsx'
 import type { EnvName, RunSummary } from '@/types'
 import { ENVS } from '@/types'
 import { ENV_LABELS } from '@/lib/config'
-import { passRate } from '@/lib/results-loader'
+import { passRate, isHiddenSuite } from '@/lib/results-loader'
 import { loadCatalog } from '@/lib/catalog-loader'
 
 function rateColor(rate: number | null): string {
@@ -37,9 +37,10 @@ export default function EnvStatusGrid({ runs }: { runs: RunSummary[] }) {
         if (!prev || new Date(r.finishedAt) > new Date(prev.finishedAt)) grid.set(key, r)
     }
 
-    // Suites = catalog ∪ run-history, minus the meta "all" pseudo-suite.
-    const suiteSet = new Set<string>(catalogSuites)
-    for (const r of runs) if (r.suite !== 'all') suiteSet.add(r.suite)
+    // Suites = catalog ∪ run-history, minus the meta "all" pseudo-suite and
+    // hidden suites (test-analysis, setup) whose cells never refresh from full runs.
+    const suiteSet = new Set<string>(catalogSuites.filter(s => !isHiddenSuite(s)))
+    for (const r of runs) if (r.suite !== 'all' && !isHiddenSuite(r.suite)) suiteSet.add(r.suite)
     const visibleSuites = Array.from(suiteSet).sort()
 
     return (

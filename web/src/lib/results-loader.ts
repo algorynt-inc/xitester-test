@@ -20,6 +20,17 @@ export function isHiddenSpec(file: string): boolean {
     return HIDDEN_SPEC_RE.test(file)
 }
 
+/**
+ * Suite-name counterpart to isHiddenSpec. Suites derived from hidden specs
+ * (the long-running test-analysis suite and any setup pseudo-suites) are kept
+ * out of dashboard grids — they either never run in full "all" runs or are
+ * infrastructure-only, so their cells would otherwise show frozen, stale data.
+ */
+const HIDDEN_SUITE_RE = /(^|\.)setup(\.|$)|test-analysis/
+export function isHiddenSuite(suite: string): boolean {
+    return HIDDEN_SUITE_RE.test(suite)
+}
+
 const cache = new Map<string, unknown>()
 
 async function fetchJson<T>(path: string, signal?: AbortSignal): Promise<T> {
