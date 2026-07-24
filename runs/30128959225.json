@@ -1,0 +1,1766 @@
+{
+  "runId": "30128959225",
+  "actionsRunId": "30128959225",
+  "workflowRunUrl": "https://github.com/algorynt-inc/xitester-test/actions/runs/30128959225",
+  "commit": "20cf3eb81ca6ef2b5b488995b0c908b46a9471d8",
+  "branch": "main",
+  "environment": "stage",
+  "suite": "all",
+  "startedAt": "2026-07-24T21:56:35.483Z",
+  "finishedAt": "2026-07-24T22:14:38.931Z",
+  "durationMs": 1083448,
+  "stats": {
+    "total": 64,
+    "passed": 43,
+    "failed": 21,
+    "skipped": 0,
+    "flaky": 6
+  },
+  "tests": [
+    {
+      "id": "authenticate once per ru",
+      "title": "authenticate once per run",
+      "file": "playwright/tests/auth.setup.ts",
+      "project": "setup",
+      "category": "auth.setup.ts",
+      "status": "passed",
+      "durationMs": 5236,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/authenticate_once_per_ru-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/authenticate_once_per_ru-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-044 — Verify Total Te",
+      "title": "TC-044 — Verify Total Test Plan Runs display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5411,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-044___Verify_Total_Te-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-044___Verify_Total_Te-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-045 — Verify Pass Rat",
+      "title": "TC-045 — Verify Pass Rate calculation display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5434,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-045___Verify_Pass_Rat-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-045___Verify_Pass_Rat-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-046 — Verify Active S",
+      "title": "TC-046 — Verify Active Suites count is visible",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 12693,
+      "retries": 1,
+      "error": {
+        "message": "Error: metric card \"Active Suites\" should render\n\nexpect(locator).toBeVisible() failed\n\nLocator: locator('div').filter({ has: getByText('Active Suites', { exact: true }) }).filter({ has: locator('div, span') }).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n  - metric card \"Active Suites\" should render with timeout 10000ms\n  - waiting for locator('div').filter({ has: getByText('Active Suites', { exact: true }) }).filter({ has: locator('div, span') }).first()\n",
+        "snippet": "  30 |         .filter({ has: page.locator('div, span') })\n  31 |         .first()\n> 32 |     await expect(card, `metric card \"${title}\" should render`).toBeVisible({ timeout: 10_000 })\n     |                                                                ^\n  33 | }\n  34 |\n  35 | // ============================================================"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-046___Verify_Active_S-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-046___Verify_Active_S-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-046___Verify_Active_S-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-046___Verify_Active_S-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-047 — Verify Average ",
+      "title": "TC-047 — Verify Average Duration display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5370,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-047___Verify_Average_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-047___Verify_Average_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-048 — Verify Test Pla",
+      "title": "TC-048 — Verify Test Plan Run Analysis display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 17260,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-048___Verify_Test_Pla-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-048___Verify_Test_Pla-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-049 — Verify Top Acti",
+      "title": "TC-049 — Verify Top Active Test Plans (bar chart) display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 9593,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-049___Verify_Top_Acti-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-049___Verify_Top_Acti-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-050 — Verify Regressi",
+      "title": "TC-050 — Verify Regression Pass Rate Trend chart",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 12471,
+      "retries": 1,
+      "error": {
+        "message": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n  - waiting for locator('button').filter({ hasText: 'Regression Test Result Charts' }).first()\n",
+        "snippet": "  15 |     if (tab && tab !== 'overview') {\n  16 |         const label = tab === 'regression' ? 'Regression Test Result Charts' : 'Test Coverage'\n> 17 |         await page.locator('button', { hasText: label }).first().click()\n     |                                                                  ^\n  18 |     }\n  19 | }\n  20 |"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-050___Verify_Regressi-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-050___Verify_Regressi-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-050___Verify_Regressi-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-050___Verify_Regressi-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-051 — Verify Regressi",
+      "title": "TC-051 — Verify Regression Defects Found chart",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6381,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-051___Verify_Regressi-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-051___Verify_Regressi-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-052 — Verify Suite Br",
+      "title": "TC-052 — Verify Suite Breakdown chart",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 9192,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-052___Verify_Suite_Br-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-052___Verify_Suite_Br-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-053 — Verify Overall ",
+      "title": "TC-053 — Verify Overall System Health display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 12934,
+      "retries": 1,
+      "error": {
+        "message": "TimeoutError: locator.click: Timeout 10000ms exceeded.\nCall log:\n  - waiting for locator('button').filter({ hasText: 'Test Coverage' }).first()\n    - locator resolved to <button class=\"flex items-center gap-2 py-3 text-sm font-medium border-b-2 transition-colors border-transparent text-muted-foreground hover:text-foreground\">…</button>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is not visible\n    - retrying click action\n    - waiting 20ms\n    - waiting for element to be visible, enabled and stable\n    - element is not visible\n  - retrying click action\n    - waiting 100ms\n    - waiting for element to be visible, enabled and stable\n  - element was detached from the DOM, retrying\n",
+        "snippet": "  15 |     if (tab && tab !== 'overview') {\n  16 |         const label = tab === 'regression' ? 'Regression Test Result Charts' : 'Test Coverage'\n> 17 |         await page.locator('button', { hasText: label }).first().click()\n     |                                                                  ^\n  18 |     }\n  19 | }\n  20 |"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-053___Verify_Overall_-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-053___Verify_Overall_-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-053___Verify_Overall_-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-053___Verify_Overall_-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-054 — Verify Module Q",
+      "title": "TC-054 — Verify Module Quality Analysis display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6089,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-054___Verify_Module_Q-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-054___Verify_Module_Q-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-055 — Verify System H",
+      "title": "TC-055 — Verify System Hotspots display",
+      "file": "playwright/tests/dashboard.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 7645,
+      "retries": 1,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-055___Verify_System_H-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-055___Verify_System_H-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-001",
+      "title": "TC-LI-001 — Successful login with valid credentials",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 12798,
+      "retries": 1,
+      "error": {
+        "message": "TimeoutError: page.waitForResponse: Timeout 10000ms exceeded while waiting for event \"response\"\n=========================== logs ===========================\nwaiting for response /\\/api\\/v1\\/auth\\/login\\b/\n============================================================",
+        "snippet": "  23 |     const submit = page.locator('button[type=\"submit\"]')\n  24 |     const [response] = await Promise.all([\n> 25 |         page.waitForResponse(/\\/api\\/v1\\/auth\\/login\\b/),\n     |              ^\n  26 |         submit.click(),\n  27 |     ])\n  28 |     expect(response.status(), 'login API should return 200').toBe(200)"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-LI-001-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-LI-001-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-LI-001-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-LI-001-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-002",
+      "title": "TC-LI-002 — Wrong password shows error",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5989,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-LI-002-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-LI-002-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-003",
+      "title": "TC-LI-003 — Password visibility toggle",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 2663,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-LI-003-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-LI-003-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-004",
+      "title": "TC-LI-004 — Forgot password link navigates correctly",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 2611,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-LI-004-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-LI-004-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LI-005",
+      "title": "TC-LI-005 — Create account link navigates correctly",
+      "file": "playwright/tests/login.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 2625,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-LI-005-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-LI-005-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LO-001",
+      "title": "TC-LO-001 — Logout via user menu redirects to /login",
+      "file": "playwright/tests/logout.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5930,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-LO-001-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-LO-001-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-LO-002",
+      "title": "TC-LO-002 — Protected routes redirect to /login after logout",
+      "file": "playwright/tests/logout.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 17624,
+      "retries": 1,
+      "error": {
+        "message": "TimeoutError: page.waitForURL: Timeout 8000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================",
+        "snippet": "  89 |     // bounce us back to /login because the token / cookie was cleared.\n  90 |     await page.goto('/dashboard')\n> 91 |     await page.waitForURL(/\\/login\\b/, { timeout: 8_000 })\n     |                ^\n  92 |     expect(page.url(), 'protected route should redirect to /login when logged out').toMatch(/\\/login\\b/)\n  93 | })\n  94 |"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-LO-002-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-LO-002-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-LO-002-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-LO-002-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-056 — Verify Organiza",
+      "title": "TC-056 — Verify Organization Switch dropdown shows orgs",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 17497,
+      "retries": 1,
+      "error": {
+        "message": "TimeoutError: locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n  - waiting for locator('header') to be visible\n",
+        "snippet": "  39 |\n  40 | async function waitForTopbar(page: Page): Promise<void> {\n> 41 |     await page.locator('header').waitFor({ state: 'visible', timeout: 15_000 })\n     |                                  ^\n  42 |     await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible({timeout: 30000,});\n  43 |     // Memoised TopBar can briefly mount without children. Wait for at least\n  44 |     // one chevron trigger before iterating."
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-056___Verify_Organiza-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-056___Verify_Organiza-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-056___Verify_Organiza-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-056___Verify_Organiza-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-057 — Verify Organiza",
+      "title": "TC-057 — Verify Organization search inside dropdown",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 9596,
+      "retries": 1,
+      "error": {
+        "message": "Error: \"XiTester Automation\" should remain visible when filtering by \"XiTester\"\n\nexpect(locator).toBeVisible() failed\n\nLocator: locator('[role=\"menu\"][data-state=\"open\"]:visible').first().locator('button').filter({ hasText: /XiTester Automation/i }).first()\nExpected: visible\nTimeout: 4000ms\nError: element(s) not found\n\nCall log:\n  - \"XiTester Automation\" should remain visible when filtering by \"XiTester\" with timeout 4000ms\n  - waiting for locator('[role=\"menu\"][data-state=\"open\"]:visible').first().locator('button').filter({ hasText: /XiTester Automation/i }).first()\n",
+        "snippet": "  137 |         popup.locator('button', { hasText: /XiTester Automation/i }).first(),\n  138 |         '\"XiTester Automation\" should remain visible when filtering by \"XiTester\"',\n> 139 |     ).toBeVisible({ timeout: 4_000 })\n      |       ^\n  140 |\n  141 |     await search.fill(`xt-nomatch-${Date.now()}`)\n  142 |     // The SUT shows \"No organizations found\" for an empty filter (TopBar.tsx ~line 215)."
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-057___Verify_Organiza-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-057___Verify_Organiza-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-057___Verify_Organiza-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-057___Verify_Organiza-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-058 — Verify \"All Org",
+      "title": "TC-058 — Verify \"All Organizations\" navigates to /organizations",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 17692,
+      "retries": 1,
+      "error": {
+        "message": "TimeoutError: locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n  - waiting for locator('header') to be visible\n",
+        "snippet": "  39 |\n  40 | async function waitForTopbar(page: Page): Promise<void> {\n> 41 |     await page.locator('header').waitFor({ state: 'visible', timeout: 15_000 })\n     |                                  ^\n  42 |     await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible({timeout: 30000,});\n  43 |     // Memoised TopBar can briefly mount without children. Wait for at least\n  44 |     // one chevron trigger before iterating."
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-058___Verify__All_Org-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-058___Verify__All_Org-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-058___Verify__All_Org-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-058___Verify__All_Org-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-059 — Verify \"All Pro",
+      "title": "TC-059 — Verify \"All Projects\" + \"New project\" navigation from project dropdown",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 17697,
+      "retries": 1,
+      "error": {
+        "message": "TimeoutError: locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n  - waiting for locator('header') to be visible\n",
+        "snippet": "  39 |\n  40 | async function waitForTopbar(page: Page): Promise<void> {\n> 41 |     await page.locator('header').waitFor({ state: 'visible', timeout: 15_000 })\n     |                                  ^\n  42 |     await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible({timeout: 30000,});\n  43 |     // Memoised TopBar can briefly mount without children. Wait for at least\n  44 |     // one chevron trigger before iterating."
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-059___Verify__All_Pro-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-059___Verify__All_Pro-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-059___Verify__All_Pro-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-059___Verify__All_Pro-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-060 — Verify Project ",
+      "title": "TC-060 — Verify Project switch dropdown lists projects",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 17666,
+      "retries": 1,
+      "error": {
+        "message": "TimeoutError: locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n  - waiting for locator('header') to be visible\n",
+        "snippet": "  39 |\n  40 | async function waitForTopbar(page: Page): Promise<void> {\n> 41 |     await page.locator('header').waitFor({ state: 'visible', timeout: 15_000 })\n     |                                  ^\n  42 |     await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible({timeout: 30000,});\n  43 |     // Memoised TopBar can briefly mount without children. Wait for at least\n  44 |     // one chevron trigger before iterating."
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-060___Verify_Project_-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-060___Verify_Project_-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-060___Verify_Project_-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-060___Verify_Project_-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-061 — Verify Project ",
+      "title": "TC-061 — Verify Project search inside dropdown",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 18700,
+      "retries": 1,
+      "error": {
+        "message": "Error: Project switcher chevron not visible. Found 1 chevron trigger(s) in the topbar. The page must be a project-scoped route (e.g. /dashboard). On org-level pages (/organizations, /org/projects, /org/team) ProjectSwitcher is intentionally omitted.",
+        "snippet": "  74 |     const count = await triggers.count()\n  75 |     if (count < 2) {\n> 76 |         throw new Error(\n     |               ^\n  77 |             `Project switcher chevron not visible. Found ${count} chevron trigger(s) in the topbar. ` +\n  78 |             'The page must be a project-scoped route (e.g. /dashboard). On org-level pages ' +\n  79 |             '(/organizations, /org/projects, /org/team) ProjectSwitcher is intentionally omitted.',"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-061___Verify_Project_-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-061___Verify_Project_-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-061___Verify_Project_-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-061___Verify_Project_-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-062 — Verify Project ",
+      "title": "TC-062 — Verify Project search inside dropdown (clear restores list)",
+      "file": "playwright/tests/nav.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 17738,
+      "retries": 1,
+      "error": {
+        "message": "TimeoutError: locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n  - waiting for locator('header') to be visible\n",
+        "snippet": "  39 |\n  40 | async function waitForTopbar(page: Page): Promise<void> {\n> 41 |     await page.locator('header').waitFor({ state: 'visible', timeout: 15_000 })\n     |                                  ^\n  42 |     await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible({timeout: 30000,});\n  43 |     // Memoised TopBar can briefly mount without children. Wait for at least\n  44 |     // one chevron trigger before iterating."
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-062___Verify_Project_-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-062___Verify_Project_-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-062___Verify_Project_-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-062___Verify_Project_-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-001",
+      "title": "TC-ORG-001 — View organization list",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5308,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-ORG-001-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-ORG-001-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-002",
+      "title": "TC-ORG-002 — Search filters the org list",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5316,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-ORG-002-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-ORG-002-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-003",
+      "title": "TC-ORG-003 — View organization settings",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 12873,
+      "retries": 1,
+      "error": {
+        "message": "Error: expect(locator).not.toHaveValue(expected) failed\n\nLocator:  locator('#orgName')\nExpected: not \"\"\nReceived: \"\"\nTimeout:  5000ms\n\nCall log:\n  - Expect \"not toHaveValue\" with timeout 5000ms\n  - waiting for locator('#orgName')\n    9 × locator resolved to <input value=\"\" id=\"orgName\" placeholder=\"My Organization\" class=\"flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50\"/>\n      - unexpected value \"\"\n",
+        "snippet": "  192 |     await expect(orgDescription).toBeVisible()\n  193 |\n> 194 |     await expect(orgName).not.toHaveValue('')\n      |                               ^\n  195 |     await expect(orgSlug).not.toHaveValue('')\n  196 |     await expect(orgSlug).toHaveAttribute('readonly', '')\n  197 | })"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-ORG-003-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-ORG-003-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-ORG-003-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-ORG-003-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-004",
+      "title": "TC-ORG-004 — Create a new organization",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 13035,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-ORG-004-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-ORG-004-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-005",
+      "title": "TC-ORG-005 — Update organization name",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 14023,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-ORG-005-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-ORG-005-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-006",
+      "title": "TC-ORG-006 — Delete an organization via danger zone",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 11384,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-ORG-006-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-ORG-006-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-ORG-007",
+      "title": "TC-ORG-007 — Create rejects duplicate name",
+      "file": "playwright/tests/orgs.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 13364,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-ORG-007-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-ORG-007-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-001",
+      "title": "TC-PF-001 — Upload a valid profile photo",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 8835,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-PF-001-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-PF-001-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-002",
+      "title": "TC-PF-002 — Reject non-image file on profile photo upload",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 4941,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-PF-002-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-PF-002-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-003",
+      "title": "TC-PF-003 — Reject profile photo larger than 5 MB",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5677,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-PF-003-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-PF-003-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-004",
+      "title": "TC-PF-004 — Remove profile photo",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 8781,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-PF-004-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-PF-004-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-005",
+      "title": "TC-PF-005 — Update display name and revert",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 7182,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-PF-005-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-PF-005-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-006",
+      "title": "TC-PF-006 — Update password and revert (destructive)",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 9770,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-PF-006-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-PF-006-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-007",
+      "title": "TC-PF-007 — Wrong current password is rejected",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6192,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-PF-007-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-PF-007-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-008",
+      "title": "TC-PF-008 — Mismatched new + confirm disables Save",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5245,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-PF-008-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-PF-008-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PF-009",
+      "title": "TC-PF-009 — Weak (short) password disables Save",
+      "file": "playwright/tests/profile.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 5243,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-PF-009-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-PF-009-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PR-001",
+      "title": "TC-PR-001 — View project list",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 4882,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-PR-001-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-PR-001-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PR-002",
+      "title": "TC-PR-002 — Create a new project",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 9803,
+      "retries": 1,
+      "error": {
+        "message": "TimeoutError: locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n  - waiting for locator('div[role=\"dialog\"]').filter({ hasText: 'Create New Project' }) to be visible\n",
+        "snippet": "  49 |\n  50 |     const dialog = page.locator('div[role=\"dialog\"]', { hasText: 'Create New Project' })\n> 51 |     await dialog.waitFor({ state: 'visible', timeout: 5_000 })\n     |                  ^\n  52 |\n  53 |     await dialog.getByPlaceholder('My Project').fill(name)\n  54 |     if (description) {"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-PR-002-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-PR-002-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-PR-002-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-PR-002-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PR-003",
+      "title": "TC-PR-003 — Open Default Project and land on the dashboard",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 15404,
+      "retries": 1,
+      "error": {
+        "message": "Error: \"Default Project\" card should be present in /org/projects\n\nexpect(locator).toBeVisible() failed\n\nLocator: locator('main').getByText('Default Project', { exact: true }).locator('xpath=ancestor::div[contains(@class, \"cursor-pointer\")][1]')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n  - \"Default Project\" card should be present in /org/projects with timeout 10000ms\n  - waiting for locator('main').getByText('Default Project', { exact: true }).locator('xpath=ancestor::div[contains(@class, \"cursor-pointer\")][1]')\n",
+        "snippet": "  148 |         card,\n  149 |         `\"${DEFAULT_PROJECT_NAME}\" card should be present in /org/projects`,\n> 150 |     ).toBeVisible({ timeout: 10_000 })\n      |       ^\n  151 |     await card.click()\n  152 |\n  153 |     // Project selection navigates to /dashboard. Wait for the route change"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-PR-003-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-PR-003-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-PR-003-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-PR-003-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PR-004",
+      "title": "TC-PR-004 — Update project name (and revert)",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 9875,
+      "retries": 1,
+      "error": {
+        "message": "TimeoutError: locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n  - waiting for locator('div[role=\"dialog\"]').filter({ hasText: 'Create New Project' }) to be visible\n",
+        "snippet": "  49 |\n  50 |     const dialog = page.locator('div[role=\"dialog\"]', { hasText: 'Create New Project' })\n> 51 |     await dialog.waitFor({ state: 'visible', timeout: 5_000 })\n     |                  ^\n  52 |\n  53 |     await dialog.getByPlaceholder('My Project').fill(name)\n  54 |     if (description) {"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-PR-004-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-PR-004-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-PR-004-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-PR-004-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-PR-005",
+      "title": "TC-PR-005 — Delete a project we just created",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 10071,
+      "retries": 1,
+      "error": {
+        "message": "TimeoutError: locator.waitFor: Timeout 5000ms exceeded.\nCall log:\n  - waiting for locator('div[role=\"dialog\"]').filter({ hasText: 'Create New Project' }) to be visible\n",
+        "snippet": "  49 |\n  50 |     const dialog = page.locator('div[role=\"dialog\"]', { hasText: 'Create New Project' })\n> 51 |     await dialog.waitFor({ state: 'visible', timeout: 5_000 })\n     |                  ^\n  52 |\n  53 |     await dialog.getByPlaceholder('My Project').fill(name)\n  54 |     if (description) {"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-PR-005-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-PR-005-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-PR-005-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-PR-005-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-041 — Project name sh",
+      "title": "TC-041 — Project name shown in header after selecting Default Project",
+      "file": "playwright/tests/projects.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 15402,
+      "retries": 1,
+      "error": {
+        "message": "Error: expect(locator).toBeVisible() failed\n\nLocator: locator('main').getByText('Default Project', { exact: true }).locator('xpath=ancestor::div[contains(@class, \"cursor-pointer\")][1]')\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 10000ms\n  - waiting for locator('main').getByText('Default Project', { exact: true }).locator('xpath=ancestor::div[contains(@class, \"cursor-pointer\")][1]')\n",
+        "snippet": "  205 |     await gotoProjects(page)\n  206 |     const card = projectCard(page, DEFAULT_PROJECT_NAME)\n> 207 |     await expect(card).toBeVisible({ timeout: 10_000 })\n      |                        ^\n  208 |     await card.click()\n  209 |\n  210 |     // URL changes to /dashboard."
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-041___Project_name_sh-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-041___Project_name_sh-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-041___Project_name_sh-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-041___Project_name_sh-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-040 — Verify cancel i",
+      "title": "TC-040 — Verify cancel invitation",
+      "file": "playwright/tests/team.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 14168,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-040___Verify_cancel_i-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-040___Verify_cancel_i-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-065 — Create AI test ",
+      "title": "TC-065 — Create AI test case with name and description",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 11337,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-065___Create_AI_test_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-065___Create_AI_test_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-066 — Update existing",
+      "title": "TC-066 — Update existing AI test case name and description",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 10957,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-066___Update_existing-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-066___Update_existing-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-067 — Delete AI test ",
+      "title": "TC-067 — Delete AI test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 8957,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-067___Delete_AI_test_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-067___Delete_AI_test_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-068 — Clone AI test c",
+      "title": "TC-068 — Clone AI test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 15139,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-068___Clone_AI_test_c-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-068___Clone_AI_test_c-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-069 — Recorded test c",
+      "title": "TC-069 — Recorded test case modal accepts name + URL and routes to recording flow",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 18201,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-069___Recorded_test_c-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-069___Recorded_test_c-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-070 — Update an exist",
+      "title": "TC-070 — Update an existing recorded test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 19044,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-070___Update_an_exist-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-070___Update_an_exist-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-071 — Delete a record",
+      "title": "TC-071 — Delete a recorded test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 19938,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-071___Delete_a_record-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-071___Delete_a_record-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-072 — Clone a recorde",
+      "title": "TC-072 — Clone a recorded test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 23666,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-072___Clone_a_recorde-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-072___Clone_a_recorde-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-073 — Search filters ",
+      "title": "TC-073 — Search filters the list to matching test cases",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 9086,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-073___Search_filters_-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-073___Search_filters_-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-074 — Add a tag to a ",
+      "title": "TC-074 — Add a tag to a test case",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 13285,
+      "retries": 1,
+      "error": {
+        "message": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('dialog').filter({ hasText: 'Edit tags' }).getByRole('combobox')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 5000ms\n  - waiting for getByRole('dialog').filter({ hasText: 'Edit tags' }).getByRole('combobox')\n",
+        "snippet": "  265 |     await row.locator('button[title=\"Click to edit tags\"]').click()\n  266 |     const input = tagEditor(page).getByRole('combobox')\n> 267 |     await expect(input).toBeVisible({ timeout: 5_000 })\n      |                         ^\n  268 |     return input\n  269 | }\n  270 |"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-074___Add_a_tag_to_a_-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-074___Add_a_tag_to_a_-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-074___Add_a_tag_to_a_-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-074___Add_a_tag_to_a_-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-075 — Removing a tag ",
+      "title": "TC-075 — Removing a tag persists after page reload",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 13054,
+      "retries": 1,
+      "error": {
+        "message": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('dialog').filter({ hasText: 'Edit tags' }).getByRole('combobox')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" with timeout 5000ms\n  - waiting for getByRole('dialog').filter({ hasText: 'Edit tags' }).getByRole('combobox')\n",
+        "snippet": "  265 |     await row.locator('button[title=\"Click to edit tags\"]').click()\n  266 |     const input = tagEditor(page).getByRole('combobox')\n> 267 |     await expect(input).toBeVisible({ timeout: 5_000 })\n      |                         ^\n  268 |     return input\n  269 | }\n  270 |"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-075___Removing_a_tag_-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-075___Removing_a_tag_-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-075___Removing_a_tag_-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-075___Removing_a_tag_-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-076 — Bulk select and",
+      "title": "TC-076 — Bulk select and bulk delete test cases",
+      "file": "playwright/tests/test-cases.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "failed",
+      "durationMs": 5834,
+      "retries": 1,
+      "error": {
+        "message": "Error: createSession 409: {\"detail\":{\"error_code\":\"PLAN_LIMIT_EXCEEDED\",\"plan_tier\":\"free\",\"resource\":\"test_cases_ai\",\"limit\":5,\"current\":5,\"upgrade_hint\":\"Upgrade this organization to enterprise to remove limits.\"}}",
+        "snippet": "  166 |     if (!response.ok()) {\n  167 |         const body = await response.text().catch(() => '')\n> 168 |         throw new Error(`createSession ${response.status()}: ${body.slice(0, 200)}`)\n      |               ^\n  169 |     }\n  170 |\n  171 |     await page.waitForURL(/\\/test-analysis\\/[0-9a-f-]{8,}/i, { timeout: 10_000 })"
+      },
+      "attachments": [
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "url": "30128959225/TC-076___Bulk_select_and-0-screenshot.png"
+        },
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-076___Bulk_select_and-1-video.webm"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "url": "30128959225/TC-076___Bulk_select_and-2-error-context.md"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-076___Bulk_select_and-3-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-042 — Verify theme sw",
+      "title": "TC-042 — Verify theme switch from light to dark",
+      "file": "playwright/tests/theme.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 7128,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-042___Verify_theme_sw-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-042___Verify_theme_sw-1-trace.zip"
+        }
+      ]
+    },
+    {
+      "id": "TC-043 — Verify theme sw",
+      "title": "TC-043 — Verify theme switch from dark to light",
+      "file": "playwright/tests/theme.spec.ts",
+      "project": "chromium",
+      "category": "chromium",
+      "status": "passed",
+      "durationMs": 6672,
+      "retries": 0,
+      "error": null,
+      "attachments": [
+        {
+          "name": "video",
+          "contentType": "video/webm",
+          "url": "30128959225/TC-043___Verify_theme_sw-0-video.webm"
+        },
+        {
+          "name": "trace",
+          "contentType": "application/zip",
+          "url": "30128959225/TC-043___Verify_theme_sw-1-trace.zip"
+        }
+      ]
+    }
+  ]
+}
